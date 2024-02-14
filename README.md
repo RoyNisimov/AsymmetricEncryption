@@ -13,19 +13,23 @@ You can also sign with them.
 # Table of contents
 
 ---
-| Algorithm    | Code            | Math behind it  |
-|---------------|-----------------|-----------------|
-| [RSA](#rsa)   | [Code](#code)   | [Math](#math)   |
+| Algorithm     | Code               | Math behind it     |
+|---------------|--------------------|--------------------|
+| [RSA](#rsa)   | [Code](#rsa-code)  | [Math](#rsa-math)  |
+| [OAEP](#oaep) | [Code](#oaep-code) | [Math](#oaep-math) |
 ---
 
 # Math symbols
 - Pow : **
 - Modulo / Mod : %
+- XOR: ^
+- Append: ||
 
 
 # General
 - [Prime Number Generator](https://www.geeksforgeeks.org/how-to-generate-large-prime-numbers-for-rsa-algorithm/)
-
+- [Repeating key xor \ OTP (one-time-pad): symmetric](https://www.geeksforgeeks.org/encrypt-using-xor-cipher-with-repeating-key/)
+- [OAEP](#oaep) [here](https://www.youtube.com/watch?v=ZwPGE5GgG_E) and [here](https://www.youtube.com/watch?v=bU4so01qMP4)
 
 ---
 
@@ -38,9 +42,9 @@ Used for authentication and Diffie-Hellman exchanges.
 Problems:
 If m >= n then the encryption wouldn't work
 
-- [code here](#code)
-- [math here](#math)
-## Math
+- [code here](#rsa-code)
+- [math here](#rsa-math)
+## RSA Math
 ```
 ==============================================
                    Generate
@@ -86,7 +90,7 @@ v = s**e % n
 m == v
 ==============================================
 ```
-## Code
+## RSA Code
 **WARNING:** This is the bare bones RSA with OAEP (If you pad it with OAEP)
 ```python
 from AsymmetricEncryption import RSA
@@ -125,6 +129,50 @@ cipher.verify(s, msg)
 
 ```
 # OAEP
+```
+O-ptimal
+A-symmetric
+E-ncryption
+P-adding
+```
+[Here](https://www.youtube.com/watch?v=ZwPGE5GgG_E) and [Here](https://www.youtube.com/watch?v=bU4so01qMP4)
+## OAEP Math
+![image](https://miro.medium.com/v2/resize:fit:1358/1*ppgvPx2BA-Il2w9aZhRrWw.png)
+```
+G(x) |
+     | -> hash functions outputing g and h bits
+H(H) |
+
+Pad
+================================
+r -> random nonce of g bits
+m = m || 0**(g-len(m))
+x = m ^ G(r)
+y = H(X) ^ r
+p =  x || y
+remember that x and y are g and h bits long
+--------------------------------
+Unpad
+================================
+x = p[:g]
+y = p[g:]
+r = H(X) ^ y
+m = x ^ G(r)
+```
+
+## OAEP Code
+```python 
+from AsymmetricEncryption.General import OAEP
+msg = b"OAEP"
+padded = OAEP.oaep_pad(msg)
+print(padded)
+unpadded = OAEP.oaep_unpad(padded)
+print(unpadded)
+print(unpadded == msg) # True if the msg is smaller than 
+```
+
+
+
 
 
 
