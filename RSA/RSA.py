@@ -1,5 +1,6 @@
 from __future__ import annotations
 from .RSA_KEY import RSA_KEY
+from AsymmetricEncryption.General import BytesAndInts
 
 class RSA:
     def __init__(self, key: RSA_KEY) -> None:
@@ -11,3 +12,16 @@ class RSA:
         Priv: RSA_KEY = RSA_KEY.new(nBit)
         Pub: RSA_KEY = Priv.public
         return Priv, Pub
+
+
+    def encrypt(self, msg: bytes) -> bytes:
+        int_msg: int = BytesAndInts.byte2Int(msg)
+        cipher: int = pow(int_msg, self.key.e, self.key.n)
+        return BytesAndInts.int2Byte(cipher)
+
+    def decrypt(self, cipher: bytes) -> bytes:
+        assert self.key.has_private
+        int_cipher: int = BytesAndInts.byte2Int(cipher)
+        m: int = pow(int_cipher, self.key.d, self.key.n)
+        return BytesAndInts.int2Byte(m)
+

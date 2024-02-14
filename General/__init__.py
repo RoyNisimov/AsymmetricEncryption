@@ -1,2 +1,3 @@
-__all__ = ["PrimeNumberGen"]
+__all__ = ["PrimeNumberGen", "BytesAndInts"]
 from .PrimeNumberGen import PrimeNumberGen
+from .BytesAndInts import BytesAndInts
