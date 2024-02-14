@@ -26,6 +26,8 @@ You can also sign with them.
 RSA stands for Rivest–Shamir–Adleman, the three people who invented it (Ron Rivest, Adi Shamir, and Leonard Adleman).
 
 RSA is considered one of the best asymmetric crypto systems.
+Used for authentication and Diffie-Hellman exchanges.
+
 
 - [code here](#code)
 - [math here](#math)
@@ -95,6 +97,15 @@ msg: bytes = cipher.decrypt(encrypted_msg)
 # Test
 print(msg)
 print(msg == message) # True
+
+# Sign
+cipher = RSA(priv)
+s: bytes = cipher.sign(msg)
+cipher.verify(s, msg)
+# Verify (Will throw and error if it isn't auth)
+
+
+
 ```
 
 

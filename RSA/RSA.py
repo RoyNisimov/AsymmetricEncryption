@@ -25,3 +25,13 @@ class RSA:
         m: int = pow(int_cipher, self.key.d, self.key.n)
         return BytesAndInts.int2Byte(m)
 
+    def sign(self, msg: bytes) -> bytes:
+        assert self.key.has_private
+        int_msg: int = BytesAndInts.byte2Int(msg)
+        s: int = pow(int_msg, self.key.d, self.key.n)
+        return BytesAndInts.int2Byte(s)
+
+    def verify(self, s, og_msg: bytes) -> None:
+        int_s: int = BytesAndInts.byte2Int(s)
+        cipher: int = pow(int_s, self.key.e, self.key.n)
+        assert cipher == BytesAndInts.byte2Int(og_msg)
