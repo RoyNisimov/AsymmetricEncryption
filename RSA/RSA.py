@@ -16,6 +16,7 @@ class RSA:
 
     def encrypt(self, msg: bytes) -> bytes:
         int_msg: int = BytesAndInts.byte2Int(msg)
+        assert int_msg < self.key.n
         cipher: int = pow(int_msg, self.key.e, self.key.n)
         return BytesAndInts.int2Byte(cipher)
 
@@ -28,6 +29,7 @@ class RSA:
     def sign(self, msg: bytes) -> bytes:
         assert self.key.has_private
         int_msg: int = BytesAndInts.byte2Int(msg)
+        assert int_msg < self.key.n
         s: int = pow(int_msg, self.key.d, self.key.n)
         return BytesAndInts.int2Byte(s)
 

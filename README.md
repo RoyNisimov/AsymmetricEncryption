@@ -1,3 +1,10 @@
+# WARNING
+This is probably hazards because I don't know best practices.
+I write this only for fun and learning.
+Do not use it on real things.
+Checkout Pycryptodome [here](https://github.com/Legrandin/pycryptodome) and [here](https://pycryptodome.readthedocs.io/en/latest/)
+
+
 # Asymmetric-Encryption
 Asymmetric encryption uses two keys, one public, one private.
 You can encrypt with the public key and only decrypt with the private key.
@@ -6,7 +13,7 @@ You can also sign with them.
 # Table of contents
 
 ---
-| Algorithem    | Code            | Math behind it  |
+| Algorithm    | Code            | Math behind it  |
 |---------------|-----------------|-----------------|
 | [RSA](#rsa)   | [Code](#code)   | [Math](#math)   |
 ---
@@ -28,6 +35,8 @@ RSA stands for Rivest–Shamir–Adleman, the three people who invented it (Ron 
 RSA is considered one of the best asymmetric crypto systems.
 Used for authentication and Diffie-Hellman exchanges.
 
+Problems:
+If m >= n then the encryption wouldn't work
 
 - [code here](#code)
 - [math here](#math)
@@ -78,14 +87,20 @@ m == v
 ==============================================
 ```
 ## Code
+**WARNING:** This is the bare bones RSA with OAEP (If you pad it with OAEP)
 ```python
 from AsymmetricEncryption import RSA
+from AsymmetricEncryption.General.OAEP import OAEP
 
 message: bytes = b"RSA test"
 
+# pad
+message = OAEP.oaep_pad(message)
+print(message)
 # Key generation
-priv, pub = RSA.generate_key_pair(2048)
-
+priv, pub = RSA.generate_key_pair(1024)
+print(priv)
+print(pub)
 # Encryption (Assume we don't have the private key)
 cipher = RSA(pub)
 encrypted_msg: bytes = cipher.encrypt(message)
@@ -93,10 +108,13 @@ encrypted_msg: bytes = cipher.encrypt(message)
 # decryption (we must have the private key (d))
 cipher = RSA(priv)
 msg: bytes = cipher.decrypt(encrypted_msg)
+# make sure to use OAEP.oaep_unpad on msg
 
 # Test
+print(OAEP.oaep_unpad(msg))
+print(message)
 print(msg)
-print(msg == message) # True
+print(msg == message)  # True
 
 # Sign
 cipher = RSA(priv)
@@ -105,9 +123,8 @@ cipher.verify(s, msg)
 # Verify (Will throw and error if it isn't auth)
 
 
-
 ```
-
+# OAEP
 
 
 
