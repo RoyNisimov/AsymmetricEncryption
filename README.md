@@ -125,9 +125,21 @@ cipher = RSA(priv)
 s: bytes = cipher.sign(msg)
 cipher.verify(s, msg)
 # Verify (Will throw and error if it isn't auth)
-
-
 ```
+**WARNING:** The exportation process is dumping it to JSON, then XOR it with the pwd.
+The HMAC is then put before it.
+
+
+You can export and load keys like this:
+```python
+from AsymmetricEncryption.RSA import RSA, RSAKey
+priv, pub = RSA.generate_key_pair(1024)
+priv.export(file_name="file_name.txt", pwd=b"test")
+RSAKey.load(file_name="file_name.txt", pwd=b"test")
+# load will throw and assertion error if the HMACs aren't the same
+```
+
+
 # OAEP
 ```
 O-ptimal

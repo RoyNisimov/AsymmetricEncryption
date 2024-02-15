@@ -1,2 +1,2 @@
-__all__ = ["Exceptions"]
+__all__ = ["Exceptions", "NeededValueIsNull"]
 from .Exceptions import NeededValueIsNull

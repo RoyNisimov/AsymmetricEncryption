@@ -7,7 +7,7 @@ class RSA:
         self.key = key
 
     @staticmethod
-    def generate_key_pair(nBit) -> (RSAKey, RSAKey):
+    def generate_key_pair(nBit) -> RSAKey and RSAKey:
         # RSAKey.new returns a pair of priv and pub
         Priv: RSAKey = RSAKey.new(nBit)
         Pub: RSAKey = Priv.public
