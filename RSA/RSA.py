@@ -1,16 +1,16 @@
 from __future__ import annotations
-from .RSA_KEY import RSA_KEY
+from .RSAKey import RSAKey
 from AsymmetricEncryption.General import BytesAndInts
 
 class RSA:
-    def __init__(self, key: RSA_KEY) -> None:
+    def __init__(self, key: RSAKey) -> None:
         self.key = key
 
     @staticmethod
-    def generate_key_pair(nBit) -> (RSA_KEY, RSA_KEY):
-        # RSA_KEY.new returns a pair of priv and pub
-        Priv: RSA_KEY = RSA_KEY.new(nBit)
-        Pub: RSA_KEY = Priv.public
+    def generate_key_pair(nBit) -> (RSAKey, RSAKey):
+        # RSAKey.new returns a pair of priv and pub
+        Priv: RSAKey = RSAKey.new(nBit)
+        Pub: RSAKey = Priv.public
         return Priv, Pub
 
 

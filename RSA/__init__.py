@@ -1,3 +1,3 @@
-__all__ = ["RSA", "RSA_KEY"]
+__all__ = ["RSA", "RSAKey"]
 from .RSA import RSA
-from .RSA_KEY import RSA_KEY
+from .RSAKey import RSAKey
