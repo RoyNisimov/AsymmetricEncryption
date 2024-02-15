@@ -1,5 +1,5 @@
 from __future__ import annotations
-from .RSAKey import RSAKey
+from AsymmetricEncryption.RSA.RSAKey import RSAKey
 from AsymmetricEncryption.General import BytesAndInts
 
 class RSA:
@@ -14,9 +14,9 @@ class RSA:
         return Priv, Pub
 
 
-    def encrypt(self, msg: bytes) -> bytes:
+    def encrypt(self, msg: bytes, assertion=True) -> bytes:
         int_msg: int = BytesAndInts.byte2Int(msg)
-        assert int_msg < self.key.n
+        if assertion: assert int_msg < self.key.n
         cipher: int = pow(int_msg, self.key.e, self.key.n)
         return BytesAndInts.int2Byte(cipher)
 
@@ -26,10 +26,10 @@ class RSA:
         m: int = pow(int_cipher, self.key.d, self.key.n)
         return BytesAndInts.int2Byte(m)
 
-    def sign(self, msg: bytes) -> bytes:
+    def sign(self, msg: bytes, assertion=True) -> bytes:
         assert self.key.has_private
         int_msg: int = BytesAndInts.byte2Int(msg)
-        assert int_msg < self.key.n
+        if assertion: assert int_msg < self.key.n
         s: int = pow(int_msg, self.key.d, self.key.n)
         return BytesAndInts.int2Byte(s)
 
