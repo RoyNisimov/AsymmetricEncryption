@@ -1,9 +1,7 @@
 from __future__ import annotations
-from math import gcd
 import json
 import secrets
 from AsymmetricEncryption.General import PrimeNumberGen, XOR
-from AsymmetricEncryption.Exceptions import NeededValueIsNull
 import hmac
 import hashlib
 
@@ -18,6 +16,30 @@ class ElGamalKey:
         if x:
             self.has_private = True
             self.public: ElGamalKey = ElGamalKey(p=p, g=g, y=y, x=None)
+
+    def __eq__(self, other):
+        if not isinstance(other, ElGamalKey): return False
+        return hashlib.sha256(f"{self}".encode()).hexdigest() == hashlib.sha256(f"{other}".encode()).hexdigest()
+
+    def __str__(self) -> str:
+        r: str = ""
+        if self.has_private:
+            r += f"""
+Private Key:
+
+p = {self.p}
+q = {self.g}
+x = {self.x}
+y = {self.y}
+"""
+        r += f"""
+Public Key:
+
+p = {self.p}
+q = {self.g}
+y = {self.y}
+"""
+        return r
 
     @staticmethod
     def new(nBit) -> ElGamalKey:
