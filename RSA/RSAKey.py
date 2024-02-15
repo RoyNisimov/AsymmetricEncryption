@@ -4,6 +4,7 @@ import json
 from AsymmetricEncryption.General import PrimeNumberGen, XOR
 from AsymmetricEncryption.Exceptions import NeededValueIsNull
 import hmac
+import hashlib
 
 class RSAKey:
     def __init__(self, p: int or None = None, q: int or None = None, n: int = None, e: int = None, d: int or None = None, tot_n: int or None = None) -> None:
@@ -51,8 +52,9 @@ class RSAKey:
         assert mac.digest() == dMac
         return RSAKey(**json.loads(jData.decode()))
 
-
-
+    def __eq__(self, other: RSAKey) -> bool:
+        if not isinstance(other, RSAKey): return False
+        return hashlib.sha256(f"{self}".encode()).hexdigest() == hashlib.sha256(f"{other}".encode()).hexdigest()
 
 
     def __str__(self) -> str:
