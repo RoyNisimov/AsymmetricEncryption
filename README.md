@@ -227,7 +227,7 @@ W = 6**5 % 23 = 2
 The message is authentic
 ```
 ## ElGamal Code
-**WARNING:** This is the bare bones RSA with OAEP (If you pad it with OAEP)
+**WARNING:** This is the bare bones ElGamal with OAEP (If you pad it with OAEP)
 ```python
 from AsymmetricEncryption.ElGamal import ElGamal
 from AsymmetricEncryption.General.OAEP import OAEP
@@ -272,6 +272,127 @@ from AsymmetricEncryption.ElGamal import ElGamalKey, ElGamal
 priv, pub = ElGamal.generate_key_pair(1024)
 priv.export(file_name="file_name.txt", pwd=b"test")
 ElGamalKey.load(file_name="file_name.txt", pwd=b"test")
+# load will throw an assertion error if the HMACs aren't the same
+```
+
+# DSA
+The Digital Signature Algorithm (DSA) is a public-key cryptosystem and Federal Information Processing Standard for digital signatures, based on the mathematical concept of modular exponentiation and the discrete logarithm problem. DSA is a variant of the Schnorr and ElGamal signature schemes.
+
+All the math was taken straight from Wikipedia. Read more [here](https://en.wikipedia.org/wiki/Digital_Signature_Algorithm)
+
+**DSA is a signature only algorithm, no encryption and key exchange**
+
+- [code here](#dsa-code)
+- [math here](#dsa-math)
+## DSA Math
+```
+                        The math of ElGamal
+------------------------------------------------------------------------
+
+                          Key Generation
+------------------------------------------------------------------------
+Let p = large prime number
+Let g = 1 < g < p-1
+Let x = 1 < x < p-1
+Let y = g**x % p
+
+Public = {p,g,y}
+Private = {x}
+
+                            Encryption
+------------------------------------------------------------------------
+
+m = message < p
+Let b = 2 < b < p-1
+C1 = g**b % p
+C2 = (m * y**b) % p
+
+                            Decryption
+------------------------------------------------------------------------
+
+XM = C1**x % p
+m = (C2 * XM**(p-2)) % p
+
+                             Signing
+------------------------------------------------------------------------
+m = message
+k = 0 < k < p
+s1 = g**k % p
+phi = p - 1
+mod_inv = k ** -1 % phi // pow(k, -1, phi) or mod_inv*k % phi == 1
+s2 = (mod_inv * (m - x * s1)) % phi
+
+Send {m, s1, s2}
+Keep k private
+
+                             Verifying
+------------------------------------------------------------------------
+V = y**s1 * s1**s2 % p
+W = g**m % p
+If V == W then the message was signed by the private key
+
+
+
+                              Example
+------------------------------------------------------------------------
+
+Let p = 23
+Let g = 6
+Let x = 8
+Let y = 6**8 % 23 = 18
+
+m = 4
+Let b = 3
+C1 = 6**3 % 23 = 9
+C2 = (4 * 18**3) % 23 = 6
+
+XM = 9**8 % 23 = 13
+m = (6 * 13**21) % 23 = 4
+
+Sign 
+m = 5
+k = 3
+s1 = g**k % m = 9
+phi_n = p-1 = 22
+inv = k**-1 % phi_n = 15
+s2 = (inv * (m - x * s1)) % phi_n = 7
+
+Verify
+V = (18**9 * 9**7) % 23 = 2
+W = 6**5 % 23 = 2
+
+The message is authentic
+```
+
+
+## DSA Code
+**WARNING:** I made this with some questionable decisions, this algorithm is complex, please use [PyCryptodome implementation](https://pycryptodome.readthedocs.io/en/latest/src/public_key/dsa.html) or use [RSA](#rsa)
+```python
+from AsymmetricEncryption.DSA import DSA
+
+message: bytes = b"ElGamal test"
+
+# Key generation
+priv, pub = DSA.generate_key_pair()
+print(priv)
+print(pub)
+
+# Sign
+cipher = DSA(priv)
+sig = cipher.sign(message)
+cipher.verify(sig, message)
+# Verify (Will throw and error if it isn't auth)
+```
+**WARNING:** The exportation process is dumping it to JSON, then XOR it with the pwd.
+The HMAC is then put before it.
+
+
+You can export and load keys like this:
+```python
+from AsymmetricEncryption.DSA import DSA, DSAKey
+priv, pub = DSA.generate_key_pair()
+priv.export(file_name="file_name.txt", pwd=b"test")
+DSAKey.load(file_name="file_name.txt", pwd=b"test")
 # load will throw an assertion error if the HMACs aren't the same
 ```
 
