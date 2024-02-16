@@ -16,30 +16,38 @@ class DSAKey:
     # h (2 <= h < p - 2), usually 2
     # g = pow(h, (p-1) / q, p), if g == 1 -> reselect h
     # shared parameters are (p, q, g)
-    p = 89884656743115796742429711405763364460177151692783429800884652449310979263752253529349195459823881715145796498046459238345428121561386626945679753956400077352882071663925459750500807018254028771490434021315691357123734637046894876123496168716251735252662742462099334802433058472377674408598573487858308054417
-    q = 1193447034984784682329306571139467195163334221569
+
 
     def __init__(self, g: int, p: int, q: int, y: int, x: int or None = None):
         if not y: raise NeededValueIsNull("Y can't be null")
+        self.p = p
+        self.q = q
         self.g = g
         self.y = y
         self.x = x
         self.has_private = False
         if x:
             self.has_private = True
-            self.public = DSAKey(g=g, p=DSAKey.p, q=DSAKey.q,y=y, x=None)
+            self.public = DSAKey(g=g, p=p, q=q,y=y, x=None)
 
     @staticmethod
-    def new() -> DSAKey:
+    def new(nBit: int = 1024) -> DSAKey:
+        q: int = PrimeNumberGen.generate(nBit)
+        # p 2048 bit prime
+        loop: int = 2
+        p: int = q * loop + 1
+        while not PrimeNumberGen.isMillerRabinPassed(p):
+            loop += 1
+            p: int = q * loop + 1
         # DSA Params
-        h: int = secrets.randbelow(DSAKey.p - 2)
-        g: int = pow(h, int((DSAKey.p-1) // DSAKey.q), DSAKey.p)
+        h: int = secrets.randbelow(p - 2)
+        g: int = pow(h, int((p-1) // q), p)
         while g == 1:
-            h: int = secrets.randbelow(DSAKey.p - 2)
-            g: int = pow(h, int((DSAKey.p - 1) // DSAKey.q), DSAKey.p)
-        x: int = secrets.randbelow(DSAKey.q - 1)
-        y: int = pow(g, x, DSAKey.p)
-        return DSAKey(g=g, p=DSAKey.p, q=DSAKey.q,y=y, x=x)
+            h: int = secrets.randbelow(p - 2)
+            g: int = pow(h, int((p - 1) // q), p)
+        x: int = secrets.randbelow(q - 1)
+        y: int = pow(g, x, p)
+        return DSAKey(g=g, p=p, q=q, y=y, x=x)
 
     def __str__(self) -> str:
         r: str = ""

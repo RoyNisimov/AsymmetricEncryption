@@ -15,7 +15,7 @@ class ElGamal:
         Pub: ElGamalKey = Priv.public
         return Priv, Pub
 
-    def encrypt(self, msg: bytes, assertion=True) -> bytes and bytes:
+    def encrypt(self, msg: bytes, assertion=True) -> tuple[bytes, bytes]:
         m: bytes = BytesAndInts.byte2Int(msg)
         if assertion: assert m < self.key.p
         b: int = secrets.randbelow(self.key.p)
@@ -23,16 +23,16 @@ class ElGamal:
         c2: int = (m * pow(self.key.y, b, self.key.p)) % self.key.p
         return BytesAndInts.int2Byte(c1), BytesAndInts.int2Byte(c2)
 
-    def decrypt(self, c1: bytes, c2: bytes):
+    def decrypt(self, cipher: tuple[bytes, bytes]):
         assert self.key.x
-        c1: int = BytesAndInts.byte2Int(c1)
-        c2: int = BytesAndInts.byte2Int(c2)
+        c1: int = BytesAndInts.byte2Int(cipher[0])
+        c2: int = BytesAndInts.byte2Int(cipher[1])
         a: int = pow(c1, self.key.x, self.key.p)
         m = (c2 * pow(a, self.key.p - 2, self.key.p)) % self.key.p
         return BytesAndInts.int2Byte(m)
 
 
-    def sign(self, msg: bytes, assertion=True) -> bytes and bytes and int:
+    def sign(self, msg: bytes, assertion=True) -> tuple[bytes, bytes, bytes]:
         m: bytes = BytesAndInts.byte2Int(msg)
         if assertion: assert m < self.key.p
         k: int = secrets.randbelow(self.key.p)
@@ -44,10 +44,10 @@ class ElGamal:
         if s2 == 0: self.sign(msg, assertion)
         return BytesAndInts.int2Byte(s1), BytesAndInts.int2Byte(s2),  BytesAndInts.int2Byte(m)
 
-    def verify(self, s1: bytes, s2: bytes, m: bytes):
-        s1: int = BytesAndInts.byte2Int(s1)
-        s2: int = BytesAndInts.byte2Int(s2)
-        m: int = BytesAndInts.byte2Int(m)
+    def verify(self, signature: tuple[bytes, bytes, bytes]):
+        s1: int = BytesAndInts.byte2Int(signature[0])
+        s2: int = BytesAndInts.byte2Int(signature[1])
+        m: int = BytesAndInts.byte2Int(signature[2])
         V = pow(self.key.y, s1, self.key.p) * pow(s1, s2, self.key.p)
         V = V % self.key.p
         W = pow(self.key.g, m, self.key.p)

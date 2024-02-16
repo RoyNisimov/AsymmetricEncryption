@@ -17,6 +17,7 @@ You can also sign with them.
 |---------------------|-----------------------|-----------------------|
 | [RSA](#rsa)         | [Code](#rsa-code)     | [Math](#rsa-math)     |
 | [ElGamal](#elgamal) | [Code](#elgamal-code) | [Math](#elgamal-math) |
+| [DSA](#dsa)         | [Code](#dsa-code)     | [Math](#dsa-math)     |
 | [OAEP](#oaep)       | [Code](#oaep-code)    | [Math](#oaep-math)    |
 ---
 
@@ -243,11 +244,11 @@ print(priv)
 print(pub)
 # Encryption (Assume we don't have the private key)
 cipher = ElGamal(pub)
-c1, c2 = cipher.encrypt(message)
+encrypted_msg = cipher.encrypt(message)
 
 # decryption (we must have the private key (d))
 cipher = ElGamal(priv)
-msg: bytes = cipher.decrypt(c1, c2)
+msg: bytes = cipher.decrypt(encrypted_msg)
 # make sure to use OAEP.oaep_unpad on msg
 
 # Test
@@ -258,8 +259,8 @@ print(msg == message)  # True
 
 # Sign
 cipher = ElGamal(priv)
-s1, s2, m = cipher.sign(msg)
-cipher.verify(s1, s2, m)
+signature = cipher.sign(msg)
+cipher.verify(signature)
 # Verify (Will throw and error if it isn't auth)
 ```
 **WARNING:** The exportation process is dumping it to JSON, then XOR it with the pwd.
@@ -286,80 +287,55 @@ All the math was taken straight from Wikipedia. Read more [here](https://en.wiki
 - [math here](#dsa-math)
 ## DSA Math
 ```
-                        The math of ElGamal
+                           The math of DSA
+------------------------------------------------------------------------
+The math is very complex.
+Good luck.
+        
+                            Key generation
+------------------------------------------------------------------------
+Key generation has two phases. 
+The first phase is a choice of algorithm parameters which may be shared between different users of the system.
+The second phase computes a single key pair for one user.
+
+First phase (paramaters)
+------------------------------
+1. Choose an aproved hash function (I chose Sha256) H that outputs |H| bits (256)
+2. Choose a key length L (1024 without any change).
+(2048 or 3072 is considered safer for life long until 2030)
+3. Choose modulus N such that N < L and 0 < N <= |H|
+Tricky part:
+4. Choose N-bit prime q
+5. Choose L-bit prime p such that (p -1) % q == 0
+End of tricky part.
+6. Choose 0 < h < p - 2
+7. Compute g = h**((p-1)//q) % p
+{p, q, g} may be shared.
+
+Second phase (Actuall key gen)
+-------------------------------
+1. Choose private key x such that 0 < x < q -1
+2. Compute public key y, y = g**x % p
+
+                            Signing
+------------------------------------------------------------------------
+m = message as an int
+1. Choose an integer k randomly from {1... q-1}
+2. Compute r = (g**k % p) % q
+3. Compute s = ((k**-1 % q) * (H(m) + x * r)) % q
+4. If s == 0 or r == 0: start over with a different k
+Sig = (r, s)
+                            Verifying
+------------------------------------------------------------------------
+m = message as an int
+1. Verify that 0 < r < q, 0 < s < q
+2. Compute W = s**-1 % q
+3. Compute U1 = (H(m) * w) % q
+4. Compute U2 = (r * w) % q
+5. Compute V = (((g**u1 % p) * (y**u2 % p)) % p) % q
+The signature is valid if and only if V == r
 ------------------------------------------------------------------------
 
-                          Key Generation
-------------------------------------------------------------------------
-Let p = large prime number
-Let g = 1 < g < p-1
-Let x = 1 < x < p-1
-Let y = g**x % p
-
-Public = {p,g,y}
-Private = {x}
-
-                            Encryption
-------------------------------------------------------------------------
-
-m = message < p
-Let b = 2 < b < p-1
-C1 = g**b % p
-C2 = (m * y**b) % p
-
-                            Decryption
-------------------------------------------------------------------------
-
-XM = C1**x % p
-m = (C2 * XM**(p-2)) % p
-
-                             Signing
-------------------------------------------------------------------------
-m = message
-k = 0 < k < p
-s1 = g**k % p
-phi = p - 1
-mod_inv = k ** -1 % phi // pow(k, -1, phi) or mod_inv*k % phi == 1
-s2 = (mod_inv * (m - x * s1)) % phi
-
-Send {m, s1, s2}
-Keep k private
-
-                             Verifying
-------------------------------------------------------------------------
-V = y**s1 * s1**s2 % p
-W = g**m % p
-If V == W then the message was signed by the private key
-
-
-
-                              Example
-------------------------------------------------------------------------
-
-Let p = 23
-Let g = 6
-Let x = 8
-Let y = 6**8 % 23 = 18
-
-m = 4
-Let b = 3
-C1 = 6**3 % 23 = 9
-C2 = (4 * 18**3) % 23 = 6
-
-XM = 9**8 % 23 = 13
-m = (6 * 13**21) % 23 = 4
-
-Sign 
-m = 5
-k = 3
-s1 = g**k % m = 9
-phi_n = p-1 = 22
-inv = k**-1 % phi_n = 15
-s2 = (inv * (m - x * s1)) % phi_n = 7
-
-Verify
-V = (18**9 * 9**7) % 23 = 2
-W = 6**5 % 23 = 2
 
 The message is authentic
 ```
@@ -370,10 +346,10 @@ The message is authentic
 ```python
 from AsymmetricEncryption.DSA import DSA
 
-message: bytes = b"ElGamal test"
+message: bytes = b"DSA test"
 
-# Key generation
-priv, pub = DSA.generate_key_pair()
+# Key generation, Will take longer if the nBit is large
+priv, pub = DSA.generate_key_pair(1024)
 print(priv)
 print(pub)
 
