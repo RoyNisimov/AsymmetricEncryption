@@ -37,9 +37,9 @@ class DSA:
 
 
     @staticmethod
-    def generate_key_pair(nBit: int = 1024) -> DSAKey and DSAKey:
+    def generate_key_pair(nBit: int = 1024, use_precalculated: bool = True) -> DSAKey and DSAKey:
         # DSAKey.new returns a pair of priv and pub
-        Priv: DSAKey = DSAKey.new(nBit)
+        Priv: DSAKey = DSAKey.new(nBit=nBit, use_precalculated=use_precalculated)
         Pub: DSAKey = Priv.public
         return Priv, Pub
 

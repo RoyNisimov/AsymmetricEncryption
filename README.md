@@ -336,19 +336,18 @@ m = message as an int
 The signature is valid if and only if V == r
 ------------------------------------------------------------------------
 
-
-The message is authentic
 ```
 
 
 ## DSA Code
-**WARNING:** I made this with some questionable decisions, this algorithm is complex, please use [PyCryptodome implementation](https://pycryptodome.readthedocs.io/en/latest/src/public_key/dsa.html) or use [RSA](#rsa)
+**WARNING:** I made this with some questionable decisions, this algorithm is complex, please use [PyCryptodome implementation](https://pycryptodome.readthedocs.io/en/latest/src/public_key/dsa.html) or use [RSA](#rsa) instead.
 ```python
 from AsymmetricEncryption.DSA import DSA
 
 message: bytes = b"DSA test"
 
-# Key generation, Will take longer if the nBit is large
+# Key generation, Will take longer if the nBit is large and is not 1024, 2048, or 3072
+# An extra bool (use_precalculated) is equal to true, this is to save time, you can turn it off though.
 priv, pub = DSA.generate_key_pair(1024)
 print(priv)
 print(pub)
