@@ -24,8 +24,10 @@ You can also sign with them.
 # Math symbols
 - Pow : **
 - Modulo / Mod : %
-- XOR: ^
-- Append: ||
+- XOR : ^
+- Append : ||
+- x**-1 % n : means the [Modular multiplicative inverse](https://en.wikipedia.org/wiki/Modular_multiplicative_inverse),
+    means that if d = e**-1 % n -> e*d % n == 1
 
 
 # General
@@ -335,6 +337,38 @@ m = message as an int
 5. Compute V = (((g**u1 % p) * (y**u2 % p)) % p) % q
 The signature is valid if and only if V == r
 ------------------------------------------------------------------------
+                                
+                                
+                                Example
+------------------------------------------------------------------------
+// key param gen
+p, q = 11, 5 // (p -1) % q == 0
+h = 8
+g = 8**2 % 11 = 9
+{11, 5, 9}
+// make a key
+x = 7
+y = 9**7 % 11 = 4
+
+// sign
+m = 3
+H(M) = 7
+k = 2
+r = (9**2 % 11) % 5 = 4
+s = ((2**-1 % 5) * (7 + 7 * 4)) % 5 = (3 * 56) % 5 = 3
+{r = 4, s = 3}
+
+// verify
+m = 3
+H(M) = 7
+W = 3**-1 % 5 = 2
+U1 = (7 * 2) % 5 = 4
+U2 = (4 * 2) % 5 = 3
+V = (((5 ** 4 % 11) *  (4 ** 3 % 11)) % 11) % 5 = 4
+
+V == r -> the message is authentic
+
+
 
 ```
 
