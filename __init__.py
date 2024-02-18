@@ -1,5 +1,6 @@
-__all__ = ["General", "RSA", "Exceptions", "PrimeNumberGen", "ElGamal"]
+__all__ = ["General", "PublicPrivateKey", "Exceptions", "RSA", "RSAKey", "DSAKey", "DSA", "ElGamalKey", "ElGamal"]
 from .General import PrimeNumberGen, BytesAndInts, XOR
-from .RSA import RSA, RSAKey
 from .Exceptions import Exceptions, NeededValueIsNull
-from .ElGamal import ElGamalKey, ElGamal
+from .PublicPrivateKey.ElGamal import ElGamalKey, ElGamal
+from .PublicPrivateKey.RSA import RSA, RSAKey
+from .PublicPrivateKey.DSA import DSA, DSAKey

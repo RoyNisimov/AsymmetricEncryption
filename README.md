@@ -96,9 +96,10 @@ m == v
 ```
 ## RSA Code
 **WARNING:** This is the bare bones RSA with OAEP (If you pad it with OAEP)
+
 ```python
-from AsymmetricEncryption import RSA
-from AsymmetricEncryption.General.OAEP import OAEP
+from AsymmetricEncryption.PublicPrivateKey import RSA
+from AsymmetricEncryption.General import OAEP
 
 message: bytes = b"RSA test"
 
@@ -135,8 +136,10 @@ The HMAC is then put before it.
 
 
 You can export and load keys like this:
+
 ```python
-from AsymmetricEncryption.RSA import RSA, RSAKey
+from AsymmetricEncryption import RSA, RSAKey
+
 priv, pub = RSA.generate_key_pair(1024)
 priv.export(file_name="file_name.txt", pwd=b"test")
 RSAKey.load(file_name="file_name.txt", pwd=b"test")
@@ -231,9 +234,10 @@ The message is authentic
 ```
 ## ElGamal Code
 **WARNING:** This is the bare bones ElGamal with OAEP (If you pad it with OAEP)
+
 ```python
-from AsymmetricEncryption.ElGamal import ElGamal
-from AsymmetricEncryption.General.OAEP import OAEP
+from AsymmetricEncryption.PublicPrivateKey.ElGamal import ElGamal
+from AsymmetricEncryption.General import OAEP
 
 message: bytes = b"ElGamal test"
 
@@ -270,8 +274,10 @@ The HMAC is then put before it.
 
 
 You can export and load keys like this:
+
 ```python
-from AsymmetricEncryption.ElGamal import ElGamalKey, ElGamal
+from AsymmetricEncryption import ElGamalKey, ElGamal
+
 priv, pub = ElGamal.generate_key_pair(1024)
 priv.export(file_name="file_name.txt", pwd=b"test")
 ElGamalKey.load(file_name="file_name.txt", pwd=b"test")
@@ -375,8 +381,9 @@ V == r -> the message is authentic
 
 ## DSA Code
 **WARNING:** I made this with some questionable decisions, this algorithm is complex, please use [PyCryptodome implementation](https://pycryptodome.readthedocs.io/en/latest/src/public_key/dsa.html) or use [RSA](#rsa) instead.
+
 ```python
-from AsymmetricEncryption.DSA import DSA
+from AsymmetricEncryption import DSA
 
 message: bytes = b"DSA test"
 
@@ -397,8 +404,10 @@ The HMAC is then put before it.
 
 
 You can export and load keys like this:
+
 ```python
-from AsymmetricEncryption.DSA import DSA, DSAKey
+from AsymmetricEncryption import DSA, DSAKey
+
 priv, pub = DSA.generate_key_pair()
 priv.export(file_name="file_name.txt", pwd=b"test")
 DSAKey.load(file_name="file_name.txt", pwd=b"test")
@@ -440,14 +449,16 @@ m = x ^ G(r)
 ```
 
 ## OAEP Code
+
 ```python 
 from AsymmetricEncryption.General import OAEP
+
 msg = b"OAEP"
 padded = OAEP.oaep_pad(msg)
 print(padded)
 unpadded = OAEP.oaep_unpad(padded)
 print(unpadded)
-print(unpadded == msg) # True if the msg is small 
+print(unpadded == msg)  # True if the msg is small 
 ```
 
 

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from AsymmetricEncryption.DSA.DSAKey import DSAKey
+from AsymmetricEncryption.PublicPrivateKey.DSA import DSAKey
 from AsymmetricEncryption.General import BytesAndInts
 import secrets
 import hashlib

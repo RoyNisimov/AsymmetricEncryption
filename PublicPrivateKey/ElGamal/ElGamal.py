@@ -1,5 +1,5 @@
 from __future__ import annotations
-from AsymmetricEncryption.ElGamal.ElGamalKey import ElGamalKey
+from AsymmetricEncryption.PublicPrivateKey.ElGamal.ElGamalKey import ElGamalKey
 from AsymmetricEncryption.General import BytesAndInts
 import secrets
 from math import gcd
