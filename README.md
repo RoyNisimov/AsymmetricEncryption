@@ -19,6 +19,7 @@ You can also sign with them.
 | [ElGamal](#elgamal) | [Code](#elgamal-code) | [Math](#elgamal-math) |
 | [DSA](#dsa)         | [Code](#dsa-code)     | [Math](#dsa-math)     |
 | [OAEP](#oaep)       | [Code](#oaep-code)    | [Math](#oaep-math)    |
+| [SSS](#sss)         | [Code](#sss-code)     | [Math](#sss-math)     |
 ---
 
 # Math symbols
@@ -419,7 +420,7 @@ DSAKey.load(file_name="file_name.txt", pwd=b"test")
 # Protocols
 
 - [OAEP](#oaep)
-- [SSS2N](#sss2n)
+- [SSS2N](#sss)
 
 # OAEP
 ```
@@ -466,7 +467,7 @@ print(unpadded)
 print(unpadded == msg)  # True if the msg is small 
 ```
 
-# SSS2N
+# SSS
 
 SSS stands for Shamir's Secret Sharing.
 
