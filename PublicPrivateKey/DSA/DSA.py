@@ -30,7 +30,8 @@ class DSA:
         v = ((pow(self.key.g, u1, self.key.p) * pow(self.key.y, u2, self.key.p)) % self.key.p) % self.key.q
         assert v == r
 
-    def H(self, m: int) -> int:
+    @staticmethod
+    def H(m: int) -> int:
         # H = sha256
         b: bytes = BytesAndInts.int2Byte(m)
         return BytesAndInts.byte2Int(hashlib.sha256(b, usedforsecurity=True).digest())
@@ -42,4 +43,3 @@ class DSA:
         Priv: DSAKey = DSAKey.new(nBit=nBit, use_precalculated=use_precalculated)
         Pub: DSAKey = Priv.public
         return Priv, Pub
-

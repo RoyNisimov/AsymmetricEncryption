@@ -1,5 +1,5 @@
 from __future__ import annotations
-from AsymmetricEncryption.RSA.RSAKey import RSAKey
+from AsymmetricEncryption.PublicPrivateKey.RSA.RSAKey import RSAKey
 from AsymmetricEncryption.General import BytesAndInts
 
 class RSA:
@@ -36,4 +36,5 @@ class RSA:
     def verify(self, s, og_msg: bytes) -> None:
         int_s: int = BytesAndInts.byte2Int(s)
         cipher: int = pow(int_s, self.key.e, self.key.n)
-        assert cipher == BytesAndInts.byte2Int(og_msg)
+        assert cipher == BytesAndInts.byte2Int(og_msg
+                                               )

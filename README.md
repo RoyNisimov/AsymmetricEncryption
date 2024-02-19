@@ -99,7 +99,7 @@ m == v
 
 ```python
 from AsymmetricEncryption.PublicPrivateKey import RSA
-from AsymmetricEncryption.General import OAEP
+from AsymmetricEncryption.Protocols import OAEP
 
 message: bytes = b"RSA test"
 
@@ -237,7 +237,7 @@ The message is authentic
 
 ```python
 from AsymmetricEncryption.PublicPrivateKey.ElGamal import ElGamal
-from AsymmetricEncryption.General import OAEP
+from AsymmetricEncryption.Protocols import OAEP
 
 message: bytes = b"ElGamal test"
 
@@ -416,6 +416,11 @@ DSAKey.load(file_name="file_name.txt", pwd=b"test")
 
 
 
+# Protocols
+
+- [OAEP](#oaep)
+- [SSS2N](#sss2n)
+
 # OAEP
 ```
 O-ptimal
@@ -451,7 +456,7 @@ m = x ^ G(r)
 ## OAEP Code
 
 ```python 
-from AsymmetricEncryption.General import OAEP
+from AsymmetricEncryption.Protocols import OAEP
 
 msg = b"OAEP"
 padded = OAEP.oaep_pad(msg)
@@ -461,10 +466,109 @@ print(unpadded)
 print(unpadded == msg)  # True if the msg is small 
 ```
 
+# SSS2N
+
+SSS stands for Shamir's Secret Sharing.
+
+Adi Shamir, an Israeli scientist, first formulated the scheme in 1979.
+
+BTW the S in RSA is also Adi Shamir.
+
+[This video here](https://www.youtube.com/watch?v=iFY5SyY3IMQ) explains SSS very well.
+
+I only made this with 2 n because making it dynamically is a lot more complicated.
+
+Please check out [Pycryptodome's SSS](https://pycryptodome.readthedocs.io/en/latest/src/protocol/ss.html).
+
+SSS is used to secure a secret in a distributed form, most often to secure encryption keys. The secret is split into multiple shares, which individually do not give any information about the secret.
+
+To reconstruct a secret secured by SSS, a number of shares is needed, called the threshold. No information about the secret can be gained from any number of shares below the threshold (a property called perfect secrecy). In this sense, SSS is a generalisation of the one-time pad (which can be viewed as SSS with a two-share threshold and two shares in total).
+
+## SSS Math
+
+``` 
+Shamir's Secret Sharing
+---------------------------
+n -> the number of shares
+k (2 in this case) -> the number of people needed to find the answer
+
+Take your secret as m.
+Place m on a graph such that the point is (0, m).
+
+Generate (k - 1) random points on the graph.
+
+Make a formula that goes through all of the points (a line in this case, y = mx + b)
+
+Generate n points on the line and share them. (x != 0 of course)
+-----------------------------
+To find m back you need to calculate the formula again, which you can do that with k shares.
+And then plug 0 into the formula and you get m.
+
+Example:
+------------------------------
+n = 4
+k = 2
+
+m = 3
+random slope (instead of random point because with oneline it's the same but faster):
+4 
+y = 4x + 3
+random point on the line number 1: x = 4, y = 16
+random point on the line number 2: x = 6, y = 27
+random point on the line number 3: x = 2, y = 11
+random point on the line number 4: x = 1, y = 7
 
 
+|
+|
+|
+|
+|                               (6, 27)
+|
+|               (4, 16)
+|
+|          (2, 11)                         
+|   
+|       (1, 7)
+|
+(0; 3)
+|
+|
+0------------------------------------------
+
+Given only one of those points it's impossible to find m.
+However, given k points you can always find m again.
+
+let's say that we got both points (1, 7) and (6, 27).
+slope = (27 - 7) / (6 - 1) = 20 / 5 = 4
+Using the formula y = m(x - x1) + y1 we get:
+y = 4x - 4 + 7, y = 4x + 3.
+Pluge x = 0 and we get our answer: m = 3.
+
+```
+
+## SSS Code
+
+```python
+from AsymmetricEncryption.General import Element
+from AsymmetricEncryption.Protocols import SSS2N
+
+secret = b"test"
+shares, prime_mod = SSS2N.new(msg_to_hide=secret, n=5, finite_field_p_bits=1024)
+print(Element.fmt_elements_list(shares)) # to format the coordinates nicely
+secret = SSS2N.reassemble(elements=shares, p=prime_mod)
+print(secret) # will be "test"
+```
+```
+SSS2N.new -> returns a list of Elements and a prime mod p
+msg_to_hide: the m
+n: number of shares to generate
+finite_field_p_bits: the number of bits to generate the prime mod, will throw an assertion error if p <= m
+
+SSS2N.reassemble(shares, prime_mod) -> returns the secret
+elements: the list of shares, will throw an asserion error if len(elements) < 2.
+p: prime mod.
 
 
-
-
+```
 

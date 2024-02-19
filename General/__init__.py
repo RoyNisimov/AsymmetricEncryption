@@ -1,5 +1,6 @@
-__all__ = ["PrimeNumberGen", "BytesAndInts", "OAEP", "XOR"]
+__all__ = ["PrimeNumberGen", "BytesAndInts", "XOR", "Line", "Element"]
 from .PrimeNumberGen import PrimeNumberGen
 from .BytesAndInts import BytesAndInts
 from .XOR import XOR
-from .OAEP import OAEP
+from .Element import Element
+from .Line import Line

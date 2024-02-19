@@ -67,4 +67,3 @@ y = {self.y}
         mac: hmac = hmac.new(key=pwd, msg=jData, digestmod="sha512")
         assert mac.digest() == dMac
         return ElGamalKey(**json.loads(jData.decode()))
-

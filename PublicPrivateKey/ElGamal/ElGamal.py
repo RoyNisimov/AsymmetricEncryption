@@ -54,4 +54,3 @@ class ElGamal:
         print(W)
         print(V)
         return V == W
-

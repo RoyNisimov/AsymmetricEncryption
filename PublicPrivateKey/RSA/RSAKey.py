@@ -35,7 +35,7 @@ class RSAKey:
 
 
     def export(self, file_name: str, pwd: bytes = b"\x00") -> None:
-        data_dict: dict = {"p": self.p, "q": self.q, "n": self.n, "tot_n": self.tot_n,"e": self.e, "d": self.d}
+        data_dict: dict = {"p": self.p, "q": self.q, "n": self.n, "tot_n": self.tot_n, "e": self.e, "d": self.d}
         jData: bytes = json.dumps(data_dict).encode("utf-8")
         write_data: bytes = XOR.repeated_key_xor(jData, pwd)
         mac: hmac = hmac.new(key=pwd, msg=jData, digestmod="sha512")
