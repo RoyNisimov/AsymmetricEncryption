@@ -13,13 +13,14 @@ You can also sign with them.
 # Table of contents
 
 ---
-| Algorithm           | Code                  | Math behind it        |
-|---------------------|-----------------------|-----------------------|
-| [RSA](#rsa)         | [Code](#rsa-code)     | [Math](#rsa-math)     |
-| [ElGamal](#elgamal) | [Code](#elgamal-code) | [Math](#elgamal-math) |
-| [DSA](#dsa)         | [Code](#dsa-code)     | [Math](#dsa-math)     |
-| [OAEP](#oaep)       | [Code](#oaep-code)    | [Math](#oaep-math)    |
-| [SSS](#sss)         | [Code](#sss-code)     | [Math](#sss-math)     |
+| Algorithm                                        | Code                      | Math behind it            |
+|--------------------------------------------------|---------------------------|---------------------------|
+| [RSA](#rsa)                                      | [Code](#rsa-code)         | [Math](#rsa-math)         |
+| [ElGamal](#elgamal)                              | [Code](#elgamal-code)     | [Math](#elgamal-math)     |
+| [DSA](#dsa)                                      | [Code](#dsa-code)         | [Math](#dsa-math)         |
+| [OAEP](#oaep)                                    | [Code](#oaep-code)        | [Math](#oaep-math)        |
+| [SSS](#sss)                                      | [Code](#sss-code)         | [Math](#sss-math)         |
+| [Fiat–Shamir](#fiat–shamir-zero-knowledge-proof) | [Code](#fiat–shamir-code) | [Math](#fiat–shamir-math) |
 ---
 
 # Math symbols
@@ -578,3 +579,78 @@ shares: the shares needed to reconstruct the secret
 
 ```
 
+# Fiat Shamir Zero Knowledge Proof
+
+From Wikipedia, the free encyclopedia
+In cryptography, the Fiat–Shamir heuristic is a technique for taking an interactive proof of knowledge and creating a digital signature based on it. This way, some fact (for example, knowledge of a certain secret number) can be publicly proven without revealing underlying information. The technique is due to Amos Fiat and Adi Shamir (1986). For the method to work, the original interactive proof must have the property of being public-coin, i.e. verifier's random coins are made public throughout the proof protocol.
+
+The heuristic was originally presented without a proof of security; later, Pointcheval and Stern proved its security against chosen message attacks in the random oracle model, that is, assuming random oracles exist. This result was generalized to the quantum-accessible random oracle (QROM) by Don, Fehr, Majenz and Schaffner, and concurrently by Liu and Zhandry. In the case that random oracles do not exist, the Fiat–Shamir heuristic has been proven insecure by Shafi Goldwasser and Yael Tauman Kalai. The Fiat–Shamir heuristic thus demonstrates a major application of random oracles. More generally, the Fiat–Shamir heuristic may also be viewed as converting a public-coin interactive proof of knowledge into a non-interactive proof of knowledge. If the interactive proof is used as an identification tool, then the non-interactive version can be used directly as a digital signature by using the message as part of the input to the random oracle.
+
+## Fiat Shamir Math
+``` 
+
+---------------------------------------------------
+Lets say Alice want to prove Bob that she know a password without reveling any information about it.
+Alice and Bob agree on a generator g and a prime n such that g < n
+
+Alice:
+x = Hash(Password)
+y = g**x % n
+v < n
+t = g**v % n
+
+Alice sends to Bob: {y, t}
+
+Bob:
+Bob generates a number c such that c < n
+Bob sends Alice: {c}
+
+Alice:
+r = v - c * x
+Alice sends Bob: {r}
+
+Bob:
+z = (g**r * y**c) % n
+verified if z == t
+---------------------------------------------------
+Example:
+g = 35
+n = 53
+
+Alice:
+x = 17
+y = 35**17 % 53 = 20
+v = 7
+t = 35**7 % 53 = 34
+{y = 20, t = 34}
+
+Bob:
+c = 15
+{c = 15}
+
+Alice:
+r = 7 - 15 * 17 = -248
+{r = -248}
+
+Bob:
+z = ((35**-248) * (20**15)) % 53 = 34
+t == z = 34 -> verified
+```
+## Fiat Shamir Code
+```python
+from AsymmetricEncryption.Protocols import FiatShamirZeroKnowledgeProof
+
+if __name__ == '__main__':
+    m = b'test'
+    fs = FiatShamirZeroKnowledgeProof.new()
+    y = fs.AliceStage1(m)
+    # send y to bob
+    v, t = fs.AliceStage2()
+    # keep v send t
+    c = fs.BobStage1()
+    # Bob sends c as a challenge
+    r = fs.AliceStage3(v, c, m)
+    # Alice sends r to bob
+    ver = fs.BobStage2(y, r, c, t)
+    print(ver)
+```
