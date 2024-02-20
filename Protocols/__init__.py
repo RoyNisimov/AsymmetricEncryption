@@ -1,3 +1,3 @@
-__all__ = ["SSS2N", "OAEP"]
-from .SSS2N import SSS2N
+__all__ = ["SSS", "OAEP"]
+from .SSS import SSS
 from .OAEP import OAEP

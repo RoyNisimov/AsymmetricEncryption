@@ -31,10 +31,10 @@ You can also sign with them.
     means that if d = e**-1 % n -> e*d % n == 1
 
 
-# General
+# Not my code
 - [Prime Number Generator](https://www.geeksforgeeks.org/how-to-generate-large-prime-numbers-for-rsa-algorithm/)
-- [Repeating key xor \ OTP (one-time-pad): symmetric](https://www.geeksforgeeks.org/encrypt-using-xor-cipher-with-repeating-key/)
-- [OAEP](#oaep) [here](https://www.youtube.com/watch?v=ZwPGE5GgG_E) and [here](https://www.youtube.com/watch?v=bU4so01qMP4)
+- [Repeating key xor \ OTP (one-time-pad)](https://www.geeksforgeeks.org/encrypt-using-xor-cipher-with-repeating-key/)
+- [Shamir's Secret Sharing](#https://www.geeksforgeeks.org/implementing-shamirs-secret-sharing-scheme-in-python/)
 
 ---
 
@@ -491,28 +491,27 @@ To reconstruct a secret secured by SSS, a number of shares is needed, called the
 Shamir's Secret Sharing
 ---------------------------
 n -> the number of shares
-k (2 in this case) -> the number of people needed to find the answer
+t (k in the video above) -> the number of people needed to find the answer
 
 Take your secret as m.
 Place m on a graph such that the point is (0, m).
 
-Generate (k - 1) random points on the graph.
+Generate a polynomial with a0 being m. Like this for example (3 degree polynomial):
+y = m + a1*x + a2*x**2 + a3*x**3
 
-Make a formula that goes through all of the points (a line in this case, y = mx + b)
 
-Generate n points on the line and share them. (x != 0 of course)
+Generate n points on the polynomial and share them. (x != 0 of course)
 -----------------------------
-To find m back you need to calculate the formula again, which you can do that with k shares.
+To find m back you need to calculate the formula again, which you can do that with t shares.
 And then plug 0 into the formula and you get m.
 
 Example:
 ------------------------------
 n = 4
-k = 2
+t = 2
 
 m = 3
-random slope (instead of random point because with oneline it's the same but faster):
-4 
+a1 = 4 
 y = 4x + 3
 random point on the line number 1: x = 4, y = 16
 random point on the line number 2: x = 6, y = 27
@@ -538,7 +537,7 @@ random point on the line number 4: x = 1, y = 7
 0------------------------------------------
 
 Given only one of those points it's impossible to find m.
-However, given k points you can always find m again.
+However, given t points you can always find m again.
 
 let's say that we got both points (1, 7) and (6, 27).
 slope = (27 - 7) / (6 - 1) = 20 / 5 = 4
@@ -551,24 +550,30 @@ Pluge x = 0 and we get our answer: m = 3.
 ## SSS Code
 
 ```python
-from AsymmetricEncryption.General import Element
-from AsymmetricEncryption.Protocols import SSS2N
-
+from AsymmetricEncryption.Protocols import SSS
+import secrets
+# (3,5) sharing scheme
+t, n = 3, 5
 secret = b"test"
-shares, prime_mod = SSS2N.new(msg_to_hide=secret, n=5, finite_field_p_bits=1024)
-print(Element.fmt_elements_list(shares)) # to format the coordinates nicely
-secret = SSS2N.reassemble(elements=shares, p=prime_mod)
-print(secret) # will be "test"
+print(f'Original Secret: {secret}')
+# Phase I: Generation of shares
+shares = SSS.generate_shares(n, t, secret)
+print(f'Shares: {", ".join(str(share) for share in shares)}')
+# Phase II: Secret Reconstruction
+# Picking t shares randomly for
+# reconstruction
+pool = secrets.SystemRandom().sample(shares, t)
+print(f'Combining shares: {", ".join(str(share) for share in pool)}')
+print(f'Reconstructed secret: {SSS.reconstruct_secret(pool)}')
 ```
 ```
-SSS2N.new -> returns a list of Elements and a prime mod p
-msg_to_hide: the m
+SSS.generate_shares -> returns a list of cordinets as a tuple: list[tuple[int, int]]
+secret: the secret
 n: number of shares to generate
-finite_field_p_bits: the number of bits to generate the prime mod, will throw an assertion error if p <= m
+t: the number of shares needed to reconstruct the secret
 
-SSS2N.reassemble(shares, prime_mod) -> returns the secret
-elements: the list of shares, will throw an asserion error if len(elements) < 2.
-p: prime mod.
+SSS.reconstruct_secret(shares) -> returns the secret
+shares: the shares needed to reconstruct the secret
 
 
 ```
