@@ -14,6 +14,8 @@ class SSS2N:
         p: int = PrimeNumberGen.generate(finite_field_p_bits)
         assert p > msg_to_hide
         slope: int = secrets.randbelow(p)
+        neg: bool = secrets.choice([True, False])
+        if neg: slope *= -1
         line: Line = Line(slope, msg_to_hide, p)
         return [line.generate_element() for _ in range(n)], p
 
