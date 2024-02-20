@@ -1,5 +1,4 @@
 import secrets
-from decimal import Decimal
 from AsymmetricEncryption.General import BytesAndInts
 
 class SSS:
@@ -17,14 +16,14 @@ class SSS:
         sums: int = 0
         for j, share_j in enumerate(shares):
             xj, yj = share_j
-            prod: Decimal = Decimal(1)
+            prod: int = 1
             for i, share_i in enumerate(shares):
                 xi, _ = share_i
                 if i != j:
-                    prod *= Decimal(Decimal(xi) / (xi - xj))
+                    prod *= xi / (xi - xj)
             prod *= yj
-            sums += Decimal(prod)
-        a: int = int(round(Decimal(sums), 0))
+            sums += prod
+        a: int = int(round(sums, 0))
         return BytesAndInts.int2Byte(a)
 
     @staticmethod
