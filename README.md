@@ -421,8 +421,68 @@ DSAKey.load(file_name="file_name.txt", pwd=b"test")
 
 # Protocols
 
+- [Diffie-Hellman](#diffie-hellman)
 - [OAEP](#oaep)
-- [SSS2N](#sss)
+- [SSS](#sss)
+- [Zero Knowledge](#fiat-shamir-zero-knowledge-proof)
+- [Oblivious Transfer](#oblivious-transfer)
+
+# Diffie-Hellman
+Diffie-Hellman (commonly referred to as DH) is an essential [key exchange protocol](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange).
+DH is a mathematical method of securely exchanging cryptographic keys over a public channel and was one of the first public-key protocols as conceived by Ralph Merkle and named after Whitfield Diffie and Martin Hellman. DH is one of the earliest practical examples of public key exchange implemented within the field of cryptography. Published in 1976 by Diffie and Hellman, this is the earliest publicly known work that proposed the idea of a private key and a corresponding public key.
+
+[Computerphile (without math)](https://www.youtube.com/watch?v=NmM9HA2MQGI)
+
+[Computerphile (with math)](https://www.youtube.com/watch?v=Yjrfm_oRO0w)
+
+**WARNING:** This protocol here doesn't involve authentication, in real DH every party signs their messages before sending.
+
+
+## DH Math
+``` 
+Alice and Bob publicly agree on p (large prime) and g (g < p)
+
+
+|        Alice       |        Public       |        Bob       |     
+----------------------------------------------------------------
+|      {a, g, p}     |     g, p            |      {b, g, p}   |
+|                    |                     |                  |
+|     A = g**a % p   |   A ----------->    |     k = A**b % p |
+|                    |                     |                  |
+|   k = A**b % p     |     <----------- B  |     B = g**b % p |
+|                    |                     |                  |
+----------------------------------------------------------------
+k is the shared symmetric secret.
+g**a**b % p == g**(a * b) % p
+
+```
+
+## DH Code
+```python
+from AsymmetricEncryption.PublicPrivateKey.RSA import RSAKey, RSA
+from AsymmetricEncryption.Protocols import DiffieHellman
+Apriv, Apub = RSA.generate_key_pair(1024)
+Bpriv, Bpub = RSA.generate_key_pair(1024)
+DH = DiffieHellman.new(Apriv, 1024)
+# Alice
+A = DH.Stage1()
+gp = DH.get_gp()
+# send A and gp to Bob
+
+# Bob
+B, Bob_shared = DiffieHellman.Stage2(gp, Bpriv, A)
+print(Bob_shared)
+# send B to Alice
+
+# Alice
+Alice_shared = DH.Stage3(B)
+print(Alice_shared)
+print(Alice_shared == Bob_shared)
+
+```
+
+
+
 
 # OAEP
 ```
