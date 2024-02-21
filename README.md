@@ -13,14 +13,15 @@ You can also sign with them.
 # Table of contents
 
 ---
-| Algorithm                                        | Code                      | Math behind it            |
-|--------------------------------------------------|---------------------------|---------------------------|
-| [RSA](#rsa)                                      | [Code](#rsa-code)         | [Math](#rsa-math)         |
-| [ElGamal](#elgamal)                              | [Code](#elgamal-code)     | [Math](#elgamal-math)     |
-| [DSA](#dsa)                                      | [Code](#dsa-code)         | [Math](#dsa-math)         |
-| [OAEP](#oaep)                                    | [Code](#oaep-code)        | [Math](#oaep-math)        |
-| [SSS](#sss)                                      | [Code](#sss-code)         | [Math](#sss-math)         |
-| [Fiat–Shamir](#fiat–shamir-zero-knowledge-proof) | [Code](#fiat–shamir-code) | [Math](#fiat–shamir-math) |
+| Algorithm                                        | Code                             | Math behind it                   |
+|--------------------------------------------------|----------------------------------|----------------------------------|
+| [RSA](#rsa)                                      | [Code](#rsa-code)                | [Math](#rsa-math)                |
+| [ElGamal](#elgamal)                              | [Code](#elgamal-code)            | [Math](#elgamal-math)            |
+| [DSA](#dsa)                                      | [Code](#dsa-code)                | [Math](#dsa-math)                |
+| [OAEP](#oaep)                                    | [Code](#oaep-code)               | [Math](#oaep-math)               |
+| [SSS](#sss)                                      | [Code](#sss-code)                | [Math](#sss-math)                |
+| [Fiat–Shamir](#fiat-shamir-zero-knowledge-proof) | [Code](#fiat-shamir-math)        | [Math](#fiat-shamir-code)        |
+| [OT1O2](#oblivious-transfer)                     | [Code](#oblivious-transfer-code) | [Math](#oblivious-transfer-math) |
 ---
 
 # Math symbols
@@ -653,4 +654,52 @@ if __name__ == '__main__':
     # Alice sends r to bob
     ver = fs.BobStage2(y, r, c, t)
     print(ver)
+```
+
+# Oblivious Transfer
+[Wiki](https://en.wikipedia.org/wiki/Oblivious_transfer), [Computerphile](https://www.youtube.com/watch?v=wE5cl8J27Is)
+
+In a 1–2 oblivious transfer protocol, Alice the sender has two messages m0 and m1, and wants to ensure that the receiver only learns one. Bob, the receiver, has a bit b and wishes to receive mb without Alice learning b. The protocol of Even, Goldreich, and Lempel (which the authors attribute partially to Silvio Micali) is general, but can be instantiated using RSA encryption as follows.
+
+## Oblivious Transfer Math
+``` 
+# Alice
+1. Alice has two messages: {m0, m1} and wants to send exactly one of them to Bob. Bob does not want Alice to know which one he receives.
+2. Alice generates an RSA key pair {e, n, d: keep private}
+3. She also generates two random values, {x0, x1} and sends them to Bob along with her public RSA key.
+# Bob gets e, n, x0, x1
+4. Bob picks b to be 0 or 1 (b is what message he will get) and selects xb
+5. Bob generate a random value k (k < n) and computes:
+v = (xb - k**e) % n
+Bob sends to Alice: {v} and keeps {b, k} a secret.
+# Alice gets: {v}
+6. Alice computes:
+k0 = (v - x0)**d % n
+k1 = (v - x1)**d % n
+7. 
+mp0 = (m0 + k0) % n
+mp1 = (m1 + k1) % n
+Alice sends Bob: {mp0, mp1}
+# Bob
+mb = (mpb - k) % n
+mb == the message that bob chose.
+
+
+```
+
+## Oblivious Transfer Code
+```python
+from AsymmetricEncryption.Protocols import ObliviousTransfer
+# Alice
+otProt = ObliviousTransfer(b"test A", b"test B")
+sendBob = otProt.Stage1and2and3()
+# Bob
+b = int(input("Choice 0 or 1: ")) % 2
+AlicePubKey = sendBob[0]
+sendAlice, keepPrivate = ObliviousTransfer.Stage4and5(sendBob, b)
+# Alice
+sendBob = otProt.Stage6and7(sendAlice)
+# Bob
+m = ObliviousTransfer.Stage8(sendBob, keepPrivate, b, AlicePubKey)
+print(m)
 ```
