@@ -6,7 +6,7 @@ import secrets
 class ECDSA:
 
     def __init__(self, privKey: ECKey) -> None:
-        raise NotImplementedError("Code doesn't work for some odd reason")
+        # raise NotImplementedError("Code doesn't work for some odd reason")
         self.privKey: ECKey = privKey
 
     def sign(self, msg: bytes) -> tuple[int, int]:

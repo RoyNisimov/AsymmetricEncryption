@@ -32,9 +32,9 @@ class DiffieHellman:
         # shared key is g**(a*b) % p
 
 if __name__ == '__main__':
-    Apriv, Apub = RSA.generate_key_pair(1024)
-    Bpriv, Bpub = RSA.generate_key_pair(1024)
-    DH = DiffieHellman.new(Apriv, 1024)
+    Apriv, Apub = RSA.generate_key_pair(2048)
+    Bpriv, Bpub = RSA.generate_key_pair(2048)
+    DH = DiffieHellman.new(Apriv, 2048)
     # Alice
     A = DH.Stage1()
     gp = DH.get_gp()

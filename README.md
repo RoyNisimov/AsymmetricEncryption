@@ -18,6 +18,7 @@ You can also sign with them.
 | [RSA](#rsa)                                      | [Code](#rsa-code)                | [Math](#rsa-math)                |
 | [ElGamal](#elgamal)                              | [Code](#elgamal-code)            | [Math](#elgamal-math)            |
 | [DSA](#dsa)                                      | [Code](#dsa-code)                | [Math](#dsa-math)                |
+| [ECC](#ecc)                                      | [Code](#ecc-code)                | [Math](#ecc-math)                |
 | [OAEP](#oaep)                                    | [Code](#oaep-code)               | [Math](#oaep-math)               |
 | [DH](#diffie-hellman)                            | [Code](#dh-code)                 | [Math](#dh-math)                 |
 | [SSS](#sss)                                      | [Code](#sss-code)                | [Math](#sss-math)                |
@@ -418,6 +419,49 @@ DSAKey.load(file_name="file_name.txt", pwd=b"test")
 # load will throw an assertion error if the HMACs aren't the same
 ```
 
+
+# ECC
+Elliptic Curve Cryptography.
+
+ECC in an approach to asymmetric cryptography with the hardest math concepts.
+
+**Note:** ECC protocols like ECDH aren't in the protocols package but in the ECC package.
+
+**Note:** I only implemented the Nist-P-256 curve
+
+## ECC Math
+![image](https://ih1.redbubble.net/image.3624513016.1773/bg,f8f8f8-flat,750x,075,f-pad,750x1000,f8f8f8.jpg)
+
+## ECC code
+```python
+from AsymmetricEncryption.PublicPrivateKey.ECC import ECKey, EllipticCurveNISTP256, ECPoint, ECDH
+
+# key pair gen
+key_pair = ECKey()
+priv = key_pair.private_key # int
+pub = key_pair.public_key # ECPoint
+
+
+# ECDH
+
+keyA = ECKey()
+ecdh = ECDH(keyA)
+A = keyA.public_key
+
+keyB = ECKey()
+B = keyB.public_key
+
+shared_key_alice = ecdh.Stage1(B)
+
+shared_key_bob = ECDH.Stage2(keyB, A)
+
+print(shared_key_alice)
+print(shared_key_bob)
+
+assert shared_key_alice == shared_key_bob
+
+
+```
 
 
 # Protocols
