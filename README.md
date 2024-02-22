@@ -19,6 +19,7 @@ You can also sign with them.
 | [ElGamal](#elgamal)                              | [Code](#elgamal-code)            | [Math](#elgamal-math)            |
 | [DSA](#dsa)                                      | [Code](#dsa-code)                | [Math](#dsa-math)                |
 | [OAEP](#oaep)                                    | [Code](#oaep-code)               | [Math](#oaep-math)               |
+| [DH](#diffie-hellman)                            | [Code](#dh-code)                 | [Math](#dh-math)                 |
 | [SSS](#sss)                                      | [Code](#sss-code)                | [Math](#sss-math)                |
 | [Fiat–Shamir](#fiat-shamir-zero-knowledge-proof) | [Code](#fiat-shamir-math)        | [Math](#fiat-shamir-code)        |
 | [OT1O2](#oblivious-transfer)                     | [Code](#oblivious-transfer-code) | [Math](#oblivious-transfer-math) |
@@ -459,7 +460,7 @@ g**a**b % p == g**(a * b) % p
 
 ## DH Code
 ```python
-from AsymmetricEncryption.PublicPrivateKey.RSA import RSAKey, RSA
+from AsymmetricEncryption.PublicPrivateKey.RSA import RSA
 from AsymmetricEncryption.Protocols import DiffieHellman
 Apriv, Apub = RSA.generate_key_pair(1024)
 Bpriv, Bpub = RSA.generate_key_pair(1024)
@@ -539,8 +540,6 @@ BTW the S in RSA is also Adi Shamir.
 
 [This video here](https://www.youtube.com/watch?v=iFY5SyY3IMQ) explains SSS very well.
 
-I only made this with 2 n because making it dynamically is a lot more complicated.
-
 Please check out [Pycryptodome's SSS](https://pycryptodome.readthedocs.io/en/latest/src/protocol/ss.html).
 
 SSS is used to secure a secret in a distributed form, most often to secure encryption keys. The secret is split into multiple shares, which individually do not give any information about the secret.
@@ -559,7 +558,7 @@ Take your secret as m.
 Place m on a graph such that the point is (0, m).
 
 Generate a polynomial with a0 being m. Like this for example (3 degree polynomial):
-y = m + a1*x + a2*x**2 + a3*x**3
+y = a0 + a1*x + a2*x**2 + a3*x**3
 
 
 Generate n points on the polynomial and share them. (x != 0 of course)
@@ -567,6 +566,19 @@ Generate n points on the polynomial and share them. (x != 0 of course)
 To find m back you need to calculate the formula again, which you can do that with t shares.
 And then plug 0 into the formula and you get m.
 
+Better m finding method
+------------------------
+Since we only need to calculate a0 there is and easier formula:
+
+a0 = 0
+foreach xj, yj in the points:
+    prod = 1
+    foreach xi, yi in the points:
+        if xi == xj: continue
+        prod *= xi/(xi-xj)
+    prod *= yj
+    a0 + prod
+    
 Example:
 ------------------------------
 n = 4
