@@ -1,5 +1,4 @@
-from AsymmetricEncryption.PublicPrivateKey.ECC import EllipticCurveNISTP256, ECPoint, ECKey
-import secrets
+from AsymmetricEncryption.PublicPrivateKey.ECC import ECPoint, ECKey
 
 class ECDH:
 
