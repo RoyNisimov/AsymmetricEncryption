@@ -30,7 +30,7 @@ pip install asymmetric-encryption
 | [OAEP](#oaep)                                    | [Code](#oaep-code)               | [Math](#oaep-math)               |
 | [DH](#diffie-hellman)                            | [Code](#dh-code)                 | [Math](#dh-math)                 |
 | [SSS](#sss)                                      | [Code](#sss-code)                | [Math](#sss-math)                |
-| [Fiat–Shamir](#fiat-shamir-zero-knowledge-proof) | [Code](#fiat-shamir-math)        | [Math](#fiat-shamir-code)        |
+| [Fiat–Shamir](#fiat-shamir-zero-knowledge-proof) | [Code](#fiat-shamir-code)        | [Math](#fiat-shamir-math)        |
 | [OT1O2](#oblivious-transfer)                     | [Code](#oblivious-transfer-code) | [Math](#oblivious-transfer-math) |
 ---
 
@@ -47,7 +47,7 @@ pip install asymmetric-encryption
 - [Prime Number Generator](https://www.geeksforgeeks.org/how-to-generate-large-prime-numbers-for-rsa-algorithm/)
 - [Repeating key xor \ OTP (one-time-pad)](https://www.geeksforgeeks.org/encrypt-using-xor-cipher-with-repeating-key/)
 - [Shamir's Secret Sharing](#https://www.geeksforgeeks.org/implementing-shamirs-secret-sharing-scheme-in-python/)
-
+- [Unedited ECC](https://github.com/cgossi/fundamental_cryptography_with_python/blob/main/implementing_p_256_ecdhe.py)
 ---
 
 # RSA
