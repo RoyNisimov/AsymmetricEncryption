@@ -1,6 +1,7 @@
 from __future__ import annotations
-from AsymmetricEncryptions.PublicPrivateKey.ECC import EllipticCurveNISTP256, ECPoint, ECKey
-from AsymmetricEncryptions.General import XOR
+from . import ECPoint, ECKey
+from .EllipticCurveNISTP256 import EllipticCurveNISTP256
+from ...General import XOR
 import secrets
 
 class ECIES:
@@ -12,7 +13,7 @@ class ECIES:
 
     @staticmethod
     def encrypt(msg: bytes, pub_key: ECPoint, encryption_function=XOR.repeated_key_xor) -> tuple[bytes, ECPoint]:
-        r: int = secrets.randbelow(EllipticCurveNISTP256.p)
+        r: int = secrets.randbelow(EllipticCurveNISTP256().p)
         G: ECPoint = EllipticCurveNISTP256().g()
         R: ECPoint = G * r
         S: ECPoint = pub_key * r

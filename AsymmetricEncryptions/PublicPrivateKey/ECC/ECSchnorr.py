@@ -1,5 +1,6 @@
 from __future__ import annotations
-from AsymmetricEncryptions.PublicPrivateKey.ECC import EllipticCurveNISTP256, ECPoint, ECKey
+from . import ECPoint, ECKey
+from .EllipticCurveNISTP256 import EllipticCurveNISTP256
 from AsymmetricEncryptions.General import BytesAndInts
 import secrets
 from hashlib import sha256
