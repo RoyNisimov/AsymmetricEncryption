@@ -6,8 +6,9 @@ import secrets
 class ECDSA:
 
     def __init__(self, privKey: ECKey) -> None:
-        # raise NotImplementedError("Code doesn't work for some odd reason")
+        raise NotImplementedError("Code doesn't work for some odd reason")
         self.privKey: ECKey = privKey
+
 
     def sign(self, msg: bytes) -> tuple[int, int]:
         params = EllipticCurveNISTP256()
@@ -35,6 +36,7 @@ class ECDSA:
         return r == point.x % params.n
 
 if __name__ == '__main__':
+    PrimeNumberGen.generate()
     AliceKey = ECKey()
     A = AliceKey.public_key
     ecdsa = ECDSA(AliceKey)

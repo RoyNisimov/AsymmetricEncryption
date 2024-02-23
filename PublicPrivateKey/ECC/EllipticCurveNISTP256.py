@@ -25,3 +25,7 @@ class EllipticCurveNISTP256:
 
     def __eq__(self, other) -> bool:
         return isinstance(other, EllipticCurveNISTP256)
+
+    def f(self, x: int):
+        return (pow(x, 3, self.p) + self.a * x + self.b) % self.p
+

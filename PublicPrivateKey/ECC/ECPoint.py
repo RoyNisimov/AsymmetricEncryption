@@ -1,5 +1,6 @@
 from __future__ import annotations
 from AsymmetricEncryption.PublicPrivateKey.ECC import EllipticCurveNISTP256
+import hashlib
 
 class ECPoint:
     # https://github.com/cgossi/fundamental_cryptography_with_python/blob/main/implementing_p_256_ecdhe.py
@@ -31,6 +32,8 @@ class ECPoint:
                 res = res + self
         return res
 
+    def __bytes__(self) -> bytes:
+        return hashlib.sha256(str(self).encode()).digest()
 
     def __imul__(self, other):
         return self.__mul__(other)
