@@ -10,6 +10,14 @@ Asymmetric encryption uses two keys, one public, one private.
 You can encrypt with the public key and only decrypt with the private key.
 You can also sign with them.
 
+# Installation
+```
+pip install asymmetric-encryption
+```
+[In PyPI](https://pypi.org/project/asymmetric-encryption/)
+
+
+
 # Table of contents
 
 ---
