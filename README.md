@@ -27,6 +27,7 @@ pip install asymmetric-encryption
 | [ElGamal](#elgamal)                              | [Code](#elgamal-code)            | [Math](#elgamal-math)            |
 | [DSA](#dsa)                                      | [Code](#dsa-code)                | [Math](#dsa-math)                |
 | [ECC](#ecc)                                      | [Code](#ecc-code)                | [Math](#ecc-math)                |
+| [DLIES](#dlies)                                  | [Code](#dlies-code)              | [Math](#dlies-math)              |
 | [OAEP](#oaep)                                    | [Code](#oaep-code)               | [Math](#oaep-math)               |
 | [DH](#diffie-hellman)                            | [Code](#dh-code)                 | [Math](#dh-math)                 |
 | [SSS](#sss)                                      | [Code](#sss-code)                | [Math](#sss-math)                |
@@ -110,7 +111,7 @@ m == v
 ## RSA Code
 **WARNING:** This is the bare bones RSA with OAEP (If you pad it with OAEP)
 
-```python
+```
 from AsymmetricEncryptions.PublicPrivateKey import RSA
 from AsymmetricEncryptions.Protocols import OAEP
 
@@ -150,7 +151,7 @@ The HMAC is then put before it.
 
 You can export and load keys like this:
 
-```python
+```
 from AsymmetricEncryptions import RSA, RSAKey
 
 priv, pub = RSA.generate_key_pair(1024)
@@ -248,7 +249,7 @@ The message is authentic
 ## ElGamal Code
 **WARNING:** This is the bare bones ElGamal with OAEP (If you pad it with OAEP)
 
-```python
+```
 from AsymmetricEncryptions.PublicPrivateKey.ElGamal import ElGamal
 from AsymmetricEncryptions.Protocols import OAEP
 
@@ -288,7 +289,7 @@ The HMAC is then put before it.
 
 You can export and load keys like this:
 
-```python
+```
 from AsymmetricEncryptions import ElGamalKey, ElGamal
 
 priv, pub = ElGamal.generate_key_pair(1024)
@@ -395,7 +396,7 @@ V == r -> the message is authentic
 ## DSA Code
 **WARNING:** I made this with some questionable decisions, this algorithm is complex, please use [PyCryptodome implementation](https://pycryptodome.readthedocs.io/en/latest/src/public_key/dsa.html) or use [RSA](#rsa) instead.
 
-```python
+```
 from AsymmetricEncryptions import DSA
 
 message: bytes = b"DSA test"
@@ -418,7 +419,7 @@ The HMAC is then put before it.
 
 You can export and load keys like this:
 
-```python
+```
 from AsymmetricEncryptions import DSA, DSAKey
 
 priv, pub = DSA.generate_key_pair()
@@ -442,7 +443,7 @@ ECC in an approach to asymmetric cryptography with the hardest math concepts.
 
 ## ECC code
 
-```python
+```
 from AsymmetricEncryptions.PublicPrivateKey.ECC import ECKey, ECDH, ECSchnorr, ECIES
 
 # key pair gen
@@ -487,6 +488,51 @@ print(verify)
 
 ```
 
+# DLIES
+Discrete Logarithm Integrated Encryption Scheme is an encryption scheme.
+
+It's basically [Diffie-Hellman](#diffie-hellman) with encryption.
+
+# DLIES Math
+``` 
+# key gen
+let n be a large prime
+let g < n - 1
+let x < n - 1 
+let y = g**x % n
+Private: {x}, Public: {n, g, y}
+# encryption
+{E(m, S) -> symmetric encryption function, m}
+let r be a random value
+let R = g**r % n
+let S = y**r % n
+let E = E(m, S)
+ciphertxt: (E, R)
+
+# decryption
+{D(m, S) -> corresponding decryption function, (E, R)}
+S = R**x % n
+m = D(E, S)
+
+```
+
+# DLIES Code
+```
+from AsymmetricEncryptions.PublicPrivateKey import DLIESKey, DLIES
+
+key = DLIESKey.new(1024)
+msg = b"test"
+
+c = DLIES.encrypt(key.public, msg)
+d = DLIES.decrypt(key, c)
+
+print(c)
+print(d)
+```
+
+
+
+
 
 # Protocols
 
@@ -528,7 +574,7 @@ g**a**b % p == g**(a * b) % p
 
 ## DH Code
 
-```python
+```
 from AsymmetricEncryptions.PublicPrivateKey.RSA import RSA
 from AsymmetricEncryptions.Protocols import DiffieHellman
 
@@ -589,7 +635,7 @@ m = x ^ G(r)
 
 ## OAEP Code
 
-```python 
+```
 from AsymmetricEncryptions.Protocols import OAEP
 
 msg = b"OAEP"
@@ -693,7 +739,7 @@ Pluge x = 0 and we get our answer: m = 3.
 
 ## SSS Code
 
-```python
+```
 from AsymmetricEncryptions.Protocols import SSS
 import secrets
 
@@ -782,7 +828,7 @@ t == z = 34 -> verified
 ```
 ## Fiat Shamir Code
 
-```python
+```
 from AsymmetricEncryptions.Protocols import FiatShamirZeroKnowledgeProof
 
 if __name__ == '__main__':
@@ -833,7 +879,7 @@ mb == the message that bob chose.
 
 ## Oblivious Transfer Code
 
-```python
+```
 from AsymmetricEncryptions.Protocols import ObliviousTransfer
 
 # Alice
