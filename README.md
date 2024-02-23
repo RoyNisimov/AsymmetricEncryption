@@ -434,7 +434,7 @@ ECC in an approach to asymmetric cryptography with the hardest math concepts.
 
 ## ECC code
 ```python
-from AsymmetricEncryption.PublicPrivateKey.ECC import ECKey, EllipticCurveNISTP256, ECPoint, ECDH, ECSchnorr, ECIES
+from AsymmetricEncryption.PublicPrivateKey.ECC import ECKey, ECDH, ECSchnorr, ECIES
 
 # key pair gen
 key_pair = ECKey()
