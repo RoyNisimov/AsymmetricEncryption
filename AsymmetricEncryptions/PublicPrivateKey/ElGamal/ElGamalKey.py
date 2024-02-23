@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 import secrets
-from AsymmetricEncryption.General import PrimeNumberGen, XOR
+from AsymmetricEncryptions.General import PrimeNumberGen, XOR
 import hmac
 import hashlib
 

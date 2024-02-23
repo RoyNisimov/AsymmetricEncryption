@@ -1,6 +1,6 @@
 import hashlib
 import secrets
-from AsymmetricEncryption.General import XOR
+from AsymmetricEncryptions.General import XOR
 class OAEP:
     # Using Sha256 as the hash algorithm
     @staticmethod

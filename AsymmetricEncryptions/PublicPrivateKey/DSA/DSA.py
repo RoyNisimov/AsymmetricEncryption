@@ -1,6 +1,6 @@
 from __future__ import annotations
-from AsymmetricEncryption.PublicPrivateKey.DSA import DSAKey
-from AsymmetricEncryption.General import BytesAndInts
+from AsymmetricEncryptions.PublicPrivateKey.DSA import DSAKey
+from AsymmetricEncryptions.General import BytesAndInts
 import secrets
 import hashlib
 class DSA:

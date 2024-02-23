@@ -1,6 +1,6 @@
 from __future__ import annotations
 # Fiat–Shamir Zero Knowledge Proof
-from AsymmetricEncryption.General import PrimeNumberGen, BytesAndInts
+from AsymmetricEncryptions.General import PrimeNumberGen, BytesAndInts
 import secrets
 import hashlib
 

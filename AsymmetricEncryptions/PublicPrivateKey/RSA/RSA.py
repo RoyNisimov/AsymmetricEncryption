@@ -1,6 +1,6 @@
 from __future__ import annotations
-from AsymmetricEncryption.PublicPrivateKey.RSA.RSAKey import RSAKey
-from AsymmetricEncryption.General import BytesAndInts
+from AsymmetricEncryptions.PublicPrivateKey.RSA.RSAKey import RSAKey
+from AsymmetricEncryptions.General import BytesAndInts
 
 class RSA:
     def __init__(self, key: RSAKey) -> None:

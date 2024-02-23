@@ -1,4 +1,4 @@
-from AsymmetricEncryption.PublicPrivateKey.ECC import ECPoint, ECKey
+from AsymmetricEncryptions.PublicPrivateKey.ECC import ECPoint, ECKey
 
 class ECDH:
 

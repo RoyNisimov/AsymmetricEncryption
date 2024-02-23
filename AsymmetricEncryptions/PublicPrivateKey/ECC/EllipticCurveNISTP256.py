@@ -1,5 +1,5 @@
 from __future__ import annotations
-from AsymmetricEncryption.PublicPrivateKey.ECC import ECPoint
+from AsymmetricEncryptions.PublicPrivateKey.ECC import ECPoint
 
 
 class EllipticCurveNISTP256:

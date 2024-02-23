@@ -1,5 +1,5 @@
 import secrets
-from AsymmetricEncryption.General import BytesAndInts
+from AsymmetricEncryptions.General import BytesAndInts
 
 class SSS:
     FIELD_SIZE: int = pow(10, 5)

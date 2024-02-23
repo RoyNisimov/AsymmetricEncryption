@@ -103,8 +103,8 @@ m == v
 **WARNING:** This is the bare bones RSA with OAEP (If you pad it with OAEP)
 
 ```python
-from AsymmetricEncryption.PublicPrivateKey import RSA
-from AsymmetricEncryption.Protocols import OAEP
+from AsymmetricEncryptions.PublicPrivateKey import RSA
+from AsymmetricEncryptions.Protocols import OAEP
 
 message: bytes = b"RSA test"
 
@@ -143,7 +143,7 @@ The HMAC is then put before it.
 You can export and load keys like this:
 
 ```python
-from AsymmetricEncryption import RSA, RSAKey
+from AsymmetricEncryptions import RSA, RSAKey
 
 priv, pub = RSA.generate_key_pair(1024)
 priv.export(file_name="file_name.txt", pwd=b"test")
@@ -241,8 +241,8 @@ The message is authentic
 **WARNING:** This is the bare bones ElGamal with OAEP (If you pad it with OAEP)
 
 ```python
-from AsymmetricEncryption.PublicPrivateKey.ElGamal import ElGamal
-from AsymmetricEncryption.Protocols import OAEP
+from AsymmetricEncryptions.PublicPrivateKey.ElGamal import ElGamal
+from AsymmetricEncryptions.Protocols import OAEP
 
 message: bytes = b"ElGamal test"
 
@@ -281,7 +281,7 @@ The HMAC is then put before it.
 You can export and load keys like this:
 
 ```python
-from AsymmetricEncryption import ElGamalKey, ElGamal
+from AsymmetricEncryptions import ElGamalKey, ElGamal
 
 priv, pub = ElGamal.generate_key_pair(1024)
 priv.export(file_name="file_name.txt", pwd=b"test")
@@ -388,7 +388,7 @@ V == r -> the message is authentic
 **WARNING:** I made this with some questionable decisions, this algorithm is complex, please use [PyCryptodome implementation](https://pycryptodome.readthedocs.io/en/latest/src/public_key/dsa.html) or use [RSA](#rsa) instead.
 
 ```python
-from AsymmetricEncryption import DSA
+from AsymmetricEncryptions import DSA
 
 message: bytes = b"DSA test"
 
@@ -411,7 +411,7 @@ The HMAC is then put before it.
 You can export and load keys like this:
 
 ```python
-from AsymmetricEncryption import DSA, DSAKey
+from AsymmetricEncryptions import DSA, DSAKey
 
 priv, pub = DSA.generate_key_pair()
 priv.export(file_name="file_name.txt", pwd=b"test")
@@ -433,14 +433,14 @@ ECC in an approach to asymmetric cryptography with the hardest math concepts.
 ![image](https://ih1.redbubble.net/image.3624513016.1773/bg,f8f8f8-flat,750x,075,f-pad,750x1000,f8f8f8.jpg)
 
 ## ECC code
+
 ```python
-from AsymmetricEncryption.PublicPrivateKey.ECC import ECKey, ECDH, ECSchnorr, ECIES
+from AsymmetricEncryptions.PublicPrivateKey.ECC import ECKey, ECDH, ECSchnorr, ECIES
 
 # key pair gen
 key_pair = ECKey()
-priv = key_pair.private_key # int
-pub = key_pair.public_key # ECPoint
-
+priv = key_pair.private_key  # int
+pub = key_pair.public_key  # ECPoint
 
 # ECDH
 
@@ -519,9 +519,11 @@ g**a**b % p == g**(a * b) % p
 ```
 
 ## DH Code
+
 ```python
-from AsymmetricEncryption.PublicPrivateKey.RSA import RSA
-from AsymmetricEncryption.Protocols import DiffieHellman
+from AsymmetricEncryptions.PublicPrivateKey.RSA import RSA
+from AsymmetricEncryptions.Protocols import DiffieHellman
+
 Apriv, Apub = RSA.generate_key_pair(1024)
 Bpriv, Bpub = RSA.generate_key_pair(1024)
 DH = DiffieHellman.new(Apriv, 1024)
@@ -580,7 +582,7 @@ m = x ^ G(r)
 ## OAEP Code
 
 ```python 
-from AsymmetricEncryption.Protocols import OAEP
+from AsymmetricEncryptions.Protocols import OAEP
 
 msg = b"OAEP"
 padded = OAEP.oaep_pad(msg)
@@ -684,8 +686,9 @@ Pluge x = 0 and we get our answer: m = 3.
 ## SSS Code
 
 ```python
-from AsymmetricEncryption.Protocols import SSS
+from AsymmetricEncryptions.Protocols import SSS
 import secrets
+
 # (3,5) sharing scheme
 t, n = 3, 5
 secret = b"test"
@@ -770,8 +773,9 @@ z = ((35**-248) * (20**15)) % 53 = 34
 t == z = 34 -> verified
 ```
 ## Fiat Shamir Code
+
 ```python
-from AsymmetricEncryption.Protocols import FiatShamirZeroKnowledgeProof
+from AsymmetricEncryptions.Protocols import FiatShamirZeroKnowledgeProof
 
 if __name__ == '__main__':
     m = b'test'
@@ -820,8 +824,10 @@ mb == the message that bob chose.
 ```
 
 ## Oblivious Transfer Code
+
 ```python
-from AsymmetricEncryption.Protocols import ObliviousTransfer
+from AsymmetricEncryptions.Protocols import ObliviousTransfer
+
 # Alice
 otProt = ObliviousTransfer(b"test A", b"test B")
 sendBob = otProt.Stage1and2and3()

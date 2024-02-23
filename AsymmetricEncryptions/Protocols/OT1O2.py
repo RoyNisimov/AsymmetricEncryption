@@ -1,6 +1,6 @@
 from __future__ import annotations
-from AsymmetricEncryption.PublicPrivateKey.RSA import RSA, RSAKey
-from AsymmetricEncryption.General import BytesAndInts
+from AsymmetricEncryptions.PublicPrivateKey.RSA import RSA, RSAKey
+from AsymmetricEncryptions.General import BytesAndInts
 import secrets
 # 1 out of 2 Oblivious Transfer https://en.wikipedia.org/wiki/Oblivious_transfer
 

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from AsymmetricEncryption.PublicPrivateKey.ECC.EllipticCurveNISTP256 import EllipticCurveNISTP256
+from AsymmetricEncryptions.PublicPrivateKey.ECC.EllipticCurveNISTP256 import EllipticCurveNISTP256
 import secrets
 class ECKey:
     def __init__(self) -> None:

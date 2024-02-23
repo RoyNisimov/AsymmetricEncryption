@@ -1,6 +1,6 @@
 from __future__ import annotations
-from AsymmetricEncryption.PublicPrivateKey.ECC import ECKey, EllipticCurveNISTP256, ECPoint
-from AsymmetricEncryption.General import BytesAndInts, PrimeNumberGen
+from AsymmetricEncryptions.PublicPrivateKey.ECC import ECKey, EllipticCurveNISTP256, ECPoint
+from AsymmetricEncryptions.General import BytesAndInts, PrimeNumberGen
 import hashlib
 import secrets
 class ECDSA:

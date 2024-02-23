@@ -1,6 +1,6 @@
 from __future__ import annotations
-from AsymmetricEncryption.General import PrimeNumberGen, BytesAndInts
-from AsymmetricEncryption.PublicPrivateKey.RSA import RSAKey, RSA
+from AsymmetricEncryptions.General import PrimeNumberGen, BytesAndInts
+from AsymmetricEncryptions.PublicPrivateKey.RSA import RSAKey, RSA
 import secrets
 class DiffieHellman:
 

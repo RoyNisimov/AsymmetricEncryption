@@ -1,8 +1,8 @@
 from __future__ import annotations
 import json
 import secrets
-from AsymmetricEncryption.General import PrimeNumberGen, XOR
-from AsymmetricEncryption.Exceptions import NeededValueIsNull
+from AsymmetricEncryptions.General import PrimeNumberGen, XOR
+from AsymmetricEncryptions.Exceptions import NeededValueIsNull
 import hmac
 import hashlib
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
-from AsymmetricEncryption.PublicPrivateKey.ElGamal.ElGamalKey import ElGamalKey
-from AsymmetricEncryption.General import BytesAndInts
+from AsymmetricEncryptions.PublicPrivateKey.ElGamal.ElGamalKey import ElGamalKey
+from AsymmetricEncryptions.General import BytesAndInts
 import secrets
 from math import gcd
 class ElGamal:

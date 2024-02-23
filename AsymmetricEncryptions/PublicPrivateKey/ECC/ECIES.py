@@ -1,6 +1,6 @@
 from __future__ import annotations
-from AsymmetricEncryption.PublicPrivateKey.ECC import EllipticCurveNISTP256, ECPoint, ECKey
-from AsymmetricEncryption.General import XOR
+from AsymmetricEncryptions.PublicPrivateKey.ECC import EllipticCurveNISTP256, ECPoint, ECKey
+from AsymmetricEncryptions.General import XOR
 import secrets
 
 class ECIES:

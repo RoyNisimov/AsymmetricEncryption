@@ -4,7 +4,7 @@ DESC = 'A simple asymmetric encryption module'
 with open("README.md", 'r') as f:
     LONG_DESC = f.read()
 setup(
-    name="",
+    name="asymmetric-encryption",
     version="0.0.1",
     author="Roy Nisimov, jacebalaron (Daniel gaisenberg)",
     description=DESC,
