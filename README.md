@@ -434,7 +434,7 @@ ECC in an approach to asymmetric cryptography with the hardest math concepts.
 
 ## ECC code
 ```python
-from AsymmetricEncryption.PublicPrivateKey.ECC import ECKey, EllipticCurveNISTP256, ECPoint, ECDH
+from AsymmetricEncryption.PublicPrivateKey.ECC import ECKey, EllipticCurveNISTP256, ECPoint, ECDH, ECSchnorr, ECIES
 
 # key pair gen
 key_pair = ECKey()
@@ -460,6 +460,22 @@ print(shared_key_bob)
 
 assert shared_key_alice == shared_key_bob
 
+# ECIES
+keyPair = ECKey()
+msg = b"test"
+c = ECIES.encrypt(msg, keyPair.public_key)
+print(c)
+d = ECIES.decrypt(c, keyPair)
+print(d)
+assert d == msg
+
+# Schnorr signing
+key = ECKey()
+signer = ECSchnorr(key)
+msg = b"test"
+signature = signer.sign(msg)
+verify = ECSchnorr.verify(signature, msg, key.public_key)
+print(verify)
 
 ```
 
