@@ -6,8 +6,9 @@ import hmac
 import hashlib
 
 class ElGamalKey:
-
+    """ElGamal key object"""
     def __init__(self, p: int, g: int, y: int, x: int or None = None) -> None:
+        """Use .new()"""
         self.p: int = p
         self.g: int = g
         self.y: int = y
@@ -43,6 +44,11 @@ y = {self.y}
 
     @staticmethod
     def new(nBit) -> ElGamalKey:
+        """
+        Returns a new ElGamalKey object
+        :param nBit: key length
+        :return: ElGamalKey
+        """
         p: int = PrimeNumberGen.generate(nBit)
         g: int = secrets.randbelow(p)
         x: int = secrets.randbelow(p)
@@ -51,9 +57,23 @@ y = {self.y}
 
 
     def export(self, file_name: str, pwd: bytes = b"\x00", *, enc_func=XOR.repeated_key_xor) -> None:
+        """
+        Exports the key.
+        :param file_name: File name
+        :param pwd: Passphrase
+        :param enc_func: Symmetric encryption function (Without touching it, it's XOR / OTP)
+        :return: None
+        """
         data_dict: dict = {"p": self.p, "g": self.g, "y": self.y, "x": self.x}
         Exportation.export(file_name=file_name, pwd=pwd, data_dict=data_dict, exportation_func=enc_func)
 
     @staticmethod
     def load(file_name: str, pwd: bytes = b"\x00", *, dec_func=XOR.repeated_key_xor) -> ElGamalKey:
+        """
+        Loads a key from a file.
+        :param file_name: File name
+        :param pwd: Passphrase
+        :param dec_func: Symmetric decryption function (Without touching it, it's XOR / OTP)
+        :return: ElGamalKey if it succeeds.
+        """
         return ElGamalKey(**Exportation.load(file_name=file_name, pwd=pwd, dec_func=dec_func))

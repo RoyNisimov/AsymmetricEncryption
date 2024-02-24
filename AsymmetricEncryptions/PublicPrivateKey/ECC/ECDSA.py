@@ -4,7 +4,7 @@ from AsymmetricEncryptions.General import BytesAndInts, PrimeNumberGen
 import hashlib
 import secrets
 class ECDSA:
-
+    """Elliptic Curve Digital Signature Algorithm, doesn't work, use ECSchnorr instead"""
     def __init__(self, privKey: ECKey) -> None:
         raise NotImplementedError("Code doesn't work for some odd reason")
         self.privKey: ECKey = privKey

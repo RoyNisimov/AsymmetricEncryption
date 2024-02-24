@@ -3,16 +3,44 @@ from AsymmetricEncryptions.General import PrimeNumberGen, BytesAndInts
 from AsymmetricEncryptions.PublicPrivateKey.RSA import RSAKey, RSA
 import secrets
 class DiffieHellman:
+    """RSA Diffie-Hellman, (Discrete Logarithms Diffie Hellman).
+    Example:
+    ```
+    Apriv, Apub = RSA.generate_key_pair(2048)
+    Bpriv, Bpub = RSA.generate_key_pair(2048)
+    DH = DiffieHellman.new(Apriv, 2048)
+    # Alice
+    A = DH.Stage1()
+    gp = DH.get_gp()
+    # send A and gp to Bob
 
+    # Bob
+    B, Bob_shared = DiffieHellman.Stage2(gp, Bpriv, A)
+    print(Bob_shared)
+    # send B to Alice
+
+    # Alice
+    Alice_shared = DH.Stage3(B)
+    print(Alice_shared)
+    print(Alice_shared == Bob_shared)
+    ```
+
+    """
     def __init__(self, priv_key: RSAKey, p: int, g: int) -> None:
         self.key: RSAKey = priv_key
         self.p: int = p
         self.g: int = g
 
-    def get_gp(self) -> tuple[int, int]: return self.g, self.p
+    def get_gp(self) -> tuple[int, int]:
+        return self.g, self.p
 
     @staticmethod
     def new(priv_key: RSAKey, nBitP: int) -> DiffieHellman:
+        """
+        :param priv_key: The first's person private key.
+        :param nBitP: How big p is.
+        :return: DiffieHellman Object.
+        """
         p: int = PrimeNumberGen.generate(nBitP)
         g: int = secrets.randbelow(p)
         return DiffieHellman(priv_key, p, g)

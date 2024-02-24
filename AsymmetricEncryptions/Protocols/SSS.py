@@ -2,16 +2,20 @@ import secrets
 from AsymmetricEncryptions.General import BytesAndInts
 
 class SSS:
+    """
+    Shamir's Secret Sharing over a finite field of 10**5.
+    """
+
     FIELD_SIZE: int = pow(10, 5)
 
     @staticmethod
-    def reconstruct_secret(shares: list[tuple[int, int]]) -> BytesAndInts:
+    def reconstruct_secret(shares: list[tuple[int, int]]) -> bytes:
         """
         Combines individual shares (points on graph)
         using Lagrange's interpolation.
-
-        `shares` is a list of points (x, y) belonging to a
-        polynomial with a constant of our key.
+        :param shares: `shares` is a list of points (x, y) belonging to a
+        polynomial with a constant of our key. PLEASE ENTER ONLY T NUMBER OF POINTS OR THIS WON'T WORK!
+        :return: The secret, assuming t points have been entered.
         """
         sums: int = 0
         for j, share_j in enumerate(shares):
@@ -57,13 +61,15 @@ class SSS:
         return coeff
 
     @staticmethod
-    def generate_shares(n: int, m: int, secret: bytes) -> list[tuple[int, int]]:
+    def generate_shares(n: int, t: int, secret: bytes) -> list[tuple[int, int]]:
         """
-        Split given `secret` into `n` shares with minimum threshold
-        of `m` shares to recover this `secret`, using SSS algorithm.
+        :param n: Number of shares to be split
+        :param t: The number of required shares to reconstruct the secret.
+        :param secret: The secret
+        :return: List of cords (x, y).
         """
         secret: int = BytesAndInts.byte2Int(secret)
-        coefficients: list[int] = SSS.coeff(m, secret)
+        coefficients: list[int] = SSS.coeff(t, secret)
         shares: list[tuple[int, int]] = []
 
         for i in range(1, n + 1):

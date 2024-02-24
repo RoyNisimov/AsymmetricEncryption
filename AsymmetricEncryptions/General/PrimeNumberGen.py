@@ -3,6 +3,7 @@
 import secrets
 
 class PrimeNumberGen:
+    """Generation of Prime numbers and checking if prime"""
     # Pre generated primes
     first_primes_list = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
                          31, 37, 41, 43, 47, 53, 59, 61, 67,
@@ -20,8 +21,8 @@ class PrimeNumberGen:
 
     @staticmethod
     def getLowLevelPrime(n):
-        '''Generate a prime candidate divisible
-        by first primes'''
+        """Generate a prime candidate divisible
+        by first primes"""
         while True:
             # Obtain a random number
             pc = PrimeNumberGen.nBitRandom(n)
@@ -36,7 +37,7 @@ class PrimeNumberGen:
 
     @staticmethod
     def isMillerRabinPassed(mrc):
-        '''Run 20 iterations of Rabin Miller Primality test'''
+        """Run 20 iterations of Rabin Miller Primality test. Use to check if mrc is prime"""
         maxDivisionsByTwo = 0
         ec = mrc - 1
         while ec % 2 == 0:
@@ -62,6 +63,11 @@ class PrimeNumberGen:
 
     @staticmethod
     def generate(nBit: int) -> int:
+        """
+        Generates an nBit prime number
+        :param nBit: The bit size of the number
+        :return: Random nBit prime number as an int
+        """
         while True:
             prime_candidate = PrimeNumberGen.getLowLevelPrime(nBit)
             if not PrimeNumberGen.isMillerRabinPassed(prime_candidate):

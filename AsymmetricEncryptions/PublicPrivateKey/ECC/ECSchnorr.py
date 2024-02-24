@@ -6,11 +6,16 @@ import secrets
 from hashlib import sha256
 
 class ECSchnorr:
-
+    """Schnorr's signature scheme implemented with ECC."""
     def __init__(self, key: ECKey):
         self.key: ECKey = key
 
     def sign(self, msg: bytes) -> tuple[int, ECPoint]:
+        """
+        Signs a message
+        :param msg: the message
+        :return: signature
+        """
         G: ECPoint = EllipticCurveNISTP256().g()
         r: int = secrets.randbelow(EllipticCurveNISTP256.p)
         R: ECPoint = G * r
@@ -20,6 +25,13 @@ class ECSchnorr:
 
     @staticmethod
     def verify(signature: tuple[int, ECPoint], msg: bytes, pubkey: ECPoint) -> bool:
+        """
+        Verifies a signature.
+        :param signature: The signature.
+        :param msg: The message.
+        :param pubkey: the public key.
+        :return: True if it passes, else: False.
+        """
         G: ECPoint = EllipticCurveNISTP256().g()
         s, R = signature
         c: int = BytesAndInts.byte2Int(sha256(bytes(R) + msg).digest())

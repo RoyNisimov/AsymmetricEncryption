@@ -7,6 +7,7 @@ import hmac
 import hashlib
 
 class DSAKey:
+    """The key object of DSA"""
     # H is Sha256 |H| is 256 bits or 32 bytes
     # L (Key length) is going to be 1024
     # N = 160
@@ -43,6 +44,7 @@ class DSAKey:
 
     @staticmethod
     def new(nBit: int = 1024, use_precalculated: bool = True) -> DSAKey:
+        """Generates a private key"""
         if use_precalculated and nBit in DSAKey.precalculated_av:
             p: int = DSAKey.precalculated_av[nBit]["p"]
             q: int = DSAKey.precalculated_av[nBit]["q"]

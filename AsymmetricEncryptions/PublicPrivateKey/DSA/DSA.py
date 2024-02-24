@@ -4,12 +4,16 @@ from AsymmetricEncryptions.General import BytesAndInts
 import secrets
 import hashlib
 class DSA:
-
+    """Digital Signature Algorithm"""
     def __init__(self, key: DSAKey) -> None:
         self.key = key
 
     def sign(self, message: bytes) -> tuple[int, int]:
-
+        """
+        Signs a message.
+        :param message: Message to sign
+        :return: Signature.
+        """
         assert self.key.has_private
         m: int = BytesAndInts.byte2Int(message)
         k: int = secrets.randbelow(self.key.q - 1)
@@ -20,6 +24,12 @@ class DSA:
         return r, s
 
     def verify(self, sig: tuple[int, int], message: bytes) -> None:
+        """
+        Verifies a signed message.
+        :param sig: The signature.
+        :param message: The original message
+        :return: None, will throw an assertion error if it failed to verify.
+        """
         r: int = sig[0]
         s: int = sig[1]
         assert 0 < r < self.key.q and 0 < s < self.key.q

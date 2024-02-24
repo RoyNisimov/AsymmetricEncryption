@@ -3,6 +3,7 @@ from .EllipticCurveNISTP256 import EllipticCurveNISTP256
 import hashlib
 
 class ECPoint:
+    """A point on the ECC NIST-P-256 curve"""
     # https://github.com/cgossi/fundamental_cryptography_with_python/blob/main/implementing_p_256_ecdhe.py
     def __init__(self, curve: EllipticCurveNISTP256, x: int, y: int) -> None:
         self.curve: EllipticCurveNISTP256 = curve

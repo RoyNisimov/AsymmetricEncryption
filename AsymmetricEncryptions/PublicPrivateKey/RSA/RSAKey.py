@@ -34,11 +34,11 @@ class RSAKey:
 
     def export(self, file_name: str, pwd: bytes = b"\x00", *, enc_func=XOR.repeated_key_xor) -> None:
         data_dict: dict = {"p": self.p, "q": self.q, "n": self.n, "tot_n": self.tot_n, "e": self.e, "d": self.d}
-        Exportation.export(file_name=file_name, pwd=pwd, data_dict=data_dict, exportation_func=enc_func)
+        Exportation.Exportation.export(file_name=file_name, pwd=pwd, data_dict=data_dict, exportation_func=enc_func)
 
     @staticmethod
     def load(file_name: str, pwd: bytes = b"\x00", *, dec_func=XOR.repeated_key_xor) -> RSAKey:
-        return RSAKey(**Exportation.load(file_name=file_name, pwd=pwd, dec_func=dec_func))
+        return RSAKey(**Exportation.Exportation.load(file_name=file_name, pwd=pwd, dec_func=dec_func))
 
     def __eq__(self, other: RSAKey) -> bool:
         if not isinstance(other, RSAKey): return False

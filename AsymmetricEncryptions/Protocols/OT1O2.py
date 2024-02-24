@@ -6,7 +6,26 @@ import secrets
 
 
 class ObliviousTransfer:
-    # The methods with static method on them are ment to be used by the other person. (In the example below Alice wants to send Bob only one of the messages)
+    """
+    Oblivious Transfer.
+    The methods with static method on them are ment to be used by the other person.
+    (In the example below Alice wants to send Bob only one of the messages)
+    Example:
+    ```
+    # Alice
+    otProt = ObliviousTransfer(b"test A", b"test B")
+    sendBob = otProt.Stage1and2and3()
+    # Bob
+    b = int(input("Choice 0 or 1: ")) % 2
+    AlicePubKey = sendBob[0]
+    sendAlice, keepPrivate = ObliviousTransfer.Stage4and5(sendBob, b)
+    # Alice
+    sendBob = otProt.Stage6and7(sendAlice)
+    # Bob
+    m = ObliviousTransfer.Stage8(sendBob, keepPrivate, b, AlicePubKey)
+    print(m)
+    ```
+    """
     def __init__(self, m0: bytes, m1: bytes) -> None:
         # stage one
         self.m0: int = BytesAndInts.byte2Int(m0)

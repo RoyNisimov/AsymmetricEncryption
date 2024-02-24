@@ -33,6 +33,7 @@ pip install asymmetric-encryption
 | [SSS](#sss)                                      | [Code](#sss-code)                | [Math](#sss-math)                |
 | [Fiat–Shamir](#fiat-shamir-zero-knowledge-proof) | [Code](#fiat-shamir-code)        | [Math](#fiat-shamir-math)        |
 | [OT1O2](#oblivious-transfer)                     | [Code](#oblivious-transfer-code) | [Math](#oblivious-transfer-math) |
+| [TPP](#three-pass-protocol)                      | [Code](#tpp-code)                | [Math](#tpp-math)                |
 ---
 
 # Math symbols
@@ -486,6 +487,11 @@ signature = signer.sign(msg)
 verify = ECSchnorr.verify(signature, msg, key.public_key)
 print(verify)
 
+# export
+key = ECKey.new()
+key.export("key.key", b"password") # there's also an encryption function variable (XOR right now)
+new_key = ECKey.load("key.key", b"password")
+assert new_key == key
 ```
 
 # DLIES
@@ -528,6 +534,11 @@ d = DLIES.decrypt(key, c)
 
 print(c)
 print(d)
+# export
+priv, pub = DLIES.generate_key_pair(2048)
+priv.export("key.key", b"password") # there's also an encryption function variable (XOR right now)
+new_key = DLIESKey.load("key.key", b"password")
+assert new_key == priv
 ```
 
 
@@ -894,4 +905,50 @@ sendBob = otProt.Stage6and7(sendAlice)
 # Bob
 m = ObliviousTransfer.Stage8(sendBob, keepPrivate, b, AlicePubKey)
 print(m)
+```
+
+# Three Pass Protocol
+The first three-pass protocol was the Shamir three-pass protocol developed circa in 1980. It is also called the Shamir No-Key Protocol because the sender and the receiver do not exchange any keys, however the protocol requires the sender and receiver to have two private keys for encrypting and decrypting messages.
+
+**WARNING:** the protocol needs external authentication, please authenticate.
+
+[Spanning Tree's excellent video](https://www.youtube.com/watch?v=I6Unxb-PFhs)
+
+## TPP Math
+``` 
+let keyA be a key to a symmetric encryption function EA and decryption function DA
+let keyB be a key to a symmetric encryption function EB and decryption function DB
+
+c1 = EA(m, keyA)
+# Pass to Bob
+c2 = EB(c1, keyB)
+# Pass to Alice
+c3 = DA(c2, keyA)
+# Pass to Bob
+m = DB(c2, keyB)
+
+```
+
+
+
+## TPP Code
+```
+from AsymmetricEncryptions.Protocols.ThreePass import ThreePassProtocol
+
+if __name__ == '__main__':
+    msg = b"message"
+    alice = b"Alice's key"
+
+    bob = b"Bob's key"
+
+    TPP = ThreePassProtocol(alice, warningsBool=False)
+    c1 = TPP.stage1(msg)
+    print(c1)
+    c2 = ThreePassProtocol.stage2(bob, c1)
+    print(c2)
+    c3 = TPP.stage3(c2)
+    print(c3)
+    m = ThreePassProtocol.stage4(c3, bob)
+    print(m)
+    assert m == msg
 ```

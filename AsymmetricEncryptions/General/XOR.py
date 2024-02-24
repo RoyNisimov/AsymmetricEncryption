@@ -1,6 +1,12 @@
 class XOR:
     @staticmethod
     def repeated_key_xor(plain_text: bytes, key: bytes) -> bytes:
+        """
+        Encrypts using OTP
+        :param plain_text: The plain text
+        :param key: The encryption/decryption key
+        :return: ciphertext
+        """
         pt = plain_text
         len_key = len(key)
         encoded = []

@@ -1,6 +1,7 @@
 from __future__ import annotations
 from AsymmetricEncryptions.General import PrimeNumberGen, Exportation, XOR
 import secrets
+from hashlib import sha256
 
 class DLIESKey:
 
@@ -29,3 +30,31 @@ class DLIESKey:
     @staticmethod
     def load(file_name: str, pwd: bytes = b"\x00", *, dec_func=XOR.repeated_key_xor) -> DLIESKey:
         return DLIESKey(**Exportation.load(file_name=file_name, pwd=pwd, dec_func=dec_func))
+
+    def __eq__(self, other: DLIESKey) -> bool:
+        if not isinstance(other, DLIESKey): return False
+        return sha256(f"{self}".encode()).hexdigest() == sha256(f"{other}".encode()).hexdigest()
+
+    def __str__(self) -> str:
+        r: str = ""
+        if self.has_private:
+            r += f"""
+    Private Key:
+
+    g = {self.g}
+    n = {self.n}
+    x = {self.x}
+    y = {self.y}
+
+
+
+    """
+            r += f"""
+    Public Key:
+
+    g = {self.g}
+    n = {self.n}
+    y = {self.y}
+
+    """
+            return r

@@ -3,6 +3,9 @@ from AsymmetricEncryptions.PublicPrivateKey.ECC import ECPoint
 
 
 class EllipticCurveNISTP256:
+    """
+
+    """
     p: int = 0xffffffff00000001000000000000000000000000ffffffffffffffffffffffff
     n: int = 0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551
     a: int = 0xffffffff00000001000000000000000000000000fffffffffffffffffffffffc
