@@ -30,7 +30,7 @@ class ECIES:
         return msg
 
 if __name__ == '__main__':
-    keyPair = ECKey()
+    keyPair = ECKey.new()
     msg = b"test"
     c = ECIES.encrypt(msg, keyPair.public_key)
     print(c)

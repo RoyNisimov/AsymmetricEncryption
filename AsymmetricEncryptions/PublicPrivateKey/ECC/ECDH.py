@@ -14,7 +14,7 @@ class ECDH:
 
 
 if __name__ == '__main__':
-    keyA = ECKey()
+    keyA = ECKey.new()
     ecdh = ECDH(keyA)
     A = keyA.public_key
 

@@ -8,6 +8,11 @@ class DLIES:
         pass
 
     @staticmethod
+    def generate_key_pair(nBits: int) -> tuple[DLIESKey, DLIESKey]:
+        priv: DLIESKey = DLIESKey.new(nBits)
+        return priv, priv.public
+
+    @staticmethod
     def encrypt(pub_key: DLIESKey, msg: bytes, encryption_func=XOR.repeated_key_xor) -> tuple[bytes, int]:
         r: int = secrets.randbelow(pub_key.n)
         R: int = pow(pub_key.g, r, pub_key.n)

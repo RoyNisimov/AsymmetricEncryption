@@ -26,7 +26,7 @@ class ECSchnorr:
         return G * s == (pubkey * c) + R
 
 if __name__ == '__main__':
-    key = ECKey()
+    key = ECKey.new()
     signer = ECSchnorr(key)
     msg = b"test"
     signature = signer.sign(msg)

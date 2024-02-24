@@ -447,17 +447,17 @@ ECC in an approach to asymmetric cryptography with the hardest math concepts.
 from AsymmetricEncryptions.PublicPrivateKey.ECC import ECKey, ECDH, ECSchnorr, ECIES
 
 # key pair gen
-key_pair = ECKey()
+key_pair = ECKey.new()
 priv = key_pair.private_key  # int
 pub = key_pair.public_key  # ECPoint
 
 # ECDH
 
-keyA = ECKey()
+keyA = ECKey.new()
 ecdh = ECDH(keyA)
 A = keyA.public_key
 
-keyB = ECKey()
+keyB = ECKey.new()
 B = keyB.public_key
 
 shared_key_alice = ecdh.Stage1(B)
@@ -470,7 +470,7 @@ print(shared_key_bob)
 assert shared_key_alice == shared_key_bob
 
 # ECIES
-keyPair = ECKey()
+keyPair = ECKey.new()
 msg = b"test"
 c = ECIES.encrypt(msg, keyPair.public_key)
 print(c)
@@ -479,7 +479,7 @@ print(d)
 assert d == msg
 
 # Schnorr signing
-key = ECKey()
+key = ECKey.new()
 signer = ECSchnorr(key)
 msg = b"test"
 signature = signer.sign(msg)

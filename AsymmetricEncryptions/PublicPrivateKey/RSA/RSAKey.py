@@ -1,9 +1,7 @@
 from __future__ import annotations
 from math import gcd
-import json
-from AsymmetricEncryptions.General import PrimeNumberGen, XOR
+from AsymmetricEncryptions.General import PrimeNumberGen, XOR, Exportation
 from AsymmetricEncryptions.Exceptions import NeededValueIsNull
-import hmac
 import hashlib
 
 class RSAKey:
@@ -34,23 +32,13 @@ class RSAKey:
         return RSAKey(p, q, n, e, d, tot_n)
 
 
-    def export(self, file_name: str, pwd: bytes = b"\x00") -> None:
+    def export(self, file_name: str, pwd: bytes = b"\x00", *, enc_func=XOR.repeated_key_xor) -> None:
         data_dict: dict = {"p": self.p, "q": self.q, "n": self.n, "tot_n": self.tot_n, "e": self.e, "d": self.d}
-        jData: bytes = json.dumps(data_dict).encode("utf-8")
-        write_data: bytes = XOR.repeated_key_xor(jData, pwd)
-        mac: hmac = hmac.new(key=pwd, msg=jData, digestmod="sha512")
-        with open(file_name, "wb") as f:
-            f.write(mac.digest() + write_data)
+        Exportation.export(file_name=file_name, pwd=pwd, data_dict=data_dict, exportation_func=enc_func)
 
     @staticmethod
-    def load(file_name: str, pwd: bytes = b"\x00") -> RSAKey:
-        with open(file_name, "rb") as f:
-            dMac: bytes = f.read(64)
-            read_data: bytes = f.read()
-        jData: bytes = XOR.repeated_key_xor(read_data, pwd)
-        mac: hmac = hmac.new(key=pwd, msg=jData, digestmod="sha512")
-        assert mac.digest() == dMac
-        return RSAKey(**json.loads(jData.decode()))
+    def load(file_name: str, pwd: bytes = b"\x00", *, dec_func=XOR.repeated_key_xor) -> RSAKey:
+        return RSAKey(**Exportation.load(file_name=file_name, pwd=pwd, dec_func=dec_func))
 
     def __eq__(self, other: RSAKey) -> bool:
         if not isinstance(other, RSAKey): return False
