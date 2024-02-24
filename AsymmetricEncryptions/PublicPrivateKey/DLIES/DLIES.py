@@ -1,5 +1,5 @@
 from AsymmetricEncryptions.General import XOR, BytesAndInts
-from AsymmetricEncryption.AsymmetricEncryptions.Protocols import KDF
+from AsymmetricEncryptions.Protocols import KDF
 from .DLIESKey import DLIESKey
 import secrets
 
