@@ -112,7 +112,7 @@ m == v
 ## RSA Code
 **WARNING:** This is the bare bones RSA with OAEP (If you pad it with OAEP)
 
-```
+```python
 from AsymmetricEncryptions.PublicPrivateKey import RSA
 from AsymmetricEncryptions.Protocols import OAEP
 
@@ -250,7 +250,7 @@ The message is authentic
 ## ElGamal Code
 **WARNING:** This is the bare bones ElGamal with OAEP (If you pad it with OAEP)
 
-```
+```python
 from AsymmetricEncryptions.PublicPrivateKey.ElGamal import ElGamal
 from AsymmetricEncryptions.Protocols import OAEP
 
@@ -397,8 +397,8 @@ V == r -> the message is authentic
 ## DSA Code
 **WARNING:** I made this with some questionable decisions, this algorithm is complex, please use [PyCryptodome implementation](https://pycryptodome.readthedocs.io/en/latest/src/public_key/dsa.html) or use [RSA](#rsa) instead.
 
-```
-from AsymmetricEncryptions import DSA
+```python
+from AsymmetricEncryptions.PublicPrivateKey.DSA import DSA
 
 message: bytes = b"DSA test"
 
@@ -444,7 +444,7 @@ ECC in an approach to asymmetric cryptography with the hardest math concepts.
 
 ## ECC code
 
-```
+```python
 from AsymmetricEncryptions.PublicPrivateKey.ECC import ECKey, ECDH, ECSchnorr, ECIES
 
 # key pair gen
@@ -523,7 +523,7 @@ m = D(E, S)
 ```
 
 # DLIES Code
-```
+```python
 from AsymmetricEncryptions.PublicPrivateKey import DLIESKey, DLIES
 
 key = DLIESKey.new(1024)
@@ -585,7 +585,7 @@ g**a**b % p == g**(a * b) % p
 
 ## DH Code
 
-```
+```python
 from AsymmetricEncryptions.PublicPrivateKey.RSA import RSA
 from AsymmetricEncryptions.Protocols import DiffieHellman
 
@@ -646,7 +646,7 @@ m = x ^ G(r)
 
 ## OAEP Code
 
-```
+```python
 from AsymmetricEncryptions.Protocols import OAEP
 
 msg = b"OAEP"
@@ -750,7 +750,7 @@ Pluge x = 0 and we get our answer: m = 3.
 
 ## SSS Code
 
-```
+```python
 from AsymmetricEncryptions.Protocols import SSS
 import secrets
 
@@ -839,7 +839,7 @@ t == z = 34 -> verified
 ```
 ## Fiat Shamir Code
 
-```
+```python
 from AsymmetricEncryptions.Protocols import FiatShamirZeroKnowledgeProof
 
 if __name__ == '__main__':
@@ -890,7 +890,7 @@ mb == the message that bob chose.
 
 ## Oblivious Transfer Code
 
-```
+```python
 from AsymmetricEncryptions.Protocols import ObliviousTransfer
 
 # Alice
@@ -929,10 +929,8 @@ m = DB(c2, keyB)
 
 ```
 
-
-
 ## TPP Code
-```
+```python
 from AsymmetricEncryptions.Protocols.ThreePass import ThreePassProtocol
 
 if __name__ == '__main__':
