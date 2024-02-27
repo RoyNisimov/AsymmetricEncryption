@@ -7,6 +7,8 @@ Test.py
 # C extensions
 *.so
 .idea/*
+private/*
+private
 # Distribution / packaging
 .Python
 build/
