@@ -26,11 +26,11 @@ class ObliviousTransfer:
     print(m)
     ```
     """
-    def __init__(self, m0: bytes, m1: bytes) -> None:
+    def __init__(self, m0: bytes, m1: bytes, nBitKey: int = 2048) -> None:
         # stage one
         self.m0: int = BytesAndInts.byte2Int(m0)
         self.m1: int = BytesAndInts.byte2Int(m1)
-        self.priv = RSA.generate_key_pair(1024)
+        self.priv = RSA.generate_key_pair(nBitKey)
         self.pub: RSAKey = self.priv[1]
         self.priv: RSAKey = self.priv[0]
         self.x0: int = None
