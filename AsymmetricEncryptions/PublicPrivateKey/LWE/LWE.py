@@ -1,0 +1,47 @@
+from __future__ import annotations
+from .LWEKey import LWEKey
+from AsymmetricEncryptions.General import BytesAndInts
+import secrets
+
+
+class LWE:
+
+    def __init__(self, key: LWEKey):
+        self.key: LWEKey = key
+
+    @staticmethod
+    def encrypt_one_bit(key: LWEKey, m: int) -> tuple[int, int]:
+        m: int = m % 2
+        number_of_samples: int = 5
+        u: list[int] = []
+        v: list[int] = []
+        looked: list[int] = []
+        for _ in range(number_of_samples):
+            r: int = secrets.randbelow(len(key.A))
+            while r in looked: r: int = secrets.randbelow(len(key.A))
+            u.append(key.A[r])
+            v.append(key.B[r])
+            looked.append(r)
+        half_q_times_m: int = (key.q // 2) * m
+        return (sum(u) % key.q), (sum(v) - half_q_times_m) % key.q
+
+    def decrypt_one_bit(self, ciphertext: tuple[int, int]):
+        u, v = ciphertext
+        dec: int = (v - (self.key.s * u)) % self.key.q
+        return int(dec > (self.key.q // 2))
+
+
+    @staticmethod
+    def encrypt_message(key: LWEKey, message: bytes) -> list[tuple[int, int]]:
+        m: int = BytesAndInts.byte2Int(message)
+        out: list[int] = []
+        for bit in format(m, "b"):
+            bit = int(bit)
+            out.append(LWE.encrypt_one_bit(key, bit))
+        return out
+
+    def decrypt_message(self, ciphertexts: list[tuple[int, int]]):
+        st: str = ""
+        for index, i in enumerate(ciphertexts):
+            st += str(self.decrypt_one_bit(i))
+        return BytesAndInts.int2Byte(int(st, 2))
