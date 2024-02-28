@@ -28,6 +28,7 @@ pip install asymmetric-encryption
 | [DSA](#dsa)                                      | [Code](#dsa-code)                | [Math](#dsa-math)                |
 | [ECC](#ecc)                                      | [Code](#ecc-code)                | [Math](#ecc-math)                |
 | [DLIES](#dlies)                                  | [Code](#dlies-code)              | [Math](#dlies-math)              |
+| [LWE](#learning-with-errors)                     | [Code](#lwe-code)                | [Math](#lwe-math)                |
 | [OAEP](#oaep)                                    | [Code](#oaep-code)               | [Math](#oaep-math)               |
 | [DH](#diffie-hellman)                            | [Code](#dh-code)                 | [Math](#dh-math)                 |
 | [SSS](#sss)                                      | [Code](#sss-code)                | [Math](#sss-math)                |
@@ -543,7 +544,34 @@ assert new_key == priv
 
 
 
+# Learning With Errors
+LWE is a [post quantum cryptography algorithm](https://en.wikipedia.org/wiki/Post-quantum_cryptography)
 
+[Video](https://www.youtube.com/watch?v=K026C5YaB3A)
+
+# LWE Math
+[Video](https://www.youtube.com/watch?v=MBdKvBA5vrw)
+
+# LWE Code
+```python
+from AsymmetricEncryptions.PublicPrivateKey.LWE import LWEKey, LWE
+
+if __name__ == '__main__':
+    # generation
+    key_pair = LWEKey.new(128)
+    # encryption
+    m = b"test"
+    cipher = LWE(key_pair)
+    ciphertxt = LWE.encrypt_message(key_pair.public, m)
+    plaintext = cipher.decrypt_message(ciphertxt)
+    print(plaintext)
+    assert plaintext == m
+    
+    # exportation
+    key_pair.export("test.txt", b"super secret")
+    new_key = LWEKey.load("test.txt", b"super secret")
+    assert new_key == key_pair
+```
 
 # Protocols
 
