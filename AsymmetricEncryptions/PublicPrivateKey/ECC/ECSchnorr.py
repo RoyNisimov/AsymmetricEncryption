@@ -1,5 +1,5 @@
 from __future__ import annotations
-from . import ECPoint, ECKey
+from . import ECPoint, ECKey, EllipticCurveNISTP256
 from AsymmetricEncryptions.General import BytesAndInts
 import secrets
 from hashlib import sha256
@@ -37,7 +37,7 @@ class ECSchnorr:
         return G * s == (pubkey * c) + R
 
 if __name__ == '__main__':
-    key = ECKey.new()
+    key = ECKey.new(EllipticCurveNISTP256.get_curve())
     signer = ECSchnorr(key)
     msg = b"test"
     signature = signer.sign(msg)

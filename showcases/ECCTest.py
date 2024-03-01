@@ -39,9 +39,3 @@ msg = b"test"
 signature = signer.sign(msg)
 verify = ECSchnorr.verify(signature, msg, key.public_key)
 print(verify)
-
-# export
-key = ECKey.new(EllipticCurveNISTP256.get_curve())
-key.export("key.key", b"password") # there's also an encryption function variable (XOR right now)
-new_key = ECKey.load("key.key", b"password")
-assert new_key == key
