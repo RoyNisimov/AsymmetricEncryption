@@ -1,6 +1,6 @@
 from __future__ import annotations
-from .EllipticCurveNISTP256 import EllipticCurveNISTP256
 from .ECPoint import ECPoint
+from .ECCurve import ECCurve
 from AsymmetricEncryptions.General import XOR, Exportation
 import secrets
 from hashlib import sha256
@@ -12,10 +12,10 @@ class ECKey:
         self.public_key = pub
 
     @staticmethod
-    def new() -> ECKey:
+    def new(curve: ECCurve) -> ECKey:
         """Creates a new ECKey pair"""
-        priv: int = secrets.randbelow(EllipticCurveNISTP256.p)
-        pub: ECPoint = EllipticCurveNISTP256().g() * priv
+        priv: int = secrets.randbelow(curve.p)
+        pub: ECPoint = curve.G * priv
         return ECKey(pub, priv)
 
     def export(self, file_name: str, pwd: bytes = b"\x00", *, enc_func=XOR.repeated_key_xor) -> None:
@@ -26,7 +26,7 @@ class ECKey:
         :param enc_func: symmetric encryption function (XOR / OTP here)
         :return: None
         """
-        data_dict: dict = {"pub_x": self.public_key.x, "pub_y": self.public_key.y, "priv": self.private_key}
+        data_dict: dict = {"curve": self.public_key.curve.export(), "pub_x": self.public_key.x, "pub_y": self.public_key.y, "priv": self.private_key}
         Exportation.export(file_name=file_name, pwd=pwd, data_dict=data_dict, exportation_func=enc_func)
 
     @staticmethod
@@ -39,7 +39,7 @@ class ECKey:
         :return: ECKey
         """
         data: dict = Exportation.load(file_name=file_name, pwd=pwd, dec_func=dec_func)
-        pub: ECPoint = ECPoint(EllipticCurveNISTP256, data["pub_x"], data["pub_y"])
+        pub: ECPoint = ECPoint(ECCurve.load(data["curve"]), data["pub_x"], data["pub_y"])
         return ECKey(pub, data["priv"])
 
 

@@ -1,12 +1,13 @@
 from __future__ import annotations
-from .EllipticCurveNISTP256 import EllipticCurveNISTP256
+from . import ECCurve
 import hashlib
+import json
 
 class ECPoint:
     """A point on the ECC NIST-P-256 curve"""
     # https://github.com/cgossi/fundamental_cryptography_with_python/blob/main/implementing_p_256_ecdhe.py
-    def __init__(self, curve: EllipticCurveNISTP256, x: int, y: int) -> None:
-        self.curve: EllipticCurveNISTP256 = curve
+    def __init__(self, curve: ECCurve.ECCurve, x: int, y: int) -> None:
+        self.curve: ECCurve.ECCurve = curve
         self.x: int = x
         self.y: int = y
 
@@ -58,3 +59,13 @@ class ECPoint:
         x3 = (pow(s, 2) - x1 - x2) % p
         y3 = (s * (x1 - x3) - y1) % p
         return ECPoint(curve=self.curve, x=x3, y=y3)
+
+    def export(self) -> str:
+        d: dict = {"curve": self.curve.export(), "x": self.x, "y": self.y}
+        return json.dumps(d)
+
+    @staticmethod
+    def load(s: str) -> ECPoint:
+        d: dict = json.loads(s)
+        d['curve'] = ECCurve.load(d['curve'])
+        return ECPoint(**d)

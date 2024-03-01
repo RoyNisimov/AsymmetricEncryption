@@ -1,11 +1,11 @@
 from AsymmetricEncryptions.PublicPrivateKey.RSA import RSA
-from AsymmetricEncryptions.PublicPrivateKey.ECC import ECKey, ECDH
+from AsymmetricEncryptions.PublicPrivateKey.ECC import ECKey, ECDH, EllipticCurveNISTP256
 from AsymmetricEncryptions.Protocols import DiffieHellman
 from time import time
 
 def ECCDH():
-    Alice_keys = ECKey.new()
-    Bob_keys = ECKey.new()
+    Alice_keys = ECKey.new(EllipticCurveNISTP256.get_curve())
+    Bob_keys = ECKey.new(EllipticCurveNISTP256.get_curve())
     dh = ECDH(Alice_keys)
     Alice_shared = dh.Stage1(Bob_keys.public_key)
     Bob_shared = ECDH.Stage2(Bob_keys, Alice_keys.public_key)

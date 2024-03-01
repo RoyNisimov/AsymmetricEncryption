@@ -1,6 +1,5 @@
 from __future__ import annotations
 from . import ECPoint, ECKey
-from .EllipticCurveNISTP256 import EllipticCurveNISTP256
 from AsymmetricEncryptions.General import BytesAndInts
 import secrets
 from hashlib import sha256
@@ -16,8 +15,8 @@ class ECSchnorr:
         :param msg: the message
         :return: signature
         """
-        G: ECPoint = EllipticCurveNISTP256().g()
-        r: int = secrets.randbelow(EllipticCurveNISTP256.p)
+        G: ECPoint = self.key.public_key.curve.G
+        r: int = secrets.randbelow(self.key.public_key.curve.p)
         R: ECPoint = G * r
         c: int = BytesAndInts.byte2Int(sha256(bytes(R) + msg).digest())
         s: int = (c * self.key.private_key) + r
@@ -32,7 +31,7 @@ class ECSchnorr:
         :param pubkey: the public key.
         :return: True if it passes, else: False.
         """
-        G: ECPoint = EllipticCurveNISTP256().g()
+        G: ECPoint = pubkey.curve.G
         s, R = signature
         c: int = BytesAndInts.byte2Int(sha256(bytes(R) + msg).digest())
         return G * s == (pubkey * c) + R
