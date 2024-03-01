@@ -21,6 +21,8 @@ pip install asymmetric-encryption
 # Table of contents
 
 ---
+If you don't know what you're doing, use [Unhazardous](#unhazardous)
+
 | Algorithm                                        | Code                             | Math behind it                   |
 |--------------------------------------------------|----------------------------------|----------------------------------|
 | [RSA](#rsa)                                      | [Code](#rsa-code)                | [Math](#rsa-math)                |
@@ -29,6 +31,7 @@ pip install asymmetric-encryption
 | [ECC](#ecc)                                      | [Code](#ecc-code)                | [Math](#ecc-math)                |
 | [DLIES](#dlies)                                  | [Code](#dlies-code)              | [Math](#dlies-math)              |
 | [LWE](#learning-with-errors)                     | [Code](#lwe-code)                | [Math](#lwe-math)                |
+| [PKCS7](#pkcs7)                                  | [Code](#pkcs7-code)              | [Math](#pkcs7-math)              |
 | [OAEP](#oaep)                                    | [Code](#oaep-code)               | [Math](#oaep-math)               |
 | [DH](#diffie-hellman)                            | [Code](#dh-code)                 | [Math](#dh-math)                 |
 | [SSS](#sss)                                      | [Code](#sss-code)                | [Math](#sss-math)                |
@@ -637,7 +640,25 @@ print(Alice_shared == Bob_shared)
 
 ```
 
+# PKCS7
+Padding for symmetric algorithms
 
+## PKCS7 Math
+[Video](https://www.youtube.com/watch?v=3OTMLUEPZUc)
+
+## PKCS7 Code
+
+```python
+from AsymmetricEncryptions.Protocols import PKCS7
+
+msg = b"PKCS7"
+block_size = 32
+padded = PKCS7(block_size).pad(msg)
+print(padded)
+unpadded = PKCS7(block_size).unpad(padded)
+print(unpadded)
+print(unpadded == msg)  # True if the msg is small 
+```
 
 
 # OAEP
@@ -977,4 +998,39 @@ if __name__ == '__main__':
     m = ThreePassProtocol.stage4(c3, bob)
     print(m)
     assert m == msg
+```
+
+# Unhazardous
+
+# Contents in UH
+
+| Algorithm      | Code                 |
+|----------------|----------------------|
+| [RSA](#uh-rsa) | [Code](#uh-rsa-code) |
+---
+
+# UH RSA
+Turns RSA into a KEM and signs it.
+
+## UH RSA Code
+**WARNING:** This uses XOR (Aka OTP), please use a different function like AES.
+Modify the function by putting `encryption_function=` for encryption and `decryption_function=` for decryption.
+The signature of both functions have to be `(msg or ciphertxt: bytes, key: bytes) -> msg or ciphertxt: bytes`
+For the padding: `padding_block_size=`
+```python
+from AsymmetricEncryptions.Unhazardous.UHRSA import UHRSA
+from AsymmetricEncryptions.PublicPrivateKey.RSA import RSA
+
+AlicesPriv, AlicesPub = RSA.generate_key_pair(2048) # Alice creates a key pair
+BobsPriv, BobsPub = RSA.generate_key_pair(2048)# Bob creates a key pair
+# Alice wants to send bob a message
+msg = b"Long Message" * 200
+cipherAlice = UHRSA(AlicesPriv) # Alice inits a UHRSA cipher object
+ciphertext = cipherAlice.encrypt(BobsPub, msg) # Alice encrypts using Bob's public key, also creating a signature.
+print(ciphertext)
+# Bob gets the ciphertext and Alices public key
+cipherBob = UHRSA(BobsPriv) # Bob makes his own UHRSA cipher object
+pt = cipherBob.decrypt(ciphertext, AlicesPub) # Bob verifies the signature and finds the message
+print(pt)
+assert pt == msg
 ```

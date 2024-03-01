@@ -18,15 +18,13 @@ class LWE:
         """
         m: int = m % 2
         number_of_samples: int = secrets.randbelow(key.q % len(key.A) + 1)
+        while number_of_samples == 1: number_of_samples: int = secrets.randbelow(key.q % len(key.A) + 1)
         u: list[int] = []
         v: list[int] = []
-        looked: list[int] = []
         for _ in range(number_of_samples):
             r: int = secrets.randbelow(len(key.A))
-            while r in looked: r: int = secrets.randbelow(len(key.A))
             u.append(key.A[r])
             v.append(key.B[r])
-            looked.append(r)
         half_q_times_m: int = (key.q // 2) * m
         return (sum(u) % key.q), (sum(v) - half_q_times_m) % key.q
 
