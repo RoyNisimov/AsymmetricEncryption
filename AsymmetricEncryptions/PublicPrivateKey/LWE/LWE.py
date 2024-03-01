@@ -5,14 +5,19 @@ import secrets
 
 
 class LWE:
-
+    """
+    Learning With Errors
+    """
     def __init__(self, key: LWEKey):
         self.key: LWEKey = key
 
     @staticmethod
     def encrypt_one_bit(key: LWEKey, m: int) -> tuple[int, int]:
+        """
+        Encrypts one bit, m will be either 0 or 1
+        """
         m: int = m % 2
-        number_of_samples: int = 5
+        number_of_samples: int = secrets.randbelow(key.q % len(key.A) + 1)
         u: list[int] = []
         v: list[int] = []
         looked: list[int] = []
@@ -25,7 +30,10 @@ class LWE:
         half_q_times_m: int = (key.q // 2) * m
         return (sum(u) % key.q), (sum(v) - half_q_times_m) % key.q
 
-    def decrypt_one_bit(self, ciphertext: tuple[int, int]):
+    def decrypt_one_bit(self, ciphertext: tuple[int, int]) -> int:
+        """
+        Decrypts a bit
+        """
         u, v = ciphertext
         dec: int = (v - (self.key.s * u)) % self.key.q
         return int(dec > (self.key.q // 2))
@@ -33,6 +41,9 @@ class LWE:
 
     @staticmethod
     def encrypt_message(key: LWEKey, message: bytes) -> list[tuple[int, int]]:
+        """
+        Encrypts a message (bytes)
+        """
         m: int = BytesAndInts.byte2Int(message)
         out: list[int] = []
         for bit in format(m, "b"):
@@ -40,7 +51,10 @@ class LWE:
             out.append(LWE.encrypt_one_bit(key, bit))
         return out
 
-    def decrypt_message(self, ciphertexts: list[tuple[int, int]]):
+    def decrypt_message(self, ciphertexts: list[tuple[int, int]]) -> bytes:
+        """
+        Decrypts a ciphertext
+        """
         st: str = ""
         for index, i in enumerate(ciphertexts):
             st += str(self.decrypt_one_bit(i))

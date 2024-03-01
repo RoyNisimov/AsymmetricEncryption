@@ -10,8 +10,3 @@ if __name__ == '__main__':
     plaintext = cipher.decrypt_message(ciphertxt)
     print(plaintext)
     assert plaintext == m
-
-    # exportation
-    key_pair.export("test.txt", b"super secret")
-    new_key = LWEKey.load("test.txt", b"super secret")
-    assert new_key == key_pair

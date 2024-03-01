@@ -21,14 +21,13 @@ class LWEKey:
             self.public = LWEKey(A, B, q)
 
     @staticmethod
-    def new(nBit: int = 128) -> LWEKey:
+    def new(nBit: int = 128, n: int = 1024) -> LWEKey:
         """
         Generates a new Learning With Errors key
         """
         s: int = secrets.randbits(nBit)
         q: int = PrimeNumberGen.generate(nBit)
         s = s % q
-        n: int = 20
         A: list[int] = [secrets.randbelow(q) for _ in range(n)]
         error_margin: int = 4
         e: list[int] = [secrets.randbelow(error_margin) for _ in range(n)]
