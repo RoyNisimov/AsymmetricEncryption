@@ -8,12 +8,12 @@ class LWEKey:
     Learning With Errors key object
     """
 
-    def __init__(self, A: list[int], B: list[int], q: int, e: list[int] = None, s: int = None) -> None:
-        self.A: list[int] = A
+    def __init__(self, A: list[list[int]], B: list[int], q: int, e: list[int] = None, s: list[int] = None) -> None:
+        self.A: list[list[int]] = A
         self.B: list[int] = B
         self.q: int = q
         self.e: list[int] = e
-        self.s: int = s
+        self.s: list[int] = s
         self.is_private: bool = False
         self.public = None
         if s:
@@ -21,17 +21,19 @@ class LWEKey:
             self.public = LWEKey(A, B, q)
 
     @staticmethod
-    def new(nBit: int = 128, n: int = 1024) -> LWEKey:
+    def new(nBit: int = 128, n: int = 1024, *, Svector_length: int = 32) -> LWEKey:
         """
         Generates a new Learning With Errors key
         """
-        s: int = secrets.randbits(nBit)
         q: int = PrimeNumberGen.generate(nBit)
-        s = s % q
-        A: list[int] = [secrets.randbelow(q) for _ in range(n)]
+        s: list[int] = [secrets.randbelow(q) for _ in range(Svector_length)]
+        A: list[int] = [[secrets.randbelow(q) for _ in range(Svector_length)] for _ in range(n)]
         error_margin: int = 4
         e: list[int] = [secrets.randbelow(error_margin) for _ in range(n)]
-        B: list[int] = [((A[i] * s) + e[i]) % q for i in range(n)]
+
+        def helper(A_i: list[int]) -> int:
+            return sum([(A_i[i] * s[i]) % q for i in range(Svector_length)])
+        B: list[int] = [(helper(A[i]) + e[i]) % q for i in range(n)]
         return LWEKey(A, B, q, e, s)
 
     def export(self, file_name: str, pwd: bytes = b"\x00", *, enc_func=XOR.repeated_key_xor) -> None:

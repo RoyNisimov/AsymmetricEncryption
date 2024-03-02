@@ -12,7 +12,7 @@ class LWE:
         self.key: LWEKey = key
 
     @staticmethod
-    def encrypt_one_bit(key: LWEKey, m: int) -> tuple[int, int]:
+    def encrypt_one_bit(key: LWEKey, m: int) -> tuple[list[int], int]:
         """
         Encrypts one bit, m will be either 0 or 1
         """
@@ -26,14 +26,23 @@ class LWE:
             u.append(key.A[r])
             v.append(key.B[r])
         half_q_times_m: int = (key.q // 2) * m
-        return (sum(u) % key.q), (sum(v) - half_q_times_m) % key.q
+
+        def sum_u(l) -> list[int]:
+            result_arr: list[int] = [0] * len(l[0])
+            for i in range(len(l)):
+                for c in range(len(result_arr)):
+                    result_arr[c] += l[i][c]
+            return result_arr
+        return sum_u(u), (sum(v) - half_q_times_m) % key.q
 
     def decrypt_one_bit(self, ciphertext: tuple[int, int]) -> int:
         """
         Decrypts a bit
         """
+        def helper(A_i: list[int]) -> int:
+            return sum([(A_i[i] * self.key.s[i]) % self.key.q for i in range(len(self.key.s))])
         u, v = ciphertext
-        dec: int = (v - (self.key.s * u)) % self.key.q
+        dec: int = (v - (helper(u))) % self.key.q
         return int(dec > (self.key.q // 2))
 
 
