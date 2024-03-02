@@ -1,6 +1,7 @@
 from __future__ import annotations
 from AsymmetricEncryptions.PublicPrivateKey.RSA.RSAKey import RSAKey
 from AsymmetricEncryptions.General import BytesAndInts
+from hashlib import sha256
 
 class RSA:
     """Rivest-Shamir-Adleman"""
@@ -50,6 +51,7 @@ class RSA:
         :return: signature
         """
         assert self.key.has_private
+        msg = sha256(msg).digest()
         int_msg: int = BytesAndInts.byte2Int(msg)
         if assertion: assert int_msg < self.key.n
         s: int = pow(int_msg, self.key.d, self.key.n)
@@ -62,6 +64,7 @@ class RSA:
         :param og_msg: The original message.
         :return: None, will throw an assertion error if fails
         """
+        og_msg = sha256(og_msg).digest()
         int_s: int = BytesAndInts.byte2Int(signature)
         cipher: int = pow(int_s, self.key.e, self.key.n)
         assert cipher == BytesAndInts.byte2Int(og_msg)

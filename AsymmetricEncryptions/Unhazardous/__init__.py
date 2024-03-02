@@ -1,2 +1,2 @@
-__all__ = ["UHRSA"]
-from .UHRSA import UHRSA
+__all__ = ["PublicKey"]
+from .PublicKey import *

@@ -114,7 +114,7 @@ m == v
 ==============================================
 ```
 ## RSA Code
-**WARNING:** This is the bare bones RSA with OAEP (If you pad it with OAEP)
+**WARNING:** This is the bare bones RSA with OAEP (If you pad it with OAEP). In the signing the msg is turning into a hash (sha256)
 
 ```python
 from AsymmetricEncryptions.PublicPrivateKey import RSA
@@ -252,7 +252,7 @@ W = 6**5 % 23 = 2
 The message is authentic
 ```
 ## ElGamal Code
-**WARNING:** This is the bare bones ElGamal with OAEP (If you pad it with OAEP)
+**WARNING:** This is the bare bones ElGamal with OAEP (If you pad it with OAEP). Also the signature is turning the msg into a hash (sha256)
 
 ```python
 from AsymmetricEncryptions.PublicPrivateKey.ElGamal import ElGamal
@@ -264,7 +264,7 @@ message: bytes = b"ElGamal test"
 message = OAEP.oaep_pad(message)
 print(message)
 # Key generation
-priv, pub = ElGamal.generate_key_pair(1024)
+priv, pub = ElGamal.generate_key_pair(2048)
 print(priv)
 print(pub)
 # Encryption (Assume we don't have the private key)
@@ -1011,33 +1011,62 @@ if __name__ == '__main__':
 
 # Contents in UH
 
-| Algorithm      | Code                 |
-|----------------|----------------------|
-| [RSA](#uh-rsa) | [Code](#uh-rsa-code) |
+| Algorithm              | Code                     |
+|------------------------|--------------------------|
+| [RSA](#uh-rsa)         | [Code](#uh-rsa-code)     |
+| [ElGamal](#uh-elgamal) | [Code](#uh-elgamal-code) |
 ---
 
 # UH RSA
-Turns RSA into a KEM and signs it.
+Turns RSA into a KEM. with signatures.
 
 ## UH RSA Code
 **WARNING:** This uses XOR (Aka OTP), please use a different function like AES.
 Modify the function by putting `encryption_function=` for encryption and `decryption_function=` for decryption.
 The signature of both functions have to be `(msg or ciphertxt: bytes, key: bytes) -> msg or ciphertxt: bytes`
 For the padding: `padding_block_size=`
+
 ```python
-from AsymmetricEncryptions.Unhazardous.UHRSA import UHRSA
+from AsymmetricEncryptions.Unhazardous.PublicKey.UHRSA import UHRSA
 from AsymmetricEncryptions.PublicPrivateKey.RSA import RSA
 
-AlicesPriv, AlicesPub = RSA.generate_key_pair(2048) # Alice creates a key pair
-BobsPriv, BobsPub = RSA.generate_key_pair(2048)# Bob creates a key pair
+AlicesPriv, AlicesPub = RSA.generate_key_pair(2048)  # Alice creates a key pair
+BobsPriv, BobsPub = RSA.generate_key_pair(2048)  # Bob creates a key pair
 # Alice wants to send bob a message
 msg = b"Long Message" * 200
-cipherAlice = UHRSA(AlicesPriv) # Alice inits a UHRSA cipher object
-ciphertext = cipherAlice.encrypt(BobsPub, msg) # Alice encrypts using Bob's public key, also creating a signature.
+cipherAlice = UHRSA(AlicesPriv)  # Alice inits a UHRSA cipher object
+ciphertext = cipherAlice.encrypt(BobsPub, msg)  # Alice encrypts using Bob's public key, also creating a signature.
 print(ciphertext)
 # Bob gets the ciphertext and Alices public key
-cipherBob = UHRSA(BobsPriv) # Bob makes his own UHRSA cipher object
-pt = cipherBob.decrypt(ciphertext, AlicesPub) # Bob verifies the signature and finds the message
+cipherBob = UHRSA(BobsPriv)  # Bob makes his own UHRSA cipher object
+pt = cipherBob.decrypt(ciphertext, AlicesPub)  # Bob verifies the signature and finds the message
 print(pt)
 assert pt == msg
 ```
+
+
+# UH ElGamal
+Turns ElGamal into a KEM, with signatures.
+
+## UH ElGamal Code
+**WARNING:** This uses XOR (Aka OTP), please use a different function like AES.
+Modify the function by putting `encryption_function=` for encryption and `decryption_function=` for decryption.
+The signature of both functions have to be `(msg or ciphertxt: bytes, key: bytes) -> msg or ciphertxt: bytes`
+For the padding: `padding_block_size=`
+
+```python
+from AsymmetricEncryptions.Unhazardous.PublicKey.UHElGamal import UHElGamal
+from AsymmetricEncryptions.PublicPrivateKey.ElGamal import ElGamal
+
+AlicesPriv, AlicesPub = ElGamal.generate_key_pair(2048) # Alice's keys
+BobsPriv, BobsPub = ElGamal.generate_key_pair(2048) # Bob's keys
+msg = b"test" # Message
+cipherAlice = UHElGamal(AlicesPriv)
+ct = cipherAlice.encrypt(BobsPub, msg) # Encrypts and signs
+cipherBob = UHElGamal(BobsPriv)
+pt = cipherBob.decrypt(ct, AlicesPub) # Decrypts and verify
+assert pt == msg
+print(ct)
+print(pt)
+```
+
