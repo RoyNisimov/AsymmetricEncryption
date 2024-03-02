@@ -552,8 +552,16 @@ LWE is a [post quantum cryptography algorithm](https://en.wikipedia.org/wiki/Pos
 [Video](https://www.youtube.com/watch?v=K026C5YaB3A)
 
 # LWE Math
-[Video](https://www.youtube.com/watch?v=MBdKvBA5vrw)
-
+[Video](https://www.youtube.com/watch?v=MBdKvBA5vrw first define an S this will be your privite key then we need to define A.
+A is a group of 20 random numbers up to a prime number that will be our Q then we define our E which is 20 random numbers
+between 1-4 inculding 1 and 4 now we can use our veriables to define B using this formula B=A*S+E(mod Q)
+so for example A={80,86,19...} S=5 Q=97 E={3,3,4..} 
+then B1 will be eqwel to 80*5+3(mod97)=15 now we take a messege that we call M it can be either 1 or 0 and we define u and v 
+u=sum A sample
+v= sum B sample - Q÷2 * M
+to decript wew take v and u to this formula dec=v-su(mod Q)
+if dec is less then Q÷2 then M=0
+if dec is more thenQ÷2 then M=1
 # LWE Code
 ```python
 from AsymmetricEncryptions.PublicPrivateKey.LWE import LWEKey, LWE
@@ -1036,6 +1044,7 @@ print(pt)
 assert pt == msg
 ```
 
+
 # UH ElGamal
 Turns ElGamal into a KEM, with signatures.
 
@@ -1060,3 +1069,4 @@ assert pt == msg
 print(ct)
 print(pt)
 ```
+
