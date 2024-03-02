@@ -34,11 +34,14 @@ If you don't know what you're doing, use [Unhazardous](#unhazardous)
 | [PKCS7](#pkcs7)                                  | [Code](#pkcs7-code)              | [Math](#pkcs7-math)              |
 | [OAEP](#oaep)                                    | [Code](#oaep-code)               | [Math](#oaep-math)               |
 | [DH](#diffie-hellman)                            | [Code](#dh-code)                 | [Math](#dh-math)                 |
+| [YAK](#yak)                                      | [Code](#yak-code)                | [Math](#yak-math)                |
 | [SSS](#sss)                                      | [Code](#sss-code)                | [Math](#sss-math)                |
 | [Fiat–Shamir](#fiat-shamir-zero-knowledge-proof) | [Code](#fiat-shamir-code)        | [Math](#fiat-shamir-math)        |
 | [OT1O2](#oblivious-transfer)                     | [Code](#oblivious-transfer-code) | [Math](#oblivious-transfer-math) |
 | [TPP](#three-pass-protocol)                      | [Code](#tpp-code)                | [Math](#tpp-math)                |
+| [POK](#proof-of-knowledge)                       | [Code](#pok-code)                | [Math](#pok-math)                |
 ---
+
 
 # Math symbols
 - Pow : **
@@ -252,7 +255,7 @@ W = 6**5 % 23 = 2
 The message is authentic
 ```
 ## ElGamal Code
-**WARNING:** This is the bare bones ElGamal with OAEP (If you pad it with OAEP). Also the signature is turning the msg into a hash (sha256)
+**WARNING:** This is the bare bones ElGamal with OAEP (If you pad it with OAEP). Also, the signature is turning the msg into a hash (sha256)
 
 ```python
 from AsymmetricEncryptions.PublicPrivateKey.ElGamal import ElGamal
@@ -682,6 +685,40 @@ print(Alice_shared == Bob_shared)
 
 ```
 
+# Yak
+[Wiki](https://en.wikipedia.org/wiki/YAK_(cryptography))
+
+The YAK is a public-key authenticated key-agreement protocol, proposed by Feng Hao in 2010. [1][2] It is claimed to be the simplest authenticated key exchange protocol among the related schemes, including MQV, HMQV, Station-to-Station protocol, SSL/TLS etc. The authentication is based on public key pairs. As with other protocols, YAK normally requires a Public Key Infrastructure to distribute authentic public keys to the communicating parties. The security of YAK is disputed (see below and the talk page).
+
+## Yak Math
+See [Wiki description](https://en.wikipedia.org/wiki/YAK_(cryptography))
+## Yak Code
+
+```python
+from AsymmetricEncryptions.Protocols.YAK import YAK
+from AsymmetricEncryptions.PublicPrivateKey import DLIES, DLIESKey
+
+
+yakAlice = YAK.new(2048)
+gq = yakAlice.get_gq()
+yakBob = YAK(*gq)
+g, q = gq
+
+AlicePriv = DLIESKey.build(g, q)
+AlicePub = AlicePriv.public
+BobPriv = DLIESKey.build(g, q)
+BobPub = BobPriv.public
+
+x, AliceSend = yakAlice.stage_1()
+y, BobSend = yakBob.stage_1()
+
+sharedAlice = yakAlice.stage_2(x, AlicePriv, BobSend, BobPub)
+sharedBob = yakBob.stage_2(y, BobPriv, AliceSend, AlicePub)
+print(sharedAlice)
+print(sharedBob)
+assert sharedAlice == sharedBob
+```
+
 # PKCS7
 Padding for symmetric algorithms
 
@@ -1041,6 +1078,42 @@ if __name__ == '__main__':
     print(m)
     assert m == msg
 ```
+
+# Proof of Knowledge
+Proving that you have a knowledge of a value m.
+
+This is using Schnorr non-interactive
+
+## POK Math
+``` 
+Construct a new discret log key (n -> prime, g -> generator, x -> m, y = g**x % n).
+r -> random value
+t = g ** r % n
+c = Hash(g | y | t)
+s = r + c * x
+send {t, s, new_key.public}
+# verify
+c = Hash(g | y | t)
+if g**s % n == (t * y**c) % n: the proof is true
+
+```
+
+
+## POK Code
+```python
+from AsymmetricEncryptions.Protocols.SchnorrPOK import POK
+from AsymmetricEncryptions.PublicPrivateKey import DLIES
+
+priv, pub = DLIES.generate_key_pair(1024)
+m = b"test"
+prover = POK(priv)
+proof = prover.prove(m)
+print(POK.verify(proof))
+```
+
+
+
+
 
 # Unhazardous
 

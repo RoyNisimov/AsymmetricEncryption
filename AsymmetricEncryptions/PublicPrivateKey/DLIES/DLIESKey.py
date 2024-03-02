@@ -35,6 +35,14 @@ class DLIESKey:
         if not isinstance(other, DLIESKey): return False
         return sha256(f"{self}".encode()).hexdigest() == sha256(f"{other}".encode()).hexdigest()
 
+
+    @staticmethod
+    def build(g: int, n: int, x: int = None) -> DLIESKey:
+        if x is None:
+            x = secrets.randbelow(n-1)
+        y: int = pow(g, x, n)
+        return DLIESKey(g, n, y, x)
+
     def __str__(self) -> str:
         r: str = ""
         if self.has_private:
