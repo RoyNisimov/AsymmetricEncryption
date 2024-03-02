@@ -1,8 +1,9 @@
-from AsymmetricEncryptions.Unhazardous.UHRSA import UHRSA
-from AsymmetricEncryptions.PublicPrivateKey.RSA import RSAKey, RSA
+from AsymmetricEncryptions.Unhazardous.PublicKey.UHRSA import UHRSA
+from AsymmetricEncryptions.PublicPrivateKey.RSA import RSA
 
-AlicesPriv, AlicesPub = RSA.generate_key_pair(2048)
-BobsPriv, BobsPub = RSA.generate_key_pair(2048)
+key_size = 2048
+AlicesPriv, AlicesPub = RSA.generate_key_pair(key_size)
+BobsPriv, BobsPub = RSA.generate_key_pair(key_size)
 msg = b"test"
 cipherAlice = UHRSA(AlicesPriv)
 ct = cipherAlice.encrypt(BobsPub, msg)

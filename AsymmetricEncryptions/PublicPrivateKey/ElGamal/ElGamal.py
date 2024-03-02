@@ -3,6 +3,8 @@ from .ElGamalKey import ElGamalKey
 from AsymmetricEncryptions.General import BytesAndInts
 import secrets
 from math import gcd
+import hashlib
+
 class ElGamal:
     """ElGamal encryption"""
     def __init__(self, key: ElGamalKey) -> None:
@@ -29,6 +31,7 @@ class ElGamal:
         :param assertion: If assertion is true then it will assert if the message is smaller than allowed. (e.g. m < p)
         :return: Ciphertext
         """
+
         m: bytes = BytesAndInts.byte2Int(msg)
         if assertion: assert m < self.key.p
         b: int = secrets.randbelow(self.key.p)
@@ -52,11 +55,12 @@ class ElGamal:
 
     def sign(self, msg: bytes, assertion=True) -> tuple[bytes, bytes, bytes]:
         """
-        Signs a message
-        :param msg: The plaintext
-        :param assertion: if true then will check if m is allowed
-        :return: signature
+        Signs a message (turns to hash)
+        @param msg: The plaintext
+        @param assertion: if true then will check if m is allowed
+        @return: signature
         """
+        msg = hashlib.sha256(msg).digest()
         m: bytes = BytesAndInts.byte2Int(msg)
         if assertion: assert m < self.key.p
         k: int = secrets.randbelow(self.key.p)
@@ -68,12 +72,15 @@ class ElGamal:
         if s2 == 0: self.sign(msg, assertion)
         return BytesAndInts.int2Byte(s1), BytesAndInts.int2Byte(s2),  BytesAndInts.int2Byte(m)
 
-    def verify(self, signature: tuple[bytes, bytes, bytes]) -> bool:
+    def verify(self, signature: tuple[bytes, bytes, bytes], *, og_message: bytes = None) -> bool:
         """
         Verifies a signature
-        :param signature: The signature
-        :return: bool
+        @param og_message: The original message
+        @param signature: The signature
+        @return: bool
         """
+        if og_message:
+            assert signature[2] == hashlib.sha256(og_message).digest()
         s1: int = BytesAndInts.byte2Int(signature[0])
         s2: int = BytesAndInts.byte2Int(signature[1])
         m: int = BytesAndInts.byte2Int(signature[2])
