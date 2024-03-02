@@ -552,16 +552,51 @@ LWE is a [post quantum cryptography algorithm](https://en.wikipedia.org/wiki/Pos
 [Video](https://www.youtube.com/watch?v=K026C5YaB3A)
 
 # LWE Math
-[Video](https://www.youtube.com/watch?v=MBdKvBA5vrw first define an S this will be your privite key then we need to define A.
-A is a group of 20 random numbers up to a prime number that will be our Q then we define our E which is 20 random numbers
-between 1-4 inculding 1 and 4 now we can use our veriables to define B using this formula B=A*S+E(mod Q)
-so for example A={80,86,19...} S=5 Q=97 E={3,3,4..} 
-then B1 will be eqwel to 80*5+3(mod97)=15 now we take a messege that we call M it can be either 1 or 0 and we define u and v 
-u=sum A sample
-v= sum B sample - Q÷2 * M
-to decript wew take v and u to this formula dec=v-su(mod Q)
-if dec is less then Q÷2 then M=0
-if dec is more thenQ÷2 then M=1
+[Video](https://www.youtube.com/watch?v=MBdKvBA5vrw)
+
+```
+First define a vector S this will be your private key then we need to define A.
+A is a group of random vectors that contain random numbers up to a prime number q.
+Then we define E (the errors in Learning With Errors).
+
+E contains numbers between 1-4 including 1 and 4. 
+
+A helper function is this: 
+def helper(list, s):
+    return sum([(s[i] * list[i]) % q for i in range(len(list))])
+
+Now we can use our variables to define B using this formula: B[i] = helper(A, S) + E[i] (mod q)
+
+So for example A={{80, 5, 6}, {86, 19, 17}...}, S={5, 2, 4}, Q=97 E={3,3,4...}
+
+So B1 will be equal to (80 * 5) + (5 * 2) + (6 * 4) + 3 (mod 97) = 49.
+
+To encrypt a bit (m in [0, 1]) we define u and v 
+
+
+def sum_u(l) -> list[int]:
+    result_arr: list[int] = [0] * len(l[0])
+    for i in range(len(l)):
+        for c in range(len(result_arr)):
+            result_arr[c] += l[i][c]
+    return result_arr
+    
+The sum_u function sums everything in a list[list] into a list[]
+For example:
+l = [[10, 20], [50, 30], [10, 20]]
+So the answer of sum_u(l) is [70, 70]
+
+u = sum_u(A samples)
+v = (sum(B samples) - Q÷2 * M) % q
+
+To decrypt we take v and u to this formula dec = v - helper(u, s) (mod q)
+If dec is less than q ÷ 2 then M=0
+If dec is more then q ÷ 2 then M=1
+
+This isn't gurrenteed to work 100% of the time!
+```
+Watch [this video](https://www.youtube.com/watch?v=K026C5YaB3A) for a much better explanation.
+
 # LWE Code
 ```python
 from AsymmetricEncryptions.PublicPrivateKey.LWE import LWEKey, LWE
