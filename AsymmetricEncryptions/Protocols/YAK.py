@@ -22,6 +22,7 @@ class YAK:
         @param nBit: how big q is
         @return: YAK object
         """
+        warnings.warn("YAK security is debatable")
         q: int = PrimeNumberGen.generate(nBit)
         g: int = secrets.randbelow(q)
         return YAK(g, q)

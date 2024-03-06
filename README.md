@@ -688,7 +688,7 @@ print(Alice_shared == Bob_shared)
 # Yak
 [Wiki](https://en.wikipedia.org/wiki/YAK_(cryptography))
 
-The YAK is a public-key authenticated key-agreement protocol, proposed by Feng Hao in 2010. [1][2] It is claimed to be the simplest authenticated key exchange protocol among the related schemes, including MQV, HMQV, Station-to-Station protocol, SSL/TLS etc. The authentication is based on public key pairs. As with other protocols, YAK normally requires a Public Key Infrastructure to distribute authentic public keys to the communicating parties. The security of YAK is disputed (see below and the talk page).
+The YAK is a public-key authenticated key-agreement protocol, proposed by Feng Hao in 2010. It is claimed to be the simplest authenticated key exchange protocol among the related schemes, including MQV, HMQV, Station-to-Station protocol, SSL/TLS etc. The authentication is based on public key pairs. As with other protocols, YAK normally requires a Public Key Infrastructure to distribute authentic public keys to the communicating parties. The security of YAK is disputed (see below and the talk page).
 
 ## Yak Math
 See [Wiki description](https://en.wikipedia.org/wiki/YAK_(cryptography))
@@ -696,7 +696,7 @@ See [Wiki description](https://en.wikipedia.org/wiki/YAK_(cryptography))
 
 ```python
 from AsymmetricEncryptions.Protocols.YAK import YAK
-from AsymmetricEncryptions.PublicPrivateKey import DLIES, DLIESKey
+from AsymmetricEncryptions.PublicPrivateKey import DLIESKey
 
 
 yakAlice = YAK.new(2048)
@@ -1058,23 +1058,36 @@ m = DB(c2, keyB)
 ```
 
 ## TPP Code
+**WARNING:** An added encryption and decryption function needs to be added. XOR IS UNSAFE IN TPP! 
 ```python
 from AsymmetricEncryptions.Protocols.ThreePass import ThreePassProtocol
 
+
 if __name__ == '__main__':
+    
+    def encryption_function(msg: bytes, key: bytes) -> bytes:
+        ct = msg
+        ... # Actually encrypt
+        return ct # send 
+    
+    def decryption_function(ct: bytes, key: bytes) -> bytes:
+        msg = ct
+        ... # Actually decrypt
+        return msg
+    
     msg = b"message"
     alice = b"Alice's key"
 
     bob = b"Bob's key"
 
-    TPP = ThreePassProtocol(alice, warningsBool=False)
-    c1 = TPP.stage1(msg)
+    TPP = ThreePassProtocol(alice)
+    c1 = TPP.stage1(msg, encryption_function)
     print(c1)
-    c2 = ThreePassProtocol.stage2(bob, c1)
+    c2 = ThreePassProtocol.stage2(bob, c1, encryption_function)
     print(c2)
-    c3 = TPP.stage3(c2)
+    c3 = TPP.stage3(c2, decryption_function)
     print(c3)
-    m = ThreePassProtocol.stage4(c3, bob)
+    m = ThreePassProtocol.stage4(c3, bob, decryption_function)
     print(m)
     assert m == msg
 ```
