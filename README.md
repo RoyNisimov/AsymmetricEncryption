@@ -446,6 +446,11 @@ ECC in an approach to asymmetric cryptography with the hardest math concepts.
 
 
 ## ECC Math
+eliptic curve cryptography
+we first define the curve using this eqwesiun y^2=x^3-3x+5 now we peek a point P who is a prime number and and a geadiant that end up in point Q using this that N is our private key Q=PN(modP)  
+now you need to remember that is eqwel to a number times x and b is a number wuthout x 
+![Capture](https://github.com/RoyNisimov/AsymmetricEncryption/assets/95145981/3a79c131-7a8f-4b63-97d9-14b6a3699412)
+
 ![image](https://ih1.redbubble.net/image.3624513016.1773/bg,f8f8f8-flat,750x,075,f-pad,750x1000,f8f8f8.jpg)
 
 ## ECC code
