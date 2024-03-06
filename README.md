@@ -444,32 +444,87 @@ ECC in an approach to asymmetric cryptography with the hardest math concepts.
 
 **Note:** ECC protocols like ECDH aren't in the .Protocols module but in the ECC module.
 
+[Computerphile](https://www.youtube.com/watch?v=NF1pwjL9-DE)
 
 ## ECC Math
-eliptic curve cryptography
-we first define the curve using this eqwesiun y^2=x^3-3x+5 now we peek a point P who is a prime number and and a geadiant that end up in point Q using this that N is our private key Q=PN(modP)  
-now you need to remember that is eqwel to a number times x and b is a number wuthout x 
-![Capture](https://github.com/RoyNisimov/AsymmetricEncryption/assets/95145981/3a79c131-7a8f-4b63-97d9-14b6a3699412)
+[Wiki](https://en.wikipedia.org/wiki/Elliptic_curve_point_multiplication)
 
-![image](https://ih1.redbubble.net/image.3624513016.1773/bg,f8f8f8-flat,750x,075,f-pad,750x1000,f8f8f8.jpg)
+We first define the curve using this equation y^2 = x^3 + ax + b .
+
+Now we pick a prime modulus P and a generator point G.
+
+```
+
+Key Gen
+-----------
+
+x = random int
+y = G * x
+Private: {x}
+Public: {y}
+
+ECDH
+-----------
+Ax, AY
+Bx, By
+
+Alice shared key:
+Ax * By
+Bob shared key:
+Bx * AY
+
+
+Encryption
+-------------
+You can't just encrypt with ECC but you can make an hybrid scheme (ECIES).
+
+r = random
+R = G * r
+S = Y * r
+sk = KDF(S)
+c = Encrypt(msg, sk)
+send c, R
+
+Decryption
+------------
+s = R * x
+sk = KDF(s)
+msg = Decrypt(c, sk)
+
+```
+
+
+
+
+Point addition is done like this (P + Q = R)
+
+![Image](https://github.com/RoyNisimov/AsymmetricEncryption/assets/95145981/3a79c131-7a8f-4b63-97d9-14b6a3699412)
+
+Multiplying a point by itself it's addition but drawing a tangent.
+
+![Image](https://media.springernature.com/lw685/springer-static/image/chp%3A10.1007%2F978-981-16-7018-3_46/MediaObjects/511640_1_En_46_Fig2_HTML.png)
+
+[Signatures](https://www.youtube.com/watch?v=r9hJiDrtukI)
+
 
 ## ECC code
 
 ```python
 from AsymmetricEncryptions.PublicPrivateKey.ECC import ECKey, ECDH, ECSchnorr, ECIES, EllipticCurveNISTP256
 
+curve = EllipticCurveNISTP256.get_curve()
 # key pair gen
-key_pair = ECKey.new(EllipticCurveNISTP256.get_curve())
+key_pair = ECKey.new(curve)
 priv = key_pair.private_key  # int
 pub = key_pair.public_key  # ECPoint
 
 # ECDH
 
-keyA = ECKey.new(EllipticCurveNISTP256.get_curve())
+keyA = ECKey.new(curve)
 ecdh = ECDH(keyA)
 A = keyA.public_key
 
-keyB = ECKey.new(EllipticCurveNISTP256.get_curve())
+keyB = ECKey.new(curve)
 B = keyB.public_key
 
 shared_key_alice = ecdh.Stage1(B)
@@ -491,7 +546,7 @@ print(d)
 assert d == msg
 
 # Schnorr signing
-key = ECKey.new(EllipticCurveNISTP256.get_curve())
+key = ECKey.new(curve)
 signer = ECSchnorr(key)
 msg = b"test"
 signature = signer.sign(msg)
@@ -499,7 +554,7 @@ verify = ECSchnorr.verify(signature, msg, key.public_key)
 print(verify)
 
 # export
-key = ECKey.new(EllipticCurveNISTP256.get_curve())
+key = ECKey.new(curve)
 key.export("key.key", b"password") # there's also an encryption function variable (XOR right now)
 new_key = ECKey.load("key.key", b"password")
 assert new_key == key

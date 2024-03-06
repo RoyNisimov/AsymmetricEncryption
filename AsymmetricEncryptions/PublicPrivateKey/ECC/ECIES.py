@@ -52,11 +52,3 @@ class ECIES:
         msg: bytes = PKCS7(block_size).unpad(msg)
         return msg
 
-if __name__ == '__main__':
-    keyPair = ECKey.new()
-    msg = b"test"
-    c = ECIES.encrypt(msg, keyPair.public_key)
-    print(c)
-    d = ECIES.decrypt(c, keyPair)
-    print(d)
-    assert d == msg
