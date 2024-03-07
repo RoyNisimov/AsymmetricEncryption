@@ -1184,7 +1184,43 @@ proof = prover.prove(m)
 print(POK.verify(proof))
 ```
 
+# Feistel
+A feistel network is a symmetric cipher builder.
 
+[Computerphile](https://www.youtube.com/watch?v=FGhj3CGxl8I)
+
+## Feistel Code
+
+```python
+from AsymmetricEncryptions.Protocols import Feistel
+# Here is a built-in Feistel encryption function
+def func(m, k):
+    ...
+    # Encrypt or hash
+    return m
+msg = b"lol"
+key = b"test key"
+f = Feistel(func)
+c = f.encrypt(msg, key)
+m = f.decrypt(c, key)
+print(c)
+print(m)
+```
+
+
+```python
+from AsymmetricEncryptions.General import Feistel_sha256
+# Here is a built-in Feistel encryption function
+
+msg = b"lol"
+key = b"test key"
+f = Feistel_sha256.FeistelSha256.get_feistel()
+c = f.encrypt(msg, key)
+m = f.decrypt(c, key)
+print(c)
+print(m)
+
+```
 
 
 

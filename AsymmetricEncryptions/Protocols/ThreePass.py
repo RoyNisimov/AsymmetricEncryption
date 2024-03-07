@@ -1,7 +1,5 @@
 from __future__ import annotations
-
-
-
+from typing import Callable
 from AsymmetricEncryptions.General import XOR
 from AsymmetricEncryptions.Exceptions import UnsafeEncryptionFunction
 from .KDF import KDF
@@ -16,7 +14,7 @@ class ThreePassProtocol:
         if warningsBool: warnings.warn("WARNING: Three pass is considered unsafe without authentication and can't be used with XOR!")
         self.key: bytes = KDF.derive_key(key)
 
-    def stage1(self, msg: bytes, encryption_function) -> bytes:
+    def stage1(self, msg: bytes, encryption_function: Callable[[bytes, bytes], bytes] = None) -> bytes:
         """
         Alice encrypts her message.
         :param msg: The message.
@@ -30,7 +28,7 @@ class ThreePassProtocol:
         return encryption_function(msg, self.key)
 
     @staticmethod
-    def stage2(key: bytes, ciphertext: bytes, encryption_function) -> bytes:
+    def stage2(key: bytes, ciphertext: bytes, encryption_function: Callable[[bytes, bytes], bytes] = None) -> bytes:
         """
         Bob gets a cipher text, and hopefully authentication as well
         :param key: Bob's key
@@ -44,7 +42,7 @@ class ThreePassProtocol:
         key: bytes = KDF.derive_key(key)
         return encryption_function(ciphertext, key)
 
-    def stage3(self, ciphertext, decryption_function) -> bytes:
+    def stage3(self, ciphertext, decryption_function: Callable[[bytes, bytes], bytes] = None) -> bytes:
         """
         Alice hopefully gets an authentication and a ciphertext
         :param ciphertext: The ciphertext Bob sent.
@@ -58,7 +56,7 @@ class ThreePassProtocol:
         return decryption_function(ciphertext, self.key)
 
     @staticmethod
-    def stage4(ciphertext: bytes, key: bytes, decryption_function) -> bytes:
+    def stage4(ciphertext: bytes, key: bytes, decryption_function: Callable[[bytes, bytes], bytes] = None) -> bytes:
         """
         Bob hopefully gets an authentication and a ciphertext
         :param ciphertext: The ciphertext Alice sent.
