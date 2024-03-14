@@ -1,2 +1,2 @@
-__all__ = ["Exceptions", "NeededValueIsNull", "UnsafeEncryptionFunction"]
-from .Exceptions import NeededValueIsNull, UnsafeEncryptionFunction
+__all__ = ["Exceptions", "NeededValueIsNull", "UnsafeEncryptionFunction", "MACError"]
+from .Exceptions import NeededValueIsNull, UnsafeEncryptionFunction, MACError

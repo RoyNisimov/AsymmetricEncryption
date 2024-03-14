@@ -11,3 +11,11 @@ class FeistelSha256:
     @staticmethod
     def get_feistel() -> Feistel:
         return Feistel(FeistelSha256.fSHA)
+
+    @staticmethod
+    def wrapper_encrypt(msg: bytes, key: bytes) -> bytes:
+        return FeistelSha256.get_feistel().encrypt(msg, key)
+
+    @staticmethod
+    def wrapper_decrypt(ciphertxt: bytes, key: bytes) -> bytes:
+        return FeistelSha256.get_feistel().decrypt(ciphertxt, key)

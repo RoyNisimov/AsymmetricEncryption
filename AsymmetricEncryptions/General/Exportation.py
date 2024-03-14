@@ -1,5 +1,7 @@
 from AsymmetricEncryptions.Protocols import KDF, PKCS7
 from AsymmetricEncryptions.General import XOR
+from AsymmetricEncryptions.General.Feistel_sha256 import FeistelSha256
+from AsymmetricEncryptions.Exceptions import MACError
 import json
 from secrets import compare_digest, token_bytes
 import hmac
@@ -13,7 +15,7 @@ class Exportation:
 
 
     @staticmethod
-    def export(file_name: str, data_dict: dict, pwd: bytes, *, exportation_func=XOR.repeated_key_xor, block_size: int = 32) -> None:
+    def export(file_name: str, data_dict: dict, pwd: bytes, *, exportation_func=FeistelSha256.wrapper_encrypt, block_size: int = 32) -> None:
         """
         Encrypts and exports data that can be converted to json.
         @param file_name: The file that will be exported into
@@ -36,7 +38,7 @@ class Exportation:
             f.write(final_data)
 
     @staticmethod
-    def load(file_name: str, pwd: bytes, *, dec_func=XOR.repeated_key_xor, block_size: int = 32) -> dict:
+    def load(file_name: str, pwd: bytes, *, dec_func=FeistelSha256.wrapper_decrypt, block_size: int = 32) -> dict:
         """
         Loads data from an encrypted file
         @param file_name: The encrypted file name
@@ -56,5 +58,6 @@ class Exportation:
         jData: bytes = PKCS7(block_size).unpad(jData)
         jData = XOR.repeated_key_xor(jData, randomness)
         mac: hmac = hmac.new(key=key, msg=jData, digestmod="sha512")
-        assert compare_digest(mac.digest(), dMac)
+        if not compare_digest(mac.digest(), dMac):
+            raise MACError("The macs don't match!")
         return json.loads(jData.decode())

@@ -1,9 +1,6 @@
 from __future__ import annotations
-import json
 import secrets
 from AsymmetricEncryptions.General import PrimeNumberGen, XOR, Exportation
-from AsymmetricEncryptions.Exceptions import NeededValueIsNull
-import hmac
 import hashlib
 
 class DSAKey:
@@ -31,7 +28,6 @@ class DSAKey:
     }
 
     def __init__(self, g: int, p: int, q: int, y: int, x: int or None = None):
-        if not y: raise NeededValueIsNull("Y can't be null")
         self.p = p
         self.q = q
         self.g = g
