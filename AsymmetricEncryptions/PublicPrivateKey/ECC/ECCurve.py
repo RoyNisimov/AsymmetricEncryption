@@ -13,12 +13,13 @@ class ECCurve:
     def infinity(self) -> ECPoint.ECPoint:
         return ECPoint.ECPoint(curve=self, x=None, y=None)
 
-    def __init__(self, a: int, b: int, n: int, p: int, g: ECPoint.ECPoint = None):
+    def __init__(self, a: int, b: int, n: int, p: int, g: ECPoint.ECPoint = None, h: int = 1):
         self.p = p
         self.n = n
         self.a = a
         self.b = b
         self.G = g
+        self.h = h
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, ECCurve): return False
@@ -27,8 +28,17 @@ class ECCurve:
     def f(self, x: int):
         return (pow(x, 3, self.p) + self.a * x + self.b) % self.p
 
+    def __str__(self):
+        return f"""{self.p = }
+{self.n = }
+{self.a = }
+{self.b = }
+{str(self.G) = }
+{self.h = }
+"""
+
     def export(self) -> str:
-        d: dict = {"a": self.a, "b": self.b, "n": self.n, "p": self.p, "g_x": self.G.x, "g_y": self.G.y}
+        d: dict = {"a": self.a, "b": self.b, "n": self.n, "p": self.p, "g_x": self.G.x, "g_y": self.G.y, "h": self.h}
         return json.dumps(d)
 
     @staticmethod

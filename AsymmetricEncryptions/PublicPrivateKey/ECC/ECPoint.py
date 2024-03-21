@@ -1,13 +1,13 @@
 from __future__ import annotations
-from . import ECCurve
+from .ECCurve import ECCurve
 import hashlib
 import json
 
 class ECPoint:
     """A point on the ECC NIST-P-256 curve"""
     # https://github.com/cgossi/fundamental_cryptography_with_python/blob/main/implementing_p_256_ecdhe.py
-    def __init__(self, curve: ECCurve.ECCurve, x: int, y: int) -> None:
-        self.curve: ECCurve.ECCurve = curve
+    def __init__(self, curve: ECCurve, x: int, y: int) -> None:
+        self.curve: ECCurve = curve
         self.x: int = x
         self.y: int = y
 

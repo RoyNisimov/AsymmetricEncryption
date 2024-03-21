@@ -11,6 +11,9 @@ class ECKey:
         self.private_key = priv
         self.public_key = pub
 
+    def get_public_key(self):
+        return ECKey(pub=self.public_key, priv=None)
+
     @staticmethod
     def new(curve: ECCurve) -> ECKey:
         """Creates a new ECKey pair"""

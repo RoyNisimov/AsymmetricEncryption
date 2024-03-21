@@ -35,6 +35,7 @@ If you don't know what you're doing, use [Unhazardous](#unhazardous)
 | [OAEP](#oaep)                                    | [Code](#oaep-code)               | [Math](#oaep-math)               |
 | [DH](#diffie-hellman)                            | [Code](#dh-code)                 | [Math](#dh-math)                 |
 | [YAK](#yak)                                      | [Code](#yak-code)                | [Math](#yak-math)                |
+| [MQV](#mqv)                                      | [Code](#mqv-code)                | [Math](#mqv-math)                |
 | [SSS](#sss)                                      | [Code](#sss-code)                | [Math](#sss-math)                |
 | [Fiat–Shamir](#fiat-shamir-zero-knowledge-proof) | [Code](#fiat-shamir-code)        | [Math](#fiat-shamir-math)        |
 | [OT1O2](#oblivious-transfer)                     | [Code](#oblivious-transfer-code) | [Math](#oblivious-transfer-math) |
@@ -778,6 +779,39 @@ print(sharedAlice)
 print(sharedBob)
 assert sharedAlice == sharedBob
 ```
+
+# MQV
+[Wiki](https://en.wikipedia.org/wiki/MQV)
+
+MQV (Menezes–Qu–Vanstone) is an authenticated protocol for key agreement based on the Diffie–Hellman scheme. Like other authenticated Diffie–Hellman schemes, MQV provides protection against an active attacker. The protocol can be modified to work in an arbitrary finite group, and, in particular, elliptic curve groups, where it is known as elliptic curve MQV (ECMQV).
+
+## MQV Math
+See [Wiki description](https://en.wikipedia.org/wiki/MQV)
+See [Video](https://www.youtube.com/watch?v=JKlTdY07IY4)
+## MQV Code
+
+```python
+from AsymmetricEncryptions.PublicPrivateKey.ECC import ECMQV, ECKey, EllipticCurveNISTP256
+
+a = ECKey.new(EllipticCurveNISTP256.get_curve())
+b = ECKey.new(EllipticCurveNISTP256.get_curve())
+
+x = ECMQV.Stage1n2(EllipticCurveNISTP256.get_curve())
+y = ECMQV.Stage1n2(EllipticCurveNISTP256.get_curve())
+
+Sa = ECMQV.Stage3n4(a, x)
+Sb = ECMQV.Stage3n4(b, y)
+
+keyA = ECMQV.Stage5(b.get_public_key(), Sa, y.get_public_key())
+keyB = ECMQV.Stage5(a.get_public_key(), Sb, x.get_public_key())
+
+print(keyA)
+print(keyB)
+assert keyA == keyB
+```
+
+
+
 
 # PKCS7
 Padding for symmetric algorithms
