@@ -1,6 +1,7 @@
 from __future__ import annotations
 from AsymmetricEncryptions.PublicPrivateKey.RSA.RSAKey import RSAKey
 from AsymmetricEncryptions.General import BytesAndInts
+from AsymmetricEncryptions.Exceptions import MACError
 from hashlib import sha256
 
 class RSA:
@@ -9,12 +10,14 @@ class RSA:
         self.key = key
 
     @staticmethod
-    def generate_key_pair(nBit) -> RSAKey and RSAKey:
+    def generate_key_pair(nBit) -> [RSAKey, RSAKey]:
         """
         RSAKey.new returns a pair of priv and pub
         :param nBit: Key length (2048+ is recommended )
         :return: Private key, public key
         """
+        if not isinstance(nBit, int):
+            raise TypeError("nBit must be an integer")
         Priv: RSAKey = RSAKey.new(nBit)
         Pub: RSAKey = Priv.public
         return Priv, Pub
@@ -31,6 +34,7 @@ class RSA:
         if assertion: assert int_msg < self.key.n
         cipher: int = pow(int_msg, self.key.e, self.key.n)
         return BytesAndInts.int2Byte(cipher)
+
 
     def decrypt(self, cipher: bytes) -> bytes:
         """
@@ -67,4 +71,5 @@ class RSA:
         og_msg = sha256(og_msg).digest()
         int_s: int = BytesAndInts.byte2Int(signature)
         cipher: int = pow(int_s, self.key.e, self.key.n)
-        assert cipher == BytesAndInts.byte2Int(og_msg)
+        if not cipher == BytesAndInts.byte2Int(og_msg):
+            raise MACError("Sig is wrong!")

@@ -15,15 +15,16 @@ class Exportation:
 
 
     @staticmethod
-    def export(file_name: str, data_dict: dict, pwd: bytes, *, exportation_func=FeistelSha256.wrapper_encrypt, block_size: int = 32) -> None:
+    def export(file_name: str, data_dict: dict, pwd: bytes, *, exportation_func=FeistelSha256.wrapper_encrypt, block_size: int = 32, isTesting: bool = False) -> bytes:
         """
         Encrypts and exports data that can be converted to json.
         @param file_name: The file that will be exported into
         @param data_dict: The data that will be exported
         @param pwd: The passphrase that will be used in the KDF and then encryption part of the export
         @param exportation_func: The encryption function used (I'm using XOR or OTP)
-        @return: None
+        @return: what's in the file
         @param block_size: The symmetric encryption block size
+        @param isTesting if the test is active it won't save
         """
         key: bytes = KDF.derive_key(pwd)
         jData: bytes = json.dumps(data_dict).encode("utf-8")
@@ -34,11 +35,13 @@ class Exportation:
         mac: hmac = hmac.new(key=key, msg=jData, digestmod="sha512")
         final_data: bytes = mac.digest() + write_data + randomness
         final_data = base64.b64encode(final_data)
-        with open(file_name, "wb") as f:
-            f.write(final_data)
+        if not isTesting:
+            with open(file_name, "wb") as f:
+                f.write(final_data)
+        return final_data
 
     @staticmethod
-    def load(file_name: str, pwd: bytes, *, dec_func=FeistelSha256.wrapper_decrypt, block_size: int = 32) -> dict:
+    def load(file_name: str, pwd: bytes, *, dec_func=FeistelSha256.wrapper_decrypt, block_size: int = 32, isTesting: bool = False, dataIfTesting: bytes = b"") -> dict:
         """
         Loads data from an encrypted file
         @param file_name: The encrypted file name
@@ -46,10 +49,14 @@ class Exportation:
         @param dec_func: The opposite of the encryption function
         @return: The data as a dict
         @param block_size: The symmetric decryption block size
+        @param isTesting: if testing then the dataIfTesting will take over instead of reading the file
+        @param dataIfTesting: if testing then the dataIfTesting will take over instead of reading the file
         """
         key: bytes = KDF.derive_key(pwd)
-        with open(file_name, "rb") as f:
-            final_data: bytes = f.read()
+        final_data: bytes = dataIfTesting
+        if not isTesting:
+            with open(file_name, "rb") as f:
+                final_data: bytes = f.read()
         final_data = base64.b64decode(final_data)
         dMac: bytes = final_data[:64]
         read_data: bytes = final_data[64:-32]

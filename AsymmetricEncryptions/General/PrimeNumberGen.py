@@ -17,6 +17,9 @@ class PrimeNumberGen:
 
     @staticmethod
     def nBitRandom(n):
+        if n < 0: raise ValueError(f"n must be an unsigned int! Current n:\n\n{n}\n")
+        if not isinstance(n, int):
+            raise TypeError("n must be an integer")
         return secrets.SystemRandom().randrange(pow(2, (n - 1)) + 1, pow(2, n) - 1)
 
     @staticmethod
@@ -68,6 +71,8 @@ class PrimeNumberGen:
         :param nBit: The bit size of the number
         :return: Random nBit prime number as an int
         """
+        if not isinstance(nBit, int):
+            raise TypeError("nBit must be an integer")
         while True:
             prime_candidate = PrimeNumberGen.getLowLevelPrime(nBit)
             if not PrimeNumberGen.isMillerRabinPassed(prime_candidate):

@@ -4,6 +4,8 @@ from AsymmetricEncryptions.General import PrimeNumberGen, XOR, Exportation
 from AsymmetricEncryptions.Exceptions import NeededValueIsNull
 import hashlib
 
+
+
 class RSAKey:
     def __init__(self, p: int or None = None, q: int or None = None, n: int = None, e: int = None, d: int or None = None, tot_n: int or None = None) -> None:
         if not e or not n:
@@ -21,6 +23,15 @@ class RSAKey:
 
     @staticmethod
     def new(bit_number: int) -> RSAKey:
+        if not isinstance(bit_number, int):
+            raise TypeError("bit_number must be an integer")
+        if bit_number < 0:
+            raise ValueError("Bit number must be unsigned!")
+        if not bit_number % 2 == 0:
+            raise ValueError("Bit number must be a power of two!")
+        from AsymmetricEncryptions.General.PowerOf2 import isPowerOfTwo
+        if not isPowerOfTwo(bit_number):
+            raise ValueError("Bit number must be a power of two!")
         p: int = PrimeNumberGen.generate(bit_number)
         q: int = PrimeNumberGen.generate(bit_number)
         n: int = p * q

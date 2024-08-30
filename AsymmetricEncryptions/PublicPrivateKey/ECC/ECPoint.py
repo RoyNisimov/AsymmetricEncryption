@@ -55,8 +55,8 @@ class ECPoint:
             s = (y2 - y1) * pow(x2 - x1, -1, p) % p
         else:
             # Point doubling
-            s = (3 * pow(x1, 2) + self.curve.a) * pow(2 * y1, -1, p) % p
-        x3 = (pow(s, 2) - x1 - x2) % p
+            s = (3 * pow(x1, 2, p) + self.curve.a) * pow(2 * y1, -1, p) % p
+        x3 = (pow(s, 2, p) - x1 - x2) % p
         y3 = (s * (x1 - x3) - y1) % p
         return ECPoint(curve=self.curve, x=x3, y=y3)
 
