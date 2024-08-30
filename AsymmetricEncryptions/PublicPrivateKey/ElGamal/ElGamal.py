@@ -1,6 +1,7 @@
 from __future__ import annotations
 from .ElGamalKey import ElGamalKey
 from AsymmetricEncryptions.General import BytesAndInts
+from AsymmetricEncryptions.Exceptions import Exceptions
 import secrets
 from math import gcd
 import hashlib
@@ -87,6 +88,5 @@ class ElGamal:
         V = pow(self.key.y, s1, self.key.p) * pow(s1, s2, self.key.p)
         V = V % self.key.p
         W = pow(self.key.g, m, self.key.p)
-        print(W)
-        print(V)
-        return V == W
+        if not V == W:
+            raise Exceptions.MACError("Signature doesn't match!")

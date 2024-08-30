@@ -1,8 +1,6 @@
 from __future__ import annotations
-import json
 import secrets
 from AsymmetricEncryptions.General import PrimeNumberGen, XOR, Exportation
-import hmac
 import hashlib
 
 class ElGamalKey:
@@ -49,6 +47,15 @@ y = {self.y}
         :param nBit: key length
         :return: ElGamalKey
         """
+        if not isinstance(nBit, int):
+            raise TypeError("bit_number must be an integer")
+        if nBit < 0:
+            raise ValueError("Bit number must be unsigned!")
+        if not nBit % 2 == 0:
+            raise ValueError("Bit number must be a power of two!")
+        from AsymmetricEncryptions.General.PowerOf2 import isPowerOfTwo
+        if not isPowerOfTwo(nBit):
+            raise ValueError("Bit number must be a power of two!")
         p: int = PrimeNumberGen.generate(nBit)
         g: int = secrets.randbelow(p)
         x: int = secrets.randbelow(p)
