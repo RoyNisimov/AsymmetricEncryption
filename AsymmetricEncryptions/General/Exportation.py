@@ -13,6 +13,9 @@ class Exportation:
     Handles the exportation of keys. Nothing in here is done by regulations though.
     """
 
+    @staticmethod
+    def sha_wrapper( b: bytes) -> bytes:
+        return sha256(b).digest()
 
     @staticmethod
     def export(file_name: str, data_dict: dict, pwd: bytes, *, exportation_func=FeistelSha256.wrapper_encrypt, block_size: int = 32, isTesting: bool = False) -> bytes:
@@ -28,7 +31,7 @@ class Exportation:
         """
         key: bytes = KDF.derive_key(pwd)
         jData: bytes = json.dumps(data_dict).encode("utf-8")
-        randomness: bytes = sha256(token_bytes(32)).digest()
+        randomness: bytes = Exportation.sha_wrapper(token_bytes(32))
         xored: bytes = XOR.repeated_key_xor(jData, randomness)
         xored: bytes = PKCS7(block_size).pad(xored)
         write_data: bytes = exportation_func(xored, key)
