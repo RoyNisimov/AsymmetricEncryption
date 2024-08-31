@@ -1,7 +1,7 @@
 from unittest import TestCase
 from AsymmetricEncryptions.PublicPrivateKey.DLIES import DLIESKey
 
-class TestRSAKey(TestCase):
+class TestDLIESKey(TestCase):
     def test_new(self):
         priv = DLIESKey.new(256)
         pub: DLIESKey = priv.public

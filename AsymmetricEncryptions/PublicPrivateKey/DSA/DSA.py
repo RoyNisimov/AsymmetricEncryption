@@ -1,9 +1,11 @@
 from __future__ import annotations
 from AsymmetricEncryptions.PublicPrivateKey.DSA import DSAKey
 from AsymmetricEncryptions.General import BytesAndInts
+from AsymmetricEncryptions.Interfaces import ISignAndVerify
+from AsymmetricEncryptions.Exceptions import MACError
 import secrets
 import hashlib
-class DSA:
+class DSA(ISignAndVerify):
     """Digital Signature Algorithm"""
     def __init__(self, key: DSAKey) -> None:
         self.key = key
@@ -38,7 +40,7 @@ class DSA:
         u1: int = (self.H(m) * w) % self.key.q
         u2: int = (r * w) % self.key.q
         v = ((pow(self.key.g, u1, self.key.p) * pow(self.key.y, u2, self.key.p)) % self.key.p) % self.key.q
-        assert v == r
+        if not v == r: raise MACError("Signatures don't match!")
 
     @staticmethod
     def H(m: int) -> int:

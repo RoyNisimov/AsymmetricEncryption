@@ -1,7 +1,7 @@
 from unittest import TestCase
 from AsymmetricEncryptions.PublicPrivateKey.ElGamal import ElGamalKey
 
-class TestRSAKey(TestCase):
+class TestElGamalKey(TestCase):
     def test_new(self):
         priv = ElGamalKey.new(256)
         pub: ElGamalKey = priv.public

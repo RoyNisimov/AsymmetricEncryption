@@ -3,7 +3,7 @@ from AsymmetricEncryptions.PublicPrivateKey.DLIES import DLIES
 from AsymmetricEncryptions import BytesAndInts, Exceptions
 from secrets import token_bytes
 
-class TestRSA(TestCase):
+class TestDLIES(TestCase):
 
     def test_generate_key_pair(self):
         priv, pub = DLIES.generate_key_pair(256)

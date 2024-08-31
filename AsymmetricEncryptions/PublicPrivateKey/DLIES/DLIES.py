@@ -1,9 +1,10 @@
 from AsymmetricEncryptions.General import XOR, BytesAndInts
 from AsymmetricEncryptions.Protocols import KDF
+from AsymmetricEncryptions.Interfaces import IEncryptAndDecrypt
 from .DLIESKey import DLIESKey
 import secrets
 
-class DLIES:
+class DLIES(IEncryptAndDecrypt):
     """
     Discrete Logarithm Integrated Encryption Scheme.
     """

@@ -2,11 +2,12 @@ from __future__ import annotations
 from .ElGamalKey import ElGamalKey
 from AsymmetricEncryptions.General import BytesAndInts
 from AsymmetricEncryptions.Exceptions import Exceptions
+from AsymmetricEncryptions.Interfaces import ISignAndVerify, IEncryptAndDecrypt
 import secrets
 from math import gcd
 import hashlib
 
-class ElGamal:
+class ElGamal(ISignAndVerify, IEncryptAndDecrypt):
     """ElGamal encryption"""
     def __init__(self, key: ElGamalKey) -> None:
         """

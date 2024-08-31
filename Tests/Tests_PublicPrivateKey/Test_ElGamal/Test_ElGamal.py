@@ -2,7 +2,7 @@ from unittest import TestCase
 from AsymmetricEncryptions.PublicPrivateKey.ElGamal import ElGamal
 from AsymmetricEncryptions import BytesAndInts, Exceptions
 from secrets import token_bytes
-class TestRSA(TestCase):
+class TestElGamal(TestCase):
 
     def test_generate_key_pair(self):
         priv, pub = ElGamal.generate_key_pair(256)
