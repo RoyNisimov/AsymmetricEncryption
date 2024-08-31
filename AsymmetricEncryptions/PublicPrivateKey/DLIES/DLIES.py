@@ -30,6 +30,7 @@ class DLIES:
         :param encryption_func: The symmetric encryption function
         :return: Encrypted Message, Decrypt helper as a tuple, don't split.
         """
+        if not isinstance(msg, bytes) or not isinstance(pub_key, DLIESKey): raise TypeError("Values must be: pub: DLIESKey, msg: Bytes, encryption_func: function")
         r: int = secrets.randbelow(pub_key.n)
         R: int = pow(pub_key.g, r, pub_key.n)
         S: int = pow(pub_key.y, r, pub_key.n)

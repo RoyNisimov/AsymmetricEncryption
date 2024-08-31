@@ -27,7 +27,7 @@ class TestRSA(TestCase):
         cipher = RSA(pub)
         self.assertRaises(TypeError, cipher.encrypt, "test")
 
-    def test_load(self):
+    def test_decrypt(self):
         priv, pub = RSA.generate_key_pair(256)
         cipher = RSA(pub)
         c = cipher.encrypt(b"test")
