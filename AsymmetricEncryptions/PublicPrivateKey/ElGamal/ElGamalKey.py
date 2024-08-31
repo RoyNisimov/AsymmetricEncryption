@@ -1,9 +1,10 @@
 from __future__ import annotations
 import secrets
 from AsymmetricEncryptions.General import PrimeNumberGen, XOR, Exportation
+from AsymmetricEncryptions.Interfaces import IKey
 import hashlib
 
-class ElGamalKey:
+class ElGamalKey(IKey):
     """ElGamal key object"""
     def __init__(self, p: int, g: int, y: int, x: int or None = None) -> None:
         """Use .new()"""

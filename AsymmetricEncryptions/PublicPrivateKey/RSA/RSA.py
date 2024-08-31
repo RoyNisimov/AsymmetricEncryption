@@ -2,9 +2,10 @@ from __future__ import annotations
 from AsymmetricEncryptions.PublicPrivateKey.RSA.RSAKey import RSAKey
 from AsymmetricEncryptions.General import BytesAndInts
 from AsymmetricEncryptions.Exceptions import MACError
+from AsymmetricEncryptions.Interfaces import IEncryptAndDecrypt, ISignAndVerify
 from hashlib import sha256
 
-class RSA:
+class RSA(IEncryptAndDecrypt, ISignAndVerify):
     """Rivest-Shamir-Adleman"""
     def __init__(self, key: RSAKey) -> None:
         self.key = key
