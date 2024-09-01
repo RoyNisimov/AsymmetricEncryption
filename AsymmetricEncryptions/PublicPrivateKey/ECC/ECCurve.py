@@ -1,8 +1,9 @@
 from __future__ import annotations
 from . import ECPoint
+from AsymmetricEncryptions.Interfaces.IExport import IExport
 import json
 
-class ECCurve:
+class ECCurve(IExport):
 
     def g(self) -> ECPoint.ECPoint:
         return ECPoint.ECPoint(curve=self, x=self.G.x, y=self.G.y)
@@ -26,6 +27,7 @@ class ECCurve:
         return self.p == other.p and self.n == other.n and self.a == other.a and self.b == other.b and self.G == other.G
 
     def f(self, x: int):
+        if x < 0: raise ValueError("X must be unsigned!")
         return (pow(x, 3, self.p) + self.a * x + self.b) % self.p
 
     def __str__(self):

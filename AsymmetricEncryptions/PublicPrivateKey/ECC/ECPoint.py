@@ -4,7 +4,7 @@ import hashlib
 import json
 
 class ECPoint:
-    """A point on the ECC NIST-P-256 curve"""
+    """A point on an ECC curve"""
     # https://github.com/cgossi/fundamental_cryptography_with_python/blob/main/implementing_p_256_ecdhe.py
     def __init__(self, curve: ECCurve, x: int, y: int) -> None:
         self.curve: ECCurve = curve

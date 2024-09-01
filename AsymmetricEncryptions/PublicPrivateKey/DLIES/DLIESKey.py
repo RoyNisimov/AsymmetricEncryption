@@ -1,10 +1,10 @@
 from __future__ import annotations
 from AsymmetricEncryptions.General import PrimeNumberGen, Exportation, XOR
-from AsymmetricEncryptions.Interfaces import IKey
+from AsymmetricEncryptions.Interfaces import IKey, IExport
 import secrets
 from hashlib import sha256
 
-class DLIESKey(IKey):
+class DLIESKey(IKey, IExport):
 
     def __init__(self, g: int, n: int, y: int, x: int = None):
         self.g: int = g

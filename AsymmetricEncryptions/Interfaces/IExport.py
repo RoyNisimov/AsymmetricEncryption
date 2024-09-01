@@ -1,21 +1,12 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 
-class ISignAndVerify(ABC):
+class IExport(ABC):
+    @abstractmethod
+    def export(self, *args, **kwargs):
+        raise NotImplementedError("Function should be implemented inside of class")
 
     @staticmethod
     @abstractmethod
-    def generate_key_pair(nBit: int):
+    def load(self, *args, **kwargs):
         raise NotImplementedError("Function should be implemented inside of class")
-
-    @abstractmethod
-    def sign(self, *args, **kwargs):
-        raise NotImplementedError("Function should be implemented inside of class")
-
-    @abstractmethod
-    def verify(self, *args, **kwargs):
-        raise NotImplementedError("Function should be implemented inside of class")
-
-
-
-

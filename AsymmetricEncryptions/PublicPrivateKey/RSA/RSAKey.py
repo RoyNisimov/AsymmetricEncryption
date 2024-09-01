@@ -2,12 +2,12 @@ from __future__ import annotations
 from math import gcd
 from AsymmetricEncryptions.General import PrimeNumberGen, XOR, Exportation
 from AsymmetricEncryptions.Exceptions import NeededValueIsNull
-from AsymmetricEncryptions.Interfaces.IKey import IKey
+from AsymmetricEncryptions.Interfaces import IKey, IExport
 import hashlib
 
 
 
-class RSAKey(IKey):
+class RSAKey(IKey, IExport):
     def __init__(self, p: int or None = None, q: int or None = None, n: int = None, e: int = None, d: int or None = None, tot_n: int or None = None) -> None:
         if not e or not n:
             raise NeededValueIsNull("e or n needed to create key")

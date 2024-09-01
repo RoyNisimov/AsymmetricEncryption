@@ -1,11 +1,11 @@
 from __future__ import annotations
 import secrets
 from AsymmetricEncryptions.General import PrimeNumberGen, XOR, Exportation
-from AsymmetricEncryptions.Interfaces import IKey
+from AsymmetricEncryptions.Interfaces import IKey, IExport
 
 import hashlib
 
-class DSAKey(IKey):
+class DSAKey(IKey, IExport):
     """The key object of DSA"""
     # H is Sha256 |H| is 256 bits or 32 bytes
     # L (Key length) is going to be 1024
