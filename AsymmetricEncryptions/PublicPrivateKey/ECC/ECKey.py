@@ -10,8 +10,9 @@ class ECKey:
         """Use .new()"""
         self.private_key = priv
         self.public_key = pub
+        self.curve = pub.curve
 
-    def get_public_key(self):
+    def get_public_key(self) -> ECKey:
         return ECKey(pub=self.public_key, priv=None)
 
     @staticmethod

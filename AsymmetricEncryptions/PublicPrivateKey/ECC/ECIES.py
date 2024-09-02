@@ -2,9 +2,10 @@ from __future__ import annotations
 from . import ECPoint, ECKey
 from AsymmetricEncryptions.General import XOR
 from AsymmetricEncryptions.Protocols import KDF, PKCS7
+from AsymmetricEncryptions.Interfaces import IEncryptAndDecrypt
 import secrets
 
-class ECIES:
+class ECIES(IEncryptAndDecrypt):
     """Elliptic Curve Integrated Encryption Scheme.
     This is how encryption really works in ECC.
     """
@@ -12,7 +13,9 @@ class ECIES:
     def __init__(self):
         pass
 
-
+    @staticmethod
+    def random_wrapper_for_test_mock(p):
+        return secrets.randbelow(p)
 
     @staticmethod
     def encrypt(msg: bytes, pub_key: ECPoint, encryption_function=XOR.repeated_key_xor, block_size: int=32) -> tuple[bytes, ECPoint]:
@@ -25,7 +28,7 @@ class ECIES:
         @param block_size: The symmetric block_size
         """
         msg: bytes = PKCS7(block_size).pad(msg)
-        r: int = secrets.randbelow(pub_key.curve.p)
+        r: int = ECIES.random_wrapper_for_test_mock(pub_key.curve.p)
         G: ECPoint = pub_key.curve.g()
         R: ECPoint = G * r
         S: ECPoint = pub_key * r

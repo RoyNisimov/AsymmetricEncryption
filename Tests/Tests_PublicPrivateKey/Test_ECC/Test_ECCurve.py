@@ -1,6 +1,6 @@
 from __future__ import annotations
 from unittest import TestCase
-from AsymmetricEncryptions.PublicPrivateKey.ECC import ECCurve, EllipticCurveNISTP256, ECPoint
+from AsymmetricEncryptions.PublicPrivateKey.ECC import EllipticCurveNISTP256, ECPoint
 
 class TestECCurve(TestCase):
 
