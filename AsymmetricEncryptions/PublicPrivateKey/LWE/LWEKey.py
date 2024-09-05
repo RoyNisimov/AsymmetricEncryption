@@ -1,9 +1,10 @@
 from __future__ import annotations
 import secrets
 from AsymmetricEncryptions.General import PrimeNumberGen, Exportation, XOR
+from AsymmetricEncryptions.Interfaces import IKey
 import hashlib
 
-class LWEKey:
+class LWEKey(IKey):
     """
     Learning With Errors key object
     """
