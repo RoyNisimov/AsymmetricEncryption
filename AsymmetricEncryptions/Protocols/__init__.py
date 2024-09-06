@@ -4,7 +4,7 @@ __all__ = ["SSS",
            "FiatShamirZeroKnowledgeProof",
            "OT1O2", "ObliviousTransfer",
            "Padding", "PKCS7", "RSADH", "DiffieHellman",
-           "ThreePass", "ThreePassProtocol", "KDF", "SchnorrPOK", "POK", "YAK", "Feistel"]
+           "ThreePass", "ThreePassProtocol", "KDF", "SchnorrPOK", "POK", "YAK", "Feistel", "GaloisField"]
 from .SSS import SSS
 from .OAEP import OAEP
 from .FSZKP import FiatShamirZeroKnowledgeProof
@@ -16,3 +16,4 @@ from .Padding import PKCS7
 from .SchnorrPOK import POK
 from .YAK import YAK
 from .Feistel import Feistel
+from .GaloisField import GaloisField
