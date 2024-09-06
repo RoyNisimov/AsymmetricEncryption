@@ -1,5 +1,8 @@
 import secrets
 from AsymmetricEncryptions.General import BytesAndInts
+from AsymmetricEncryptions.Exceptions import DeprecatedClass
+from hashlib import sha256
+
 
 class SSS:
     """
@@ -8,6 +11,7 @@ class SSS:
 
     FIELD_SIZE: int = pow(10, 5)
 
+    @DeprecatedClass.DeprecatedFunc
     @staticmethod
     def reconstruct_secret(shares: list[tuple[int, int]]) -> bytes:
         """
@@ -30,6 +34,7 @@ class SSS:
         a: int = int(round(sums, 0))
         return BytesAndInts.int2Byte(a)
 
+    @DeprecatedClass.DeprecatedFunc
     @staticmethod
     def polynom(x: int, coefficients: list[int]) -> int:
         """
@@ -43,6 +48,7 @@ class SSS:
             point += x ** coefficient_index * coefficient_value
         return point
 
+    @DeprecatedClass.DeprecatedFunc
     @staticmethod
     def coeff(t: int, secret: int) -> list[int]:
         """
@@ -60,6 +66,7 @@ class SSS:
         coeff.append(secret)
         return coeff
 
+    @DeprecatedClass.DeprecatedFunc
     @staticmethod
     def generate_shares(n: int, t: int, secret: bytes) -> list[tuple[int, int]]:
         """

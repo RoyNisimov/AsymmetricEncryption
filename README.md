@@ -880,6 +880,7 @@ print(unpadded == msg)  # True if the msg is small
 ```
 
 # SSS
+<span style="font-size:2em; font-weight: 900; color: red">WARNING: DEPRECATED UNTIL I FIGURE HOW TO IMPLEMENT GF(128)</span>
 
 SSS stands for Shamir's Secret Sharing.
 
