@@ -1,85 +1,108 @@
+from __future__ import division
+from __future__ import print_function
 import secrets
-from AsymmetricEncryptions.General import BytesAndInts
-from AsymmetricEncryptions.Exceptions import DeprecatedClass
-from hashlib import sha256
+import functools
 
 
 class SSS:
-    """
-    Shamir's Secret Sharing over a finite field of 10**5.
-    """
+    """Code is edited from Wikipedia"""
 
-    FIELD_SIZE: int = pow(10, 5)
+    def __init__(self, prime: int = pow(2, 10141) - 1):
+        self._PRIME = prime
 
-    @DeprecatedClass.DeprecatedFunc
+        self._RINT: int = functools.partial(secrets.SystemRandom().randint, 0)
+
     @staticmethod
-    def reconstruct_secret(shares: list[tuple[int, int]]) -> bytes:
+    def _eval_at( poly, x, prime):
+        """Evaluates polynomial (coefficient tuple) at x, used to generate a
+        shamir pool in make_random_shares below.
         """
-        Combines individual shares (points on graph)
-        using Lagrange's interpolation.
-        :param shares: `shares` is a list of points (x, y) belonging to a
-        polynomial with a constant of our key. PLEASE ENTER ONLY T NUMBER OF POINTS OR THIS WON'T WORK!
-        :return: The secret, assuming t points have been entered.
-        """
-        sums: int = 0
-        for j, share_j in enumerate(shares):
-            xj, yj = share_j
-            prod: int = 1
-            for i, share_i in enumerate(shares):
-                xi, _ = share_i
-                if i != j:
-                    prod *= xi / (xi - xj)
-            prod *= yj
-            sums += prod
-        a: int = int(round(sums, 0))
-        return BytesAndInts.int2Byte(a)
+        accum = 0
+        for coeff in reversed(poly):
+            accum *= x
+            accum += coeff
+            accum %= prime
+        return accum
 
-    @DeprecatedClass.DeprecatedFunc
+    def make_random_shares(self, secret: bytes, minimum, shares):
+        from AsymmetricEncryptions import BytesAndInts
+        """
+        Generates a random shamir pool for a given secret, returns share points.
+        """
+        secret = BytesAndInts.byte2Int(secret)
+        prime = self._PRIME
+        assert secret < prime, "The secret is too large!"
+        if minimum > shares:
+            raise ValueError("Pool secret would be irrecoverable.")
+        poly = [secret] + [self._RINT(prime - 1) for i in range(minimum - 1)]
+        points = [(i, SSS._eval_at(poly, i, prime))
+                  for i in range(1, shares + 1)]
+        return points
+
     @staticmethod
-    def polynom(x: int, coefficients: list[int]) -> int:
+    def _extended_gcd(a, b):
         """
-        This generates a single point on the graph of given polynomial
-        in `x`. The polynomial is given by the list of `coefficients`.
+        Division in integers modulus p means finding the inverse of the
+        denominator modulo p and then multiplying the numerator by this
+        inverse (Note: inverse of A is B such that A*B % p == 1). This can
+        be computed via the extended Euclidean algorithm
+        http://en.wikipedia.org/wiki/Modular_multiplicative_inverse#Computation
         """
-        point: int = 0
-        # Loop through reversed list, so that indices from enumerate match the
-        # actual coefficient indices
-        for coefficient_index, coefficient_value in enumerate(coefficients[::-1]):
-            point += x ** coefficient_index * coefficient_value
-        return point
+        x = 0
+        last_x = 1
+        y = 1
+        last_y = 0
+        while b != 0:
+            quot = a // b
+            a, b = b, a % b
+            x, last_x = last_x - quot * x, x
+            y, last_y = last_y - quot * y, y
+        return last_x, last_y
 
-    @DeprecatedClass.DeprecatedFunc
     @staticmethod
-    def coeff(t: int, secret: int) -> list[int]:
-        """
-        Randomly generate a list of coefficients for a polynomial with
-        degree of `t` - 1, whose constant is `secret`.
+    def _divmod(num, den, p):
+        """Compute num / den modulo prime p
 
-        For example with a 3rd degree coefficient like this:
-            3x^3 + 4x^2 + 18x + 554
-
-            554 is the secret, and the polynomial degree + 1 is
-            how many points are needed to recover this secret.
-            (in this case it's 4 points).
+        To explain this, the result will be such that:
+        den * _divmod(num, den, p) % p == num
         """
-        coeff: list[int] = [secrets.SystemRandom().randrange(0, SSS.FIELD_SIZE) for _ in range(t - 1)]
-        coeff.append(secret)
-        return coeff
+        inv, _ = SSS._extended_gcd(den, p)
+        return num * inv
 
-    @DeprecatedClass.DeprecatedFunc
-    @staticmethod
-    def generate_shares(n: int, t: int, secret: bytes) -> list[tuple[int, int]]:
+    def _lagrange_interpolate(self, x, x_s, y_s, p):
         """
-        :param n: Number of shares to be split
-        :param t: The number of required shares to reconstruct the secret.
-        :param secret: The secret
-        :return: List of cords (x, y).
+        Find the y-value for the given x, given n (x, y) points;
+        k points will define a polynomial of up to kth order.
         """
-        secret: int = BytesAndInts.byte2Int(secret)
-        coefficients: list[int] = SSS.coeff(t, secret)
-        shares: list[tuple[int, int]] = []
+        k = len(x_s)
+        assert k == len(set(x_s)), "points must be distinct"
 
-        for i in range(1, n + 1):
-            x = secrets.SystemRandom().randrange(1, SSS.FIELD_SIZE)
-            shares.append((x, SSS.polynom(x, coefficients)))
-        return shares
+        def PI(vals):  # upper-case PI -- product of inputs
+            accum = 1
+            for v in vals:
+                accum *= v
+            return accum
+        nums = []  # avoid inexact division
+        dens = []
+        for i in range(k):
+            others = list(x_s)
+            cur = others.pop(i)
+            nums.append(PI(x - o for o in others))
+            dens.append(PI(cur - o for o in others))
+        den = PI(dens)
+        num = sum([SSS._divmod(nums[i] * den * y_s[i] % p, dens[i], p)
+                   for i in range(k)])
+        return (SSS._divmod(num, den, p) + p) % p
+
+
+    def recover_secret(self, shares: list[tuple[int, int]]) -> bytes:
+        """
+        Recover the secret from share points
+        (points (x,y) on the polynomial).
+        """
+        from AsymmetricEncryptions import BytesAndInts
+        prime = self._PRIME
+        if len(shares) < 3:
+            raise ValueError("need at least t shares")
+        x_s, y_s = zip(*shares)
+        return BytesAndInts.int2Byte(self._lagrange_interpolate(0, x_s, y_s, prime))

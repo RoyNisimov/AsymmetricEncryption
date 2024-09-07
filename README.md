@@ -974,30 +974,23 @@ Pluge x = 0 and we get our answer: m = 3.
 ## SSS Code
 
 ```python
-from AsymmetricEncryptions.Protocols import SSS
-import secrets
+from AsymmetricEncryptions.Protocols.SSS import SSS
 
-# (3,5) sharing scheme
-t, n = 3, 5
 secret = b"test"
-print(f'Original Secret: {secret}')
-# Phase I: Generation of shares
-shares = SSS.generate_shares(n, t, secret)
-print(f'Shares: {", ".join(str(share) for share in shares)}')
-# Phase II: Secret Reconstruction
-# Picking t shares randomly for
-# reconstruction
-pool = secrets.SystemRandom().sample(shares, t)
-print(f'Combining shares: {", ".join(str(share) for share in pool)}')
-print(f'Reconstructed secret: {SSS.reconstruct_secret(pool)}')
+sss = SSS()
+shares = sss.make_random_shares(secret, 3, 5)
+recover = sss.recover_secret(shares[:3])
+print(recover)
 ```
 ```
-SSS.generate_shares -> returns a list of cordinets as a tuple: list[tuple[int, int]]
-secret: the secret
-n: number of shares to generate
-t: the number of shares needed to reconstruct the secret
+__init__(prime) -> supply another prime
 
-SSS.reconstruct_secret(shares) -> returns the secret
+SSS().make_random_shares -> returns a list of cordinets as a tuple: list[tuple[int, int]]
+secret: the secret
+shares: number of shares to generate
+minimum: the number of shares needed to reconstruct the secret
+
+SSS().reconstruct_secret(shares) -> returns the secret
 shares: the shares needed to reconstruct the secret
 
 
