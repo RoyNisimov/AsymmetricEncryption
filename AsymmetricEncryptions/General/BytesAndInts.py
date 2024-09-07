@@ -12,9 +12,10 @@ class BytesAndInts:
         :param i: the int to convert
         :return: bytes
         """
+        if not isinstance(i, int): raise TypeError("I must be an int!")
         if i < 0:
             raise ValueError("i can't be a negative number!")
-        if not isinstance(i, int): raise TypeError("I must be an int!")
+
         return i.to_bytes(i.bit_length(), "little").rstrip(b'\x00')
 
     @staticmethod
@@ -24,4 +25,5 @@ class BytesAndInts:
         :param b: the byte to convert
         :return: int
         """
+        if not isinstance(b, bytes): raise TypeError("I must be a byte!")
         return int.from_bytes(b, "little")

@@ -5,8 +5,8 @@ with open("README.md", 'r') as f:
     LONG_DESC = f.read()
 setup(
     name="asymmetric-encryption",
-    version="0.1.6",
-    author="Roy Nisimov, jacebalaron (Daniel gaisenberg)",
+    version="0.1.8",
+    author="Roy Nisimov, jacebalaron (Daniel Gaisenberg)",
     description=DESC,
     long_description_content_type="text/markdown",
     long_description=LONG_DESC,

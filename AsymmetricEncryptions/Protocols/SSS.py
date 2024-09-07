@@ -2,15 +2,19 @@ from __future__ import division
 from __future__ import print_function
 import secrets
 import functools
-
+from AsymmetricEncryptions.General.PrimeNumberGen import PrimeNumberGen
 
 class SSS:
     """Code is edited from Wikipedia"""
 
-    def __init__(self, prime: int = pow(2, 10141) - 1):
+    def __init__(self, prime: int = pow(2, 10141) - 1, mini = 2, maxi = 3):
+        if prime < 2: raise ValueError("Prime must be a positive prime number")
+        if prime != pow(2, 10141) - 1:
+            if not PrimeNumberGen.isMillerRabinPassed(prime): raise ValueError("Prime must be a positive prime number")
         self._PRIME = prime
-
         self._RINT: int = functools.partial(secrets.SystemRandom().randint, 0)
+        self.mini = mini
+        self.maxi = maxi
 
     @staticmethod
     def _eval_at( poly, x, prime):
@@ -29,11 +33,15 @@ class SSS:
         """
         Generates a random shamir pool for a given secret, returns share points.
         """
+        if minimum < 2 or shares < 3: raise ValueError("Minimum and Shares must be larger than 2, 3")
         secret = BytesAndInts.byte2Int(secret)
         prime = self._PRIME
-        assert secret < prime, "The secret is too large!"
+        if secret > prime:
+            raise ValueError("The secret is too large!")
         if minimum > shares:
             raise ValueError("Pool secret would be irrecoverable.")
+        self.mini = minimum
+        self.maxi = shares
         poly = [secret] + [self._RINT(prime - 1) for i in range(minimum - 1)]
         points = [(i, SSS._eval_at(poly, i, prime))
                   for i in range(1, shares + 1)]
@@ -102,7 +110,7 @@ class SSS:
         """
         from AsymmetricEncryptions import BytesAndInts
         prime = self._PRIME
-        if len(shares) < 3:
+        if len(shares) < self.mini:
             raise ValueError("need at least t shares")
         x_s, y_s = zip(*shares)
         return BytesAndInts.int2Byte(self._lagrange_interpolate(0, x_s, y_s, prime))
