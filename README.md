@@ -1,3 +1,5 @@
+from sysconfig import schemefrom private.Test import public_share
+
 # WARNING
 This is probably hazards because I don't know best practices.
 I write this only for fun and learning.
@@ -992,6 +994,19 @@ minimum: the number of shares needed to reconstruct the secret
 
 SSS().reconstruct_secret(shares) -> returns the secret
 shares: the shares needed to reconstruct the secret
+
+
+```
+```python
+from AsymmetricEncryptions.Protocols.SSS import SSS
+secret = b"test"
+sss = SSS()
+public_share = sss.generate_for_public(secret, [b"A", b"Custom", b"Point"])
+recover = sss.recover_secret([public_share, b"A", b"Custom", b"Point"])
+print(recover)
+```
+```doctest
+Allows you to share one public share and memorize a few words to be used as a key sharing scheme
 
 
 ```

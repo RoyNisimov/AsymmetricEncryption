@@ -3,6 +3,8 @@ from __future__ import print_function
 import secrets
 import functools
 from AsymmetricEncryptions.General.PrimeNumberGen import PrimeNumberGen
+from hashlib import sha256
+
 
 class SSS:
     """Code is edited from Wikipedia"""
@@ -17,7 +19,7 @@ class SSS:
         self.maxi = maxi
 
     @staticmethod
-    def _eval_at( poly, x, prime):
+    def _eval_at(poly, x, prime):
         """Evaluates polynomial (coefficient tuple) at x, used to generate a
         shamir pool in make_random_shares below.
         """
@@ -28,7 +30,7 @@ class SSS:
             accum %= prime
         return accum
 
-    def make_random_shares(self, secret: bytes, minimum, shares):
+    def make_random_shares(self, secret: bytes, minimum: int, shares: int) -> list[tuple[int, int]]:
         from AsymmetricEncryptions import BytesAndInts
         """
         Generates a random shamir pool for a given secret, returns share points.
@@ -42,10 +44,46 @@ class SSS:
             raise ValueError("Pool secret would be irrecoverable.")
         self.mini = minimum
         self.maxi = shares
-        poly = [secret] + [self._RINT(prime - 1) for i in range(minimum - 1)]
+        poly = [secret] + [self._RINT(prime - 1) for _ in range(minimum - 1)]
         points = [(i, SSS._eval_at(poly, i, prime))
                   for i in range(1, shares + 1)]
         return points
+
+    def get_prime(self) -> int:
+        return self._PRIME
+
+
+    def convert_list_of_bytes_and_points_to_points(self, l: list[tuple[int, int] or bytes]) -> list[tuple[int, int]]:
+        r = []
+        for obj in l:
+            if isinstance(obj, bytes):
+                r.append(SSS.convert_bytes_to_point(obj, self._PRIME))
+            else:
+                r.append(obj)
+        return r
+
+    def generate_for_public(self, secret: bytes, custom: list[tuple[int, int] or bytes]) -> tuple[int, int]:
+        from AsymmetricEncryptions import BytesAndInts
+        secret = BytesAndInts.byte2Int(secret)
+        prime = self._PRIME
+        if secret > prime:
+            raise ValueError("The secret is too large!")
+        if len(custom) == 0: raise ValueError("The secret would be irrecoverable")
+        r = self._RINT(prime - 1)
+        custom = self.convert_list_of_bytes_and_points_to_points(custom)
+        custom.append((0, secret))
+        x_s, y_s = zip(*custom)
+        point = (r, self._lagrange_interpolate(r, x_s, y_s, prime))
+        return point
+
+
+
+    @staticmethod
+    def convert_bytes_to_point(b: bytes, prime: int) -> tuple[int, int]:
+        from AsymmetricEncryptions import BytesAndInts
+        return BytesAndInts.byte2Int(b) % prime, BytesAndInts.byte2Int(sha256(b).digest()) % prime
+
+
 
     @staticmethod
     def _extended_gcd(a, b):
@@ -109,6 +147,7 @@ class SSS:
         (points (x,y) on the polynomial).
         """
         from AsymmetricEncryptions import BytesAndInts
+        shares = self.convert_list_of_bytes_and_points_to_points(shares)
         prime = self._PRIME
         if len(shares) < self.mini:
             raise ValueError("need at least t shares")
