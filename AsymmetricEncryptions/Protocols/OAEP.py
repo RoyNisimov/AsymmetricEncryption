@@ -13,6 +13,7 @@ class OAEP:
         :param message: The message to be padded.
         :return: Padded message
         """
+        if len(message) > 32: raise ValueError("Max message length is 32")
         nonce: bytes = secrets.token_bytes(32)
         mm: bytes = message + b"\x00" * (32 - len(message))
         G: bytes = XOR.repeated_key_xor(mm, hashlib.sha256(nonce).digest())
