@@ -8,7 +8,7 @@ import hashlib
 
 
 class RSAKey(IKey, IExport):
-    def __init__(self, p: int or None = None, q: int or None = None, n: int = None, e: int = None, d: int or None = None, tot_n: int or None = None) -> None:
+    def __init__(self, p: int or None = None, q: int or None = None, n: int = None, e: int = None, d: int or None = None, tot_n: int or None = None, size=2048) -> None:
         if not e or not n:
             raise NeededValueIsNull("e or n needed to create key")
         self.p = p
@@ -18,9 +18,13 @@ class RSAKey(IKey, IExport):
         self.e = e
         self.d = d
         self.has_private = False
+        self.size = size
         if d:
             self.has_private = True
             self.public = RSAKey(None, None, n, e, None, None)
+
+    def get_pub(self) -> RSAKey:
+        return RSAKey(None, None, self.n, self.e, None, None, size=self.size)
 
     @staticmethod
     def new(bit_number: int) -> RSAKey:
@@ -41,7 +45,7 @@ class RSAKey(IKey, IExport):
         while gcd(e, tot_n) != 1:
             e: int = PrimeNumberGen.generate(bit_number)
         d: int = pow(e, -1, tot_n)
-        return RSAKey(p, q, n, e, d, tot_n)
+        return RSAKey(p, q, n, e, d, tot_n, size=bit_number)
 
 
     def export(self, file_name: str, pwd: bytes = b"\x00", *, enc_func=XOR.repeated_key_xor) -> None:

@@ -1,5 +1,3 @@
-from sysconfig import schemefrom private.Test import public_share
-
 # WARNING
 This is probably hazards because I don't know best practices.
 I write this only for fun and learning.
@@ -38,6 +36,7 @@ If you don't know what you're doing, use [Unhazardous](#unhazardous)
 | [DH](#diffie-hellman)                            | [Code](#dh-code)                 | [Math](#dh-math)                 |
 | [YAK](#yak)                                      | [Code](#yak-code)                | [Math](#yak-math)                |
 | [MQV](#mqv)                                      | [Code](#mqv-code)                | [Math](#mqv-math)                |
+| [Ring Signatures](#rs)                           | [Code](#rs-code)                 | [Math](#rs-math)                 |
 | [SSS](#sss)                                      | [Code](#sss-code)                | [Math](#sss-math)                |
 | [Fiat–Shamir](#fiat-shamir-zero-knowledge-proof) | [Code](#fiat-shamir-code)        | [Math](#fiat-shamir-math)        |
 | [OT1O2](#oblivious-transfer)                     | [Code](#oblivious-transfer-code) | [Math](#oblivious-transfer-math) |
@@ -812,7 +811,41 @@ print(keyB)
 assert keyA == keyB
 ```
 
+# RS
+Ring Signatures
 
+[Wiki](https://en.wikipedia.org/wiki/Ring_signature)
+
+
+## RS Math
+See [Wiki description](https://en.wikipedia.org/wiki/Ring_signature#Implementation)
+See [Video](https://www.youtube.com/watch?v=LB3m8GZ-mpg)
+## RS Code
+
+```python
+from AsymmetricEncryptions.PublicPrivateKey.RSA import RSAKey, RSA
+from AsymmetricEncryptions.Protocols.RingSignatures import RingSignatures
+import secrets
+
+# Gen
+ksize = 2048
+gsize = 3
+og_priv, _ = RSA.generate_key_pair(ksize)
+og_priv: RSAKey
+og_priv.export("KeysForTest\\Signer.key")
+keys = []
+for i in range(gsize - 1):
+    _, pub = RSA.generate_key_pair(ksize)
+    keys.append(pub)
+msg1 = b"Test"
+p = secrets.randbelow(len(keys))
+keys.insert(p, og_priv)
+r = RingSignatures(keys)
+sig, RK = r.sign_message(msg1, p)
+print(sig)
+ver = RingSignatures(RK).verify_message(msg1, sig)
+print(ver)
+```
 
 
 # PKCS7
