@@ -832,6 +832,7 @@ permute a hash fanction E to take x, and return x + m.
 Get a random glue value u.
 For each key other than your's have a random number, this will act as some fake key, put it in array s.
 c = v = E(u)
+G(x, e, n) = x**e % n
 For i, key in enumerate(keys):
     if i == z: continue
     v = E(G(s[i], key.e, key.n) ^ v)
@@ -840,9 +841,15 @@ s[z] = G(v ^ u, keys[z].d, keys[z].n])
 rk = keys.copy()
 rk[z] = rk[z].get_pub()
 send the message, c, s, rk
+RK is the public keys denoting the group members
+s is the fake private keys with the one we calculated
 
-
-
+Verifing:
+Permute a hash fanction E to take x, and return x + m.
+v = c
+For i, key in enumerate(keys):
+    v = E(G(s[i], rk[i].e, rk[i].n) ^ v)
+if v == c: then it's verified
 
 ```
 
