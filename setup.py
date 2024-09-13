@@ -5,7 +5,7 @@ with open("README.md", 'r') as f:
     LONG_DESC = f.read()
 setup(
     name="asymmetric-encryption",
-    version="0.1.9",
+    version="0.2.0",
     author="Roy Nisimov, jacebalaron (Daniel Gaisenberg)",
     description=DESC,
     long_description_content_type="text/markdown",
@@ -14,9 +14,9 @@ setup(
     url='https://github.com/RoyNisimov/AsymmetricEncryption',
     license='MIT',
     install_requires=[],
-    keywords=['python', 'cipher', 'asymmetric encryptions', 'signing', 'verifying', 'protocols', 'encryption', 'decryption'],
+    keywords=['python', 'cipher', 'asymmetric encryptions', 'signing', 'verifying', 'protocols', 'encryption', 'decryption', "signature", "ring signature", "rsa", "dsa", "ecc"],
     classifiers=[
-        "Development Status :: 1 - Planning",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "Programming Language :: Python :: 3",
         "Operating System :: Unix",
