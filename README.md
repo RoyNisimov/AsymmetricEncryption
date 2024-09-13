@@ -828,7 +828,7 @@ Signing:
 Get a list of public RSA keys (the group of keys).
 Randomly insert your private key in the list (Don't put it first or last), will call this possiton z.
 To sign a message m:
-permute a hash fanction E to take x, and return x + m.
+permute a hash fanction E to take x, and return hash(x + m).
 Get a random glue value u.
 For each key other than your's have a random number, this will act as some fake key, put it in array s.
 c = v = E(u)
@@ -845,7 +845,7 @@ RK is the public keys denoting the group members
 s is the fake private keys with the one we calculated
 
 Verifing:
-Permute a hash fanction E to take x, and return x + m.
+Permute a hash fanction E to take x, and return hash(x + m).
 v = c
 For i, key in enumerate(keys):
     v = E(G(s[i], rk[i].e, rk[i].n) ^ v)
