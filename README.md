@@ -85,7 +85,7 @@ let d = e**-1 % tot_n
         |
         ⌄
 It took me ages to figure out what that means.
-Bassicly if you do e * d and then mod it by tot_n you get 1.
+Basically if you do e * d and then mod it by tot_n you get 1.
 e and d must be inteager primes.
 For example:
 p = 5 // Prime should be a lot larger this is for example. 
@@ -812,14 +812,44 @@ assert keyA == keyB
 ```
 
 # RS
-Ring Signatures
+[Ring Signatures Wiki](https://en.wikipedia.org/wiki/Ring_signature)
 
-[Wiki](https://en.wikipedia.org/wiki/Ring_signature)
+Ring Signatures allows a user to mask his identity, but prove that he is part of a group.
+In the original RSA paper an example of someone leaking sensitive data anonymously.
 
+![RingSignatures.png](ReadmeSrc/RingSignatures.png)
 
 ## RS Math
 See [Wiki description](https://en.wikipedia.org/wiki/Ring_signature#Implementation)
 See [Video](https://www.youtube.com/watch?v=LB3m8GZ-mpg)
+
+```
+Signing:
+Get a list of public RSA keys (the group of keys).
+Randomly insert your private key in the list (Don't put it first or last), will call this possiton z.
+To sign a message m:
+permute a hash fanction E to take x, and return x + m.
+Get a random glue value u.
+For each key other than your's have a random number, this will act as some fake key, put it in array s.
+c = v = E(u)
+For i, key in enumerate(keys):
+    if i == z: continue
+    v = E(G(s[i], key.e, key.n) ^ v)
+then
+s[z] = G(v ^ u, keys[z].d, keys[z].n])
+rk = keys.copy()
+rk[z] = rk[z].get_pub()
+send the message, c, s, rk
+
+
+
+
+```
+
+
+
+
+
 ## RS Code
 
 ```python
