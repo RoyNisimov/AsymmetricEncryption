@@ -16,7 +16,10 @@ pip install asymmetric-encryption
 ```
 [In PyPI](https://pypi.org/project/asymmetric-encryption/)
 
+# Running tests
+If cloned run this command to run tests
 
+```python -m unittest discover .\test\```
 
 # Table of contents
 
