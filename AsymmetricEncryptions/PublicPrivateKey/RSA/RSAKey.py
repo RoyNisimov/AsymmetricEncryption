@@ -60,9 +60,11 @@ class RSAKey(IKey, IExport):
         if not isinstance(other, RSAKey): return False
         return hashlib.sha256(f"{self}".encode()).hexdigest() == hashlib.sha256(f"{other}".encode()).hexdigest()
 
+    def get_hash_hex(self):
+        return hashlib.sha256(str(self).encode()).hexdigest()
 
     def __str__(self) -> str:
-        r: str = ""
+        r: str = "-" * 100 + '\n'
         if self.has_private:
             r += f"""
 Private Key:
@@ -81,4 +83,4 @@ Public Key:
 n = {self.n}
 e = {self.e}
 """
-        return r
+        return r + "-" * 100 + '\n'

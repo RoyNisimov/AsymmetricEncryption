@@ -14,12 +14,11 @@ class RingSignatures:
         self.n = len(k)
         self.q = 1 << (L - 1)
 
-    def sign_message(self, m: bytes, z: int):
+    def sign_message(self, m: bytes, z: int) -> list[int] and list[RSAKey]:
         self._permut(m)
         s = [None] * self.n
         u = secrets.SystemRandom().randint(0, self.q)
         c = v = self._E(u)
-
         first_range = list(range(z + 1, self.n))
         second_range = list(range(z))
         whole_range = first_range + second_range
@@ -36,7 +35,7 @@ class RingSignatures:
         rk[z] = rk[z].get_pub()
         return [c] + s, rk
 
-    def verify_message(self, m: bytes, X) -> bool:
+    def verify_message(self, m: bytes, X: list[int]) -> bool:
         self._permut(m)
 
         def _f(i):

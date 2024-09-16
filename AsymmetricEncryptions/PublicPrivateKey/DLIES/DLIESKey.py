@@ -43,7 +43,7 @@ class DLIESKey(IKey, IExport):
 
     def __eq__(self, other: DLIESKey) -> bool:
         if not isinstance(other, DLIESKey): return False
-        return sha256(f"{self}".encode()).hexdigest() == sha256(f"{other}".encode()).hexdigest()
+        return sha256(f"{str(self)}".encode()).hexdigest() == sha256(f"{str(other)}".encode()).hexdigest()
 
 
     @staticmethod
@@ -54,7 +54,7 @@ class DLIESKey(IKey, IExport):
         return DLIESKey(g, n, y, x)
 
     def __str__(self) -> str:
-        r: str = ""
+        r: str = "DLIES KEY"
         if self.has_private:
             r += f"""
     Private Key:
@@ -67,7 +67,7 @@ class DLIESKey(IKey, IExport):
 
 
     """
-            r += f"""
+        r += f"""
     Public Key:
 
     g = {self.g}
@@ -75,4 +75,4 @@ class DLIESKey(IKey, IExport):
     y = {self.y}
 
     """
-            return r
+        return r
