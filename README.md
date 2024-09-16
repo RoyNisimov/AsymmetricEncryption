@@ -45,6 +45,7 @@ If you don't know what you're doing, use [Unhazardous](#unhazardous)
 | [OT1O2](#oblivious-transfer)                     | [Code](#oblivious-transfer-code) | [Math](#oblivious-transfer-math) |
 | [TPP](#three-pass-protocol)                      | [Code](#tpp-code)                | [Math](#tpp-math)                |
 | [POK](#proof-of-knowledge)                       | [Code](#pok-code)                | [Math](#pok-math)                |
+| [PSGS](#PSGS)                                    | [Code](#PSGS-code)               | [Math](#PSGS-math)               |
 ---
 
 
@@ -1403,3 +1404,110 @@ print(ct)
 print(pt)
 ```
 
+# Maybe Hazardous
+
+This is a list of cryptosystem and protocols that can be hazardous, (Currently it's only PSGS by me).
+
+# PSGS
+PSGS stands for Pretty Secure Group Signature created by Roy Nisimov (That's me).
+
+Don't let the name fool you, I don't know if this is secure, it seems secure, the math is down bellow if you want to check this out.
+
+A group signature allows one trusted authority to identify the signer of a message within a group however the group members don't know who signed it only that is was a member of the group.
+
+PSGS uses the discrete logarithms problem together with symmetric encryption
+# PSGS Math
+```Setup
+A trusted authority, TA is going to do these steps in order to set up the group.
+Generate a public private RSA key (TAd, TAe, TAn)
+Generate a prime number p and a generator g
+TA then shares TAe, TAn, g, p
+Every member in the group generate a private key x and calculates y = g**x mod p
+The members then send y together with a proof that they know x to TA using a secure channel
+
+TA is going to do:
+ Verify proof
+ Save y into a list pk
+ Return sy = y**d mod n
+
+Signing
+To sign a message m:
+m = h(m)
+k = h(m || g || p || e || n)
+Sig_a = HMAC or GMC + AES (m, k)
+z = random
+C1 = h(k || z)
+C2 = h(k||c1)
+S = sy ** c1
+r = S**c2 mod n
+Sig_b = (r, S, z)
+Signature is sig_a, sig_b
+
+Verify
+m = h(m)
+k = h(m || g || p || e || n)
+Verify mac
+Pt = Decrypt_AES(ciphertext, k)
+If pt == m : the signer is part of the group
+To verify that the signer sent his identity
+C1 = h(k || z)
+C2 = h(k||c1)
+V = r ** e mod n
+W = S ** c2 ** e mod n
+If V != W the signature is faulty and fails
+U = r ** e ** c1 mod n
+T = S ** c2 ** e ** c1 mod n
+If U != T the signature is faulty and fails
+If everything passes the signature is ok
+
+Trace
+To trace signature sig TA would do this:
+Verify the signature if this fails then the signature is faulty
+And cannot be traced and can’t be trusted.
+k = h(m || g || p || e || n)
+C1 = h(k || z)
+
+For every key y in the list pk:
+If S ** e mod n == y ** c1 mod n:
+	y is the signer key
+```
+
+# PSGS code
+```python
+from AsymmetricEncryptions import BytesAndInts
+from AsymmetricEncryptions.Protocols.SchnorrPOK import POK
+from AsymmetricEncryptions.MaybeHazardous.PSGS import PSGS
+
+TA = PSGS(1024)
+public_parameters = TA.get_pub()
+AliceIdentity, AX = PSGS.build_key(public_parameters)
+prover = POK(AliceIdentity)
+proofAX = prover.prove(BytesAndInts.int2Byte(AX.x))
+BobsIdentity, BX = PSGS.build_key(public_parameters)
+prover = POK(BobsIdentity)
+proofBX = prover.prove(BytesAndInts.int2Byte(BX.x))
+CarolIdentity, CX = PSGS.build_key(public_parameters)
+prover = POK(CarolIdentity)
+proofCX = prover.prove(BytesAndInts.int2Byte(CX.x))
+# Assume they send to TA their identity securely
+SYA = TA.sign_member_key(proofAX, AliceIdentity)
+SYB = TA.sign_member_key(proofAX, AliceIdentity)
+SYC = TA.sign_member_key(proofAX, AliceIdentity)
+
+e = public_parameters[0].e
+n = public_parameters[0].n
+g = public_parameters[1]
+p = public_parameters[2]
+
+m = b"test"
+# Alice Signs
+sig = PSGS.sign(m, g, p, e, n, SYA)
+
+# verify
+PSGS.verify(sig, m, g, p, e, n)
+
+# TA wants to trace:
+pub_k = TA.trace(sig, m, g, p, e, n)
+print(pub_k)
+print(AliceIdentity)
+```
