@@ -13,12 +13,12 @@ class TestDLIESKey(TestCase):
 
     def test_export_and_load(self):
         priv: DLIESKey = DLIESKey.new(256)
-        priv.export("..\\..\\..\\TestFiles\\DLIESKeyTestFileUnprotected.key", b"")
-        loaded_priv = DLIESKey.load("..\\..\\..\\TestFiles\\DLIESKeyTestFileUnprotected.key", b"")
+        priv.export("TestFiles\\DLIESKeyTestFileUnprotected.key", b"")
+        loaded_priv = DLIESKey.load("TestFiles\\DLIESKeyTestFileUnprotected.key", b"")
         self.assertEqual(priv, loaded_priv)
         priv: DLIESKey = DLIESKey.new(256)
-        priv.export("..\\..\\..\\TestFiles\\DLIESKeyTestFileProtected.key", b"Pass")
-        loaded_priv = DLIESKey.load("..\\..\\..\\TestFiles\\DLIESKeyTestFileProtected.key", b"Pass")
+        priv.export("TestFiles\\DLIESKeyTestFileProtected.key", b"Pass")
+        loaded_priv = DLIESKey.load("TestFiles\\DLIESKeyTestFileProtected.key", b"Pass")
         self.assertEqual(priv, loaded_priv)
 
 

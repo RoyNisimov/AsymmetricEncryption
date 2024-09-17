@@ -13,12 +13,12 @@ class TestRSAKey(TestCase):
 
     def test_export_and_load(self):
         priv: RSAKey = RSAKey.new(256)
-        priv.export("..\\..\\..\\TestFiles\\RSAKeyTestFileUnprotected.key", b"")
-        loaded_priv = RSAKey.load("..\\..\\..\\TestFiles\\RSAKeyTestFileUnprotected.key", b"")
+        priv.export("TestFiles\\RSAKeyTestFileUnprotected.key", b"")
+        loaded_priv = RSAKey.load("TestFiles\\RSAKeyTestFileUnprotected.key", b"")
         self.assertEqual(priv, loaded_priv)
         priv: RSAKey = RSAKey.new(256)
-        priv.export("..\\..\\..\\TestFiles\\RSAKeyTestFileProtected.key", b"Pass")
-        loaded_priv = RSAKey.load("..\\..\\..\\TestFiles\\RSAKeyTestFileProtected.key", b"Pass")
+        priv.export("TestFiles\\RSAKeyTestFileProtected.key", b"Pass")
+        loaded_priv = RSAKey.load("TestFiles\\RSAKeyTestFileProtected.key", b"Pass")
         self.assertEqual(priv, loaded_priv)
 
 
