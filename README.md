@@ -45,6 +45,7 @@ If you don't know what you're doing, use [Unhazardous](#unhazardous)
 | [OT1O2](#oblivious-transfer)                     | [Code](#oblivious-transfer-code) | [Math](#oblivious-transfer-math) |
 | [TPP](#three-pass-protocol)                      | [Code](#tpp-code)                | [Math](#tpp-math)                |
 | [POK](#proof-of-knowledge)                       | [Code](#pok-code)                | [Math](#pok-math)                |
+| [MPC - Addition](#mpc-add)                       | [Code](#mpc-add-code)            | [Math](#mpc-add-math)            |
 ---
 
 
@@ -1402,3 +1403,73 @@ assert pt == msg
 print(ct)
 print(pt)
 ```
+# Multi-parti Compilation
+This section simulates MPC protocols over internet
+
+## MPC ADD
+Allows members to add their keys without reveling what their keys are.
+Secretly summing the keys value.
+
+
+## MPC ADD Math
+```
+We want to calculate the sum of two numbers A and B
+PA only knows A
+PB only knows B
+
+PA splits A into 2 shares: a1 and a2 such that a1 + a2 = A
+PB splits B into 2 shares: b1 and b2 such that b1 + b2 = B
+
+PA sends to PB a2
+PB sends to PA b1
+
+PA does a1 + b1 = s1
+PB does a2 + b2 = s2
+s1 + s2 = A + B
+
+   PA   |  PB
+----|---------------
+A   =    a1    |  a2
++   |    +     |  +
+B   =    b1    |  b2 
+=   ---------------
+s   =   s1   +   s2
+    
+```
+
+
+
+## MPC ADD code
+```python
+# Addition of A B and C over modulus n, if n == 0 then there's no modulus
+from AsymmetricEncryptions.MPC.MPC_Addition import MPCAddition
+# number of partis
+n = 3
+# modulus
+m = 53
+# secret numbers A B and C
+A = 3
+B = 16
+C = 20
+a = MPCAddition(A, n, m)
+b = MPCAddition(B, n, m)
+c = MPCAddition(C, n, m)
+a_shares = a.get_shares()
+b_shares = b.get_shares()
+c_shares = c.get_shares()
+total_shares = list(zip(a_shares, b_shares, c_shares))
+a_gets = total_shares[0] # gets a1 b1 c1
+b_gets = total_shares[1] # gets a2 b2 c2
+c_gets = total_shares[2] # gets a3 b3 c3
+print(a_gets)
+print(b_gets)
+print(c_gets)
+s_a = a.s(a_gets) # sums
+s_b = b.s(b_gets)
+s_c = c.s(c_gets)
+print(su := (sum([s_a, s_b, s_c]) % m))
+assert su == (A + B + C) % m
+
+
+```
+
