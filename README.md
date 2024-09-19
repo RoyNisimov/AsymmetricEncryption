@@ -1480,7 +1480,7 @@ This protocol is built on trust, but none of the parties (unless cooperating) ca
 
 # DC Math
 
-![Dining Cryptographers.png](ReadmeSrc\DC.png)
+![Dining Cryptographers.png](ReadmeSrc/DC.png)
 
 ```
 Each parti flips a coin privately such that A has a shared bit with B and one with C.
