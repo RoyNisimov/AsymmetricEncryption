@@ -5,7 +5,7 @@ from unittest import TestCase
 class TestYAK(TestCase):
 
     def test_YAK(self):
-        yakAlice = YAK.new(256)
+        yakAlice = YAK.new(256, False)
         gq = yakAlice.get_gq()
         yakBob = YAK(*gq)
         g, q = gq

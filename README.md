@@ -19,7 +19,11 @@ pip install asymmetric-encryption
 # Running tests
 If cloned run this command to run tests
 
-```python -m unittest discover .\test\```
+(Enter the venv first obviously)
+```
+cd .\test\
+python -m unittest discover 
+```
 
 # Table of contents
 

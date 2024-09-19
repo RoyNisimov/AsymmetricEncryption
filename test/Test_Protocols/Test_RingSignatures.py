@@ -7,7 +7,9 @@ class TestRingSignature(TestCase):
     def test_sign_and_verify(self):
         # Gen
         ksize = 1024
-        gsize = secrets.randbelow(7)
+        gsize = secrets.randbelow(10)
+        while gsize < 3:
+            gsize = secrets.randbelow(10)
         og_priv, _ = RSA.generate_key_pair(ksize)
         og_priv: RSAKey
         keys = []

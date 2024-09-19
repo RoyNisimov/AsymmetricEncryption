@@ -16,13 +16,14 @@ class YAK:
         self.q: int = q
 
     @staticmethod
-    def new(nBit: int = 2048) -> YAK:
+    def new(nBit: int = 2048, warn=True) -> YAK:
         """
         Generates a new YAK object
         @param nBit: how big q is
         @return: YAK object
         """
-        warnings.warn("YAK security is debatable")
+        if warn:
+            warnings.warn("YAK security is debatable")
         q: int = PrimeNumberGen.generate(nBit)
         g: int = secrets.randbelow(q)
         return YAK(g, q)
