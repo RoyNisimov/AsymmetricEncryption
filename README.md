@@ -1473,3 +1473,102 @@ assert su == (A + B + C) % m
 
 ```
 
+# Dining Cryptographers
+Three cryptographers gather around a table for dinner. The waiter informs them that the meal has been paid for by someone, who could be one of the cryptographers or the National Security Agency (NSA). The cryptographers respect each other's right to make an anonymous payment, but want to find out whether the NSA paid. So they decide to execute a two-stage protocol.
+
+This protocol is built on trust, but none of the parties (unless cooperating) can deduce who paid
+
+# DC Math
+
+![Dining Cryptographers.png](ReadmeSrc\DC.png)
+
+```
+Each parti flips a coin privately such that A has a shared bit with B and one with C.
+B with A and C. and C with A and B. (AB = BA, AC = CA, BC = CB)
+Each of the parties anounce:
+If they paid: 1 ^ [shared bits[i] ^ shared bits[i + 1]
+If not: [shared bits[i] ^ shared bits[i + 1]
+They than XORed the anouncement. If it's 1 then someone has paid, if it's 0 then the NSA has paid
+Lets go through an example.
+If the NSA paid and none other:
+AB = BA = 1
+BC = CB = 1
+AC = CA = 0
+A anounces: 0 ^ 1 ^ 0 = 1
+B anounces: 0 ^ 1 ^ 1 = 0
+C anounces: 0 ^ 1 ^ 0 = 1
+They then XOR everything together and get 0: (1 ^ 0 ^ 1 = 0) None paid
+If A paid it's the same except A anounces 0:
+A anounces: 1 ^ 1 ^ 0 = 0
+B anounces: 0 ^ 1 ^ 1 = 0
+C anounces: 0 ^ 1 ^ 0 = 1
+They then XOR everything together and get 1: (1 ^ 0 ^ 0 = 1) Someone paid
+
+The protocol assumes that one (And only one) party has paid.
+This is because of the xors cancelling eachother.
+
+    A   |   B   |   C
+------------------------------------
+A   0   |   1   |   0
+------------------------------------
+B   1   |   0   |   1
+------------------------------------
+C   0   |   1   |   0
+
+Notice how this is symmetric. 
+If none has paid than the number of ones must be even and so they cancel out.
+Now this is the same thing but now A has paid:
+    A   |   B   |   C
+------------------------------------
+A   1   |   1   |   0
+------------------------------------
+B   1   |   0   |   1
+------------------------------------
+C   0   |   1   |   0
+There is an odd number of ones, so the answer will be 1.
+B and A paid.
+    A   |   B   |   C
+------------------------------------
+A   1   |   1   |   0
+------------------------------------
+B   1   |   1   |   1
+------------------------------------
+C   0   |   1   |   0
+There is another one so they'll cancell eachother out. Leading into a false negative of 0. 
+C thinks that nobody paid, but A and B will know what has happend.
+    A   |   B   |   C
+------------------------------------
+A   1   |   1   |   0
+------------------------------------
+B   1   |   1   |   1
+------------------------------------
+C   0   |   1   |   1
+If everyone pays (i.e and odd number of ones) the answer will be 1 again, but everybody will think that they paid. 
+Thus nobody will suspect that they paid three times.
+```
+
+
+
+# DC Code
+```python
+from AsymmetricEncryptions.MPC.DiningCryptographers import Cryptographer
+from secrets import randbelow
+n = 4
+# A paid
+A = Cryptographer(n, 0, paid=True, name="Alice")
+B = Cryptographer(n, 1, name="Bob")
+C = Cryptographer(n, 2, name="Carol")
+D = Cryptographer(n, 3, name="Dan")
+cryptographers = [A, B, C, D]
+A.other_cryptographers = cryptographers.copy()
+B.other_cryptographers = cryptographers.copy()
+C.other_cryptographers = cryptographers.copy()
+D.other_cryptographers = cryptographers.copy()
+A.establish_bits()
+B.establish_bits()
+C.establish_bits()
+D.establish_bits()
+print(cryptographers[randbelow(n)].dine())
+# if dine is 1 then one of the cryptographers paid, if zero then the nsa. If you paid, and it's zero that means that an even number of people paid.
+
+```
