@@ -1,8 +1,10 @@
 import json
 import secrets
 from AsymmetricEncryptions.Protocols import KDF
+from AsymmetricEncryptions.Exceptions import ReplayAttack
 from base64 import b64encode, b64decode
-from datetime import datetime, timedelta
+from datetime import datetime
+from hashlib import sha256
 
 class TGS:
     # Ticket Granting Server
@@ -11,8 +13,12 @@ class TGS:
         self.dec = symmetric_dec_func
         self.enc = symmetric_enc_func
         self.KTGS = KTGS
+        self.cache = set()
 
     def grant_ticket(self, TGT: bytes, msgD: bytes):
+        hash_ticket = sha256(TGT + msgD).hexdigest()
+        if hash_ticket in self.cache: raise ReplayAttack()
+        self.cache.add(hash_ticket)
         d_TGT = self.dec(TGT, self.KTGS)
         try:
             TGT = json.loads(d_TGT)
@@ -25,7 +31,7 @@ class TGS:
         msgD_dict = json.loads(verify_msgD)
         assert msgD_dict["client_id"] == TGT["client_id"]
         Kc_s = b64encode(KDF.derive_key(secrets.token_bytes(32))).decode()
-        msgE = {"Kc_s": Kc_s, "client_id": TGT["client_id"], "lifetime": TGT["lifetime"]}
+        msgE = {"Kc_s": Kc_s, "client_id": TGT["client_id"], "lifetime": TGT["lifetime"], "nonce": TGT["nonce"]}
         msgE = json.dumps(msgE)
         Ks = KDF.derive_key(self.services[TGT["service_id"]])
         msgE = self.enc(msgE, Ks)

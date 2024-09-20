@@ -7,7 +7,9 @@ class UnsafeEncryptionFunction(Exception):
     def __init__(self, func_name: str, msg: str):
         super().__init__(f"The function {func_name} is an unsafe function, error message:{msg}")
 
-
+class ReplayAttack(Exception):
+    def __init__(self):
+        super().__init__(f"Replay Attack!")
 
 class MACError(Exception):
 

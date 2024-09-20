@@ -43,15 +43,22 @@ class Feistel:
         msg = PKCS7(self.block_size).pad(msg)
         if not keys:
             keys: list[bytes] = self.expand_key(key, rounds)
-        half_point: int = int(self.block_size // 2)
-        left: bytes = msg[0:half_point]
-        right: bytes = msg[half_point:]
-        for i in range(rounds):
-            left = XOR.repeated_key_xor(left, self.encryption_function(right, keys[i % len(keys)]))
-            tmp: bytes = left
-            left = right
-            right = tmp
-        return right + left
+        msgs = [msg[i:i+self.block_size] for i in range(0, len(msg), self.block_size)]
+
+        def e(msg, keys):
+            half_point: int = int(self.block_size // 2)
+            left: bytes = msg[0:half_point]
+            right: bytes = msg[half_point:]
+            for i in range(rounds):
+                left = XOR.repeated_key_xor(left, self.encryption_function(right, keys[i % len(keys)]))
+                tmp: bytes = left
+                left = right
+                right = tmp
+            return right + left
+        c = b""
+        for m in msgs:
+            c += e(m, keys)
+        return c
 
     def decrypt(self, cipher: bytes, key: bytes, *, rounds: int = 16) -> bytes:
         """

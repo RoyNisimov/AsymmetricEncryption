@@ -1,16 +1,14 @@
 from datetime import datetime
 from secrets import token_bytes
-
-
 from AsymmetricEncryptions.Protocols import KDF
 import json
 from .KDC import KDC
 from base64 import b64decode
 
 class KerberosClient:
-    from AsymmetricEncryptions.General.XOR import XOR
+    from AsymmetricEncryptions.General.Feistel_sha256 import FeistelSha256
 
-    def __init__(self, c_id: str, passwd: bytes, dec_func: callable = XOR.repeated_key_xor_with_scrypt_kdf, symmetric_enc_func: callable = XOR.repeated_key_xor_with_scrypt_kdf):
+    def __init__(self, c_id: str, passwd: bytes, dec_func: callable = FeistelSha256.get_feistel().decrypt, symmetric_enc_func: callable = FeistelSha256.get_feistel().encrypt):
         self.id = c_id
         self.passwd = passwd
         self.key = KDF.derive_key(passwd)

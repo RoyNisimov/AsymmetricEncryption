@@ -12,7 +12,7 @@ from AsymmetricEncryptions.General.XOR import XOR
 
 class KDC:
 
-    def __init__(self, clients: dict[str, bytes], services: dict[str, bytes], master_passwd: bytes, symmetric_enc_func=XOR.repeated_key_xor_with_scrypt_kdf, symmetric_dec_func=XOR.repeated_key_xor_with_scrypt_kdf, ticket_life_time=datetime(1, 1, 1, 1)):
+    def __init__(self, clients: dict[str, bytes], services: dict[str, bytes], master_passwd: bytes, symmetric_enc_func=FeistelSha256.get_feistel().encrypt, symmetric_dec_func=FeistelSha256.get_feistel().decrypt, ticket_life_time=datetime(1, 1, 1, 1, minute=1)):
         self.clients = clients
         self.services = services
         self.master_passwd = KDF.derive_key(master_passwd)

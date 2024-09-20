@@ -24,13 +24,15 @@ class AS:
         Kc_TGS: bytes = KDF.derive_key(secrets.token_bytes(32))
         Kc_TGS = b64encode(Kc_TGS).decode()
         now = datetime.now()
-        time_change = timedelta(days=self.ticket_life_time.day, minutes=self.ticket_life_time.minute, hours=self.ticket_life_time.hour)
+        # year can't be 0 so I do -1
+        time_change = timedelta(days=self.ticket_life_time.day + ((self.ticket_life_time.year - 1) * 365), minutes=self.ticket_life_time.minute, hours=self.ticket_life_time.hour)
+
         life_time = now + time_change
-        msgA_unenc = {"nonce": d["nonce"], "lifetime": str(life_time), "Kc_TGS": Kc_TGS, "service_id": d["service_id"]}
+        life_time = life_time.replace(microsecond=0).strftime("%Y-%m-%d %H:%M:%S")
+        msgA_unenc = {"nonce": d["nonce"], "lifetime": life_time, "Kc_TGS": Kc_TGS, "service_id": d["service_id"]}
         msgA_json = json.dumps(msgA_unenc)
         msgA: bytes = self.enc(msgA_json, clients_key)
-        life_time = life_time.replace(microsecond=0).strftime("%Y-%m-%d %H:%M:%S")
-        msgB_unenc = {"client_id": d["client_id"], "Kc_TGS": Kc_TGS, "lifetime": life_time, "service_id": d["service_id"]}
+        msgB_unenc = {"client_id": d["client_id"], "Kc_TGS": Kc_TGS, "lifetime": life_time, "service_id": d["service_id"], "nonce": d["nonce"]}
         msgB_json = json.dumps(msgB_unenc)
         TGT: bytes = self.enc(msgB_json, self.KTGS)
         return msgA, TGT

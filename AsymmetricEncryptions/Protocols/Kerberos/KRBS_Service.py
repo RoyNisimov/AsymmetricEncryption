@@ -4,10 +4,11 @@ from datetime import datetime
 
 from .KDC import KDC
 from AsymmetricEncryptions.General.XOR import XOR
+from AsymmetricEncryptions.General.Feistel_sha256 import FeistelSha256
 from AsymmetricEncryptions.Protocols.KDF import KDF
 
 class KerberosService:
-    def __init__(self, Ks: bytes, symmetric_enc_func=XOR.repeated_key_xor_with_scrypt_kdf, symmetric_dec_func=XOR.repeated_key_xor_with_scrypt_kdf):
+    def __init__(self, Ks: bytes, symmetric_enc_func=FeistelSha256.get_feistel().encrypt, symmetric_dec_func=FeistelSha256.get_feistel().decrypt):
         self.enc = KDC.add_hmac(symmetric_enc_func)
         self.dec = KDC.dec_with_hmac(symmetric_dec_func)
         self.ks = KDF.derive_key(Ks)

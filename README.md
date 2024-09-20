@@ -1346,21 +1346,33 @@ print(m)
 
 ## Kerberos
 
+From [wiki](https://en.wikipedia.org/wiki/Kerberos_(protocol))
+```
+Kerberos (/ˈkɜːrbərɒs/) is a computer-network authentication protocol that works on the basis of tickets to allow nodes communicating over a non-secure network to prove their identity to one another in a secure manner. 
+Its designers aimed it primarily at a client–server model, and it provides mutual authentication—both the user and the server verify each other's identity. 
+Kerberos protocol messages are protected against eavesdropping and replay attacks.
+```
+The protocol was named after the character Kerberos (or Cerberus) from Greek mythology, the ferocious three-headed guard dog of Hades.
+
 ## Kerberos Math
+https://www.youtube.com/watch?v=_44CHD3Vx-0
+
+https://www.youtube.com/watch?v=5N242XcKAsM
 
 ## Kerberos Code
 
 ```python
 # This isn't really secure since I didn't implement the nonce thing fully as well as the ticket lifetime, but this is a showcase
 from AsymmetricEncryptions.Protocols.Kerberos import KDC, KerberosService, KerberosClient
-
+# Make sure the symmetric encryption function is AES (Make a wrapper function, use other library like PyCryptodom or Cryptography)
 clients = {"Alice": b"Alice", "Bob": b"Bob"}
-services = {"S": b"Secret"}
+services = {"S": b"Secret", "CRM": b"Super secret passwOrd"}
 
 serviceS = KerberosService(b"Secret")
+CRM = KerberosService(b"Super secret passwOrd")
 
 kdc = KDC(clients, services, b"secret password")
-clientAlice = KerberosClient("Bob", b"Bob")
+clientAlice = KerberosClient("Alice", b"Alice")
 
 approach = clientAlice.approach_AS("S")
 
@@ -1373,6 +1385,20 @@ ticket, msgF = kdc.TGS_response(*approach_TGS)
 approach_service, Kc_s = clientAlice.approach_service(ticket, msgF, Kc_tgs)
 
 serviceS.confirm(*approach_service)
+
+clientBob = KerberosClient("Bob", b"Bob")
+
+approach = clientAlice.approach_AS("CRM")
+
+msgA, TGT = kdc.AS_response(approach[0])
+
+approach_TGS, Kc_tgs = clientAlice.approach_TGS(msgA, TGT)
+
+ticket, msgF = kdc.TGS_response(*approach_TGS)
+
+approach_service, Kc_s = clientAlice.approach_service(ticket, msgF, Kc_tgs)
+
+CRM.confirm(*approach_service)
 
 # Kc_s is a shared session key
 
