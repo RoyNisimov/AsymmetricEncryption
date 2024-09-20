@@ -49,6 +49,7 @@ If you don't know what you're doing, use [Unhazardous](#unhazardous)
 | [OT1O2](#oblivious-transfer)                     | [Code](#oblivious-transfer-code) | [Math](#oblivious-transfer-math) |
 | [TPP](#three-pass-protocol)                      | [Code](#tpp-code)                | [Math](#tpp-math)                |
 | [POK](#proof-of-knowledge)                       | [Code](#pok-code)                | [Math](#pok-math)                |
+| [Kerberos](#Kerberos)                            | [Code](#Kerberos-code)           | [Math](#Kerberos-math)           |
 | [MPC - Addition](#mpc-add)                       | [Code](#mpc-add-code)            | [Math](#mpc-add-math)            |
 ---
 
@@ -1342,6 +1343,41 @@ print(c)
 print(m)
 
 ```
+
+## Kerberos
+
+## Kerberos Math
+
+## Kerberos Code
+
+```python
+# This isn't really secure since I didn't implement the nonce thing fully as well as the ticket lifetime, but this is a showcase
+from AsymmetricEncryptions.Protocols.Kerberos import KDC, KerberosService, KerberosClient
+
+clients = {"Alice": b"Alice", "Bob": b"Bob"}
+services = {"S": b"Secret"}
+
+serviceS = KerberosService(b"Secret")
+
+kdc = KDC(clients, services, b"secret password")
+clientAlice = KerberosClient("Bob", b"Bob")
+
+approach = clientAlice.approach_AS("S")
+
+msgA, TGT = kdc.AS_response(approach[0])
+
+approach_TGS, Kc_tgs = clientAlice.approach_TGS(msgA, TGT)
+
+ticket, msgF = kdc.TGS_response(*approach_TGS)
+
+approach_service, Kc_s = clientAlice.approach_service(ticket, msgF, Kc_tgs)
+
+serviceS.confirm(*approach_service)
+
+# Kc_s is a shared session key
+
+```
+
 
 
 
