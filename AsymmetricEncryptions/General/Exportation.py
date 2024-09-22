@@ -18,7 +18,7 @@ class Exportation:
         return sha256(b).digest()
 
     @staticmethod
-    def export(file_name: str, data_dict: dict, pwd: bytes, *, exportation_func=FeistelSha256.wrapper_encrypt, block_size: int = 32, isTesting: bool = False) -> bytes:
+    def export(file_name: str, data_dict: dict, pwd: bytes, *, exportation_func=FeistelSha256.get_feistel().encrypt, block_size: int = 32, isTesting: bool = False) -> bytes:
         """
         Encrypts and exports data that can be converted to json.
         @param file_name: The file that will be exported into
@@ -44,7 +44,7 @@ class Exportation:
         return final_data
 
     @staticmethod
-    def load(file_name: str, pwd: bytes, *, dec_func=FeistelSha256.wrapper_decrypt, block_size: int = 32, isTesting: bool = False, dataIfTesting: bytes = b"") -> dict:
+    def load(file_name: str, pwd: bytes, *, dec_func=FeistelSha256.get_feistel().decrypt, block_size: int = 32, isTesting: bool = False, dataIfTesting: bytes = b"") -> dict:
         """
         Loads data from an encrypted file
         @param file_name: The encrypted file name

@@ -31,4 +31,12 @@ class TestDLIES(TestCase):
         c = DLIES.encrypt(pub, b"test")
         self.assertEqual(b"test", DLIES.decrypt(priv, c))
 
-
+    def test_signature_and_verification(self):
+        priv, pub = DLIES.generate_key_pair(1024)
+        signer = DLIES(priv, pub)
+        m = b"test"
+        sig = signer.sign(m)
+        v = DLIES.verify(pub, sig, m)
+        self.assertEqual(v, True)
+        v = DLIES.verify(pub, sig, m+b"no")
+        self.assertEqual(v, False)

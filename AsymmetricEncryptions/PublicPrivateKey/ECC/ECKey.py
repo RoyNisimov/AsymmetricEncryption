@@ -31,7 +31,7 @@ class ECKey:
         :return: None
         """
         data_dict: dict = {"curve": self.public_key.curve.export(), "pub_x": self.public_key.x, "pub_y": self.public_key.y, "priv": self.private_key}
-        Exportation.export(file_name=file_name, pwd=pwd, data_dict=data_dict, exportation_func=enc_func)
+        Exportation.Exportation.export(file_name=file_name, pwd=pwd, data_dict=data_dict, exportation_func=enc_func)
 
     @staticmethod
     def load(file_name: str, pwd: bytes = b"\x00", *, dec_func=XOR.repeated_key_xor) -> ECKey:
@@ -42,7 +42,7 @@ class ECKey:
         :param dec_func: symmetric decryption function (XOR / OTP here)
         :return: ECKey
         """
-        data: dict = Exportation.load(file_name=file_name, pwd=pwd, dec_func=dec_func)
+        data: dict = Exportation.Exportation.load(file_name=file_name, pwd=pwd, dec_func=dec_func)
         pub: ECPoint = ECPoint(ECCurve.load(data["curve"]), data["pub_x"], data["pub_y"])
         return ECKey(pub, data["priv"])
 

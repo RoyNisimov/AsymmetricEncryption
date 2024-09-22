@@ -8,6 +8,7 @@ class ECSchnorr:
     """Schnorr's signature scheme implemented with ECC."""
     def __init__(self, key: ECKey):
         self.key: ECKey = key
+        self.nonces = set()
 
     def sign(self, msg: bytes) -> tuple[int, ECPoint]:
         """
@@ -17,6 +18,11 @@ class ECSchnorr:
         """
         G: ECPoint = self.key.public_key.curve.G
         r: int = secrets.randbelow(self.key.public_key.curve.p)
+        h_r = sha256(BytesAndInts.int2Byte(r)).digest()
+        while h_r in self.nonces:
+            r: int = secrets.randbelow(self.key.public_key.curve.p)
+            h_r = sha256(BytesAndInts.int2Byte(r)).digest()
+        self.nonces.add(h_r)
         R: ECPoint = G * r
         c: int = BytesAndInts.byte2Int(sha256(bytes(R) + msg).digest())
         s: int = (c * self.key.private_key) + r

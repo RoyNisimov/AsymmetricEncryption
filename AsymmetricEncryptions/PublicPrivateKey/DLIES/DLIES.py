@@ -3,14 +3,19 @@ from AsymmetricEncryptions.Protocols import KDF
 from AsymmetricEncryptions.Interfaces import IEncryptAndDecrypt
 from .DLIESKey import DLIESKey
 import secrets
+from hashlib import sha256
 
 class DLIES(IEncryptAndDecrypt):
     """
     Discrete Logarithm Integrated Encryption Scheme.
     """
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, private_key: DLIESKey, public_key: DLIESKey, nonces: set = None) -> None:
+        self.nonces = set()
+        if nonces is not None:
+            self.nonces = nonces
+        self.private_key = private_key
+        self.public_key = public_key
 
     @staticmethod
     def generate_key_pair(nBits: int) -> tuple[DLIESKey, DLIESKey]:
@@ -55,3 +60,32 @@ class DLIES(IEncryptAndDecrypt):
         S_bytes: bytes = BytesAndInts.int2Byte(S)
         key: bytes = KDF.derive_key(S_bytes)
         return decryption_function(encrypted, key)
+
+
+
+    def sign(self, message: bytes):
+        """Schnorr signature
+        @param message: Message to be signed
+        """
+        assert self.private_key.has_private
+        r = secrets.randbelow(self.private_key.n-1)
+        h_r = sha256(BytesAndInts.int2Byte(r)).digest()
+        while h_r in self.nonces:
+            r = secrets.randbelow(self.private_key.n - 1)
+            h_r = sha256(BytesAndInts.int2Byte(r)).digest()
+        self.nonces.add(h_r)
+        R: int = pow(self.private_key.g, r, self.private_key.n)
+        c: int = BytesAndInts.byte2Int(f"{R}{self.public_key.y}".encode() + message)
+        s: int = c * self.private_key.x + r
+        return s, R
+
+    @staticmethod
+    def verify(public_key: DLIESKey, signature: tuple[int, int], message: bytes):
+        """Verification of Schnorr signature
+        @param public_key: the signers public key
+        @param signature: the signature
+        @param message: the message
+        """
+        s, R = signature
+        c: int = BytesAndInts.byte2Int(f"{R}{public_key.y}".encode() + message)
+        return pow(public_key.g, s, public_key.n) == (pow(public_key.y, c, public_key.n) * R) % public_key.n
