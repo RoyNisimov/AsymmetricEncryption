@@ -1388,19 +1388,17 @@ serviceS.confirm(*approach_service)
 
 clientBob = KerberosClient("Bob", b"Bob")
 
-approach = clientAlice.approach_AS("CRM")
+approach = clientBob.approach_AS("CRM")
 
 msgA, TGT = kdc.AS_response(approach[0])
 
-approach_TGS, Kc_tgs = clientAlice.approach_TGS(msgA, TGT)
+approach_TGS, Kc_tgs = clientBob.approach_TGS(msgA, TGT)
 
 ticket, msgF = kdc.TGS_response(*approach_TGS)
 
-approach_service, Kc_s = clientAlice.approach_service(ticket, msgF, Kc_tgs)
+approach_service, Kc_s = clientBob.approach_service(ticket, msgF, Kc_tgs)
 
 CRM.confirm(*approach_service)
-
-# Kc_s is a shared session key
 
 ```
 
