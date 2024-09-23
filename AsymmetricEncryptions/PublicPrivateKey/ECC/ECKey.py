@@ -12,6 +12,10 @@ class ECKey:
         self.public_key = pub
         self.curve = pub.curve
 
+    def find_inverse(self):
+        assert self.private_key is not None
+        return pow(self.private_key, -1, self.curve.n)
+
     def get_public_key(self) -> ECKey:
         return ECKey(pub=self.public_key, priv=None)
 

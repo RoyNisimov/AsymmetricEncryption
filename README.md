@@ -43,6 +43,7 @@ If you don't know what you're doing, use [Unhazardous](#unhazardous)
 | [DH](#diffie-hellman)                            | [Code](#dh-code)                 | [Math](#dh-math)                 |
 | [YAK](#yak)                                      | [Code](#yak-code)                | [Math](#yak-math)                |
 | [MQV](#mqv)                                      | [Code](#mqv-code)                | [Math](#mqv-math)                |
+| [ECDSA](#ECDSA)                                  | [Code](#ecdsa-code)              | [Math](#ecdsa-math)              |
 | [Ring Signatures](#rs)                           | [Code](#rs-code)                 | [Math](#rs-math)                 |
 | [SSS](#sss)                                      | [Code](#sss-code)                | [Math](#sss-math)                |
 | [Fiat–Shamir](#fiat-shamir-zero-knowledge-proof) | [Code](#fiat-shamir-code)        | [Math](#fiat-shamir-math)        |
@@ -819,6 +820,75 @@ print(keyA)
 print(keyB)
 assert keyA == keyB
 ```
+# ECDSA
+Elliptic Curve Digital Signature Algorithm.
+
+Shares many similarities with DSA (which is based on discrete logarithm problem) however as the name suggests it's based on Elliptic Curve Cryptography.
+
+## ECDSA Math
+[Video](https://youtu.be/RdP7_hMUTn0?si=coCCK5h1cRgVV8xX),
+[Wiki](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm#Signature_generation_algorithm)
+
+``` 
+Sign
+Private key: x
+Public key: y = G * x
+e = H(m)
+k = secure random < curve.n
+K = G * k
+r = K.x
+s = (k**-1 * (e + r * x)) % n
+send r, s
+
+Verify
+Public key: y = G * x
+r, s
+m
+
+e = H(m)
+u1 = (e * s**-1) % n
+u2 = (r * s**-1) % n
+w = G * u1 + y * u2
+if w.x == r then the signature is valid
+
+Nonce reuse private key leakage!:
+if r1 == r2 and (s1 != s2 or m1 != m2)
+k = (e1 - e2) * ((s1 - s2)**-1) 
+k = k % n
+x = (s1 * k - e) * r1**-1
+x = x%n
+x is the private key
+```
+
+## ECDSA Code
+```python
+from AsymmetricEncryptions.PublicPrivateKey.ECC import EllipticCurveNISTP256, ECKey, ECPoint, ECDSA
+from secrets import randbelow
+# Do this
+priv = ECKey.new(curve := EllipticCurveNISTP256.get_curve())
+pub = priv.get_public_key()
+m = b"Super cool message"
+signer = ECDSA(priv, pub)
+sig = signer.sign(m)
+v = ECDSA.verify(m, pub, sig)
+assert v
+# End of do this
+
+# Never, ever, do this. this is to show that a misuse can cause a private key leakage. k needs to be random. You could (And maybe should) pass a hash of H(m || private_key) through a PRNG and put k as that.
+priv = ECKey.new(curve)
+pub = priv.get_public_key()
+mA = b"Super cool message A"
+mB = b"Super cool message B"
+signer = ECDSA(priv, pub)
+k = randbelow(curve.n-1)
+sigA = signer.sign(mA, k)
+# k is shared, thus a private key can be leaked. (Same with regular DSA)
+sigB = signer.sign(mB, k)
+private = ECDSA.find_private_key_when_nonce_is_reused(sigA, mA, sigB, mB, pub)
+assert priv.private_key == private # private key is leaked!
+
+```
+
 
 # RS
 [Ring Signatures Wiki](https://en.wikipedia.org/wiki/Ring_signature)

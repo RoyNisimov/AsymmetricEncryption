@@ -5,6 +5,12 @@ import json
 
 class ECCurve(IExport):
 
+    def find_inverse(self, x):
+        return pow(x, -1, self.n)
+
+    def is_on_curve(self, point: ECPoint.ECPoint) -> bool:
+        return self.f(point.x) == pow(point.y, 2, self.p)
+
     def g(self) -> ECPoint.ECPoint:
         return ECPoint.ECPoint(curve=self, x=self.G.x, y=self.G.y)
 
@@ -28,7 +34,7 @@ class ECCurve(IExport):
 
     def f(self, x: int):
         if x < 0: raise ValueError("X must be unsigned!")
-        return (pow(x, 3, self.p) + self.a * x + self.b) % self.p
+        return (pow(x, 3, self.p) + (self.a * x) + self.b) % self.p
 
     def __str__(self):
         return f"""{self.p = }
