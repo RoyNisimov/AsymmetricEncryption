@@ -20,6 +20,13 @@ class ECPoint:
     def __str__(self):
         return f"({self.x}, {self.y})"
 
+    def __sub__(self, other):
+        if not isinstance(other, ECPoint): raise ValueError()
+        o = other.copy()
+        o.y = (- o.y) % self.curve.p
+        return self + o
+
+
     def __eq__(self, other) -> bool:
         if not isinstance(other, ECPoint): return False
         return self.x == other.x and self.y == other.y

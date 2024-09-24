@@ -862,7 +862,7 @@ x is the private key
 
 ## ECDSA Code
 ```python
-from AsymmetricEncryptions.PublicPrivateKey.ECC import EllipticCurveNISTP256, ECKey, ECPoint, ECDSA
+from AsymmetricEncryptions.PublicPrivateKey.ECC import EllipticCurveNISTP256, ECKey, ECDSA
 from secrets import randbelow
 # Do this
 priv = ECKey.new(curve := EllipticCurveNISTP256.get_curve())
