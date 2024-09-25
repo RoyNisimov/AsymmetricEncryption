@@ -45,6 +45,7 @@ If you don't know what you're doing, use [Unhazardous](#unhazardous)
 | [MQV](#mqv)                                      | [Code](#mqv-code)                | [Math](#mqv-math)                |
 | [ECDSA](#ECDSA)                                  | [Code](#ecdsa-code)              | [Math](#ecdsa-math)              |
 | [Ring Signatures](#rs)                           | [Code](#rs-code)                 | [Math](#rs-math)                 |
+| [AOS Ring Signatures](#aos-rs)                   | [Code](#aos-rs-code)             | [Math](#aos-rs-math)             |
 | [SSS](#sss)                                      | [Code](#sss-code)                | [Math](#sss-math)                |
 | [Fiat–Shamir](#fiat-shamir-zero-knowledge-proof) | [Code](#fiat-shamir-code)        | [Math](#fiat-shamir-math)        |
 | [OT1O2](#oblivious-transfer)                     | [Code](#oblivious-transfer-code) | [Math](#oblivious-transfer-math) |
@@ -961,6 +962,101 @@ sig, RK = r.sign_message(msg1, p)
 print(sig)
 ver = RingSignatures(RK).verify_message(msg1, sig)
 print(ver)
+```
+
+
+# AOS RS
+
+Abe-Ohkubo-Suzuki Ring Signature scheme is a Ring Signature that uses ECC or Discrete logarithms (I implemented ECC only at the moment). 
+
+This scheme was invented by Masayuki Abe, Miyako Ohkubo, and Koutarou Suzuki
+
+[1 out of n ring signatures](https://iacr.org/archive/asiacrypt2002/25010414/25010414.pdf)
+
+A ring signature proves the knowledge of a private key withing a group of public keys without reveling which public key.
+
+It's useful for example when leaking a secret within a government agency.
+
+If I want to prove to a journalist that I'm a trusted source but don't want to reveal who I am, I could use a ring signature.
+
+
+# AOS RS Math
+[Medium Article](https://billatnapier.medium.com/aos-ring-signatures-the-builder-of-transaction-privacy-674e52bb78ac)
+``` 
+The math of the AOS ring signature is building a ring such that it loops when calling a trap door function that uses the public keys.
+
+Lets assume we have a group of public key, let's call them keys. And at the jth position there's the signer's key.
+It's importent to note that the keys should be shuffled and should have no order, so the signers key wouldn't be infront or be last.
+Signing:
+
+We pick a random number alpha
+
+Q = G * alpha
+
+Where G is the curve generator point
+
+We say that e[j+1] = H(Q) where H is a cryptographic hash function that was permuted to append the message M.
+(H for example: sha256(M || m))
+
+Then, i, starting at j + 1 until we get back to j exlclusive. (i is mod the length of the keys). We do:
+s[i] = 2 < random < curve.n
+e[i + 1] = H(s[i] * G + e[i] * keys[i])
+
+And finaly at j
+we do:
+s[j] = (alpha - e[j] * x) mod curve.n
+where x is the private key
+the signature is then (e[0], s[0], s[1]... s[j].. s[len(keys)-1])
+And the public keys should be in order.
+Verify:
+e = e_0 = signature[0]
+
+For key in keys:
+    e = H(s[i] * G + e * keys[i])
+if e == e_0 then the signature passes
+
+Why this works?
+
+I had a pretty hard time understanding why this works but it's actually pretty simple.
+
+We firstly "seed" the ring at the next key of j to be H(alhpa * G).
+so Q = alhpa * G
+
+The ring then takes the form:
+H(s[i] * G + e[i] * keys[i])
+Where s[i] is a random number and e[i] is the last e.
+Then we reach ourself, at position j, and s[j] takes this form:
+(alpha - e * x) mod curve.n
+This is essentiely "going back in time" to find e at j + 1
+And if you look at the formula to calculate e the terms cancle eachother out.
+
+s[j] * G + e * keys[j] =
+(alpha - (e * x)) mod curve.n * e * x * G = 
+alpha * G = Q
+So essentiely we went back in time and found the formula to seed out first e
+
+```
+
+![AOSRingSig.png](ReadmeSrc/AOSRingSig.png)
+
+# AOS RS Code
+```python
+from AsymmetricEncryptions.PublicPrivateKey.ECC import ECKey, EllipticCurveNISTP256
+from AsymmetricEncryptions.Protocols.AOSRingSignatures import AOS
+
+m = b"test"
+# 15 members in the group other than the signer
+n = 15
+# signer
+signer = ECKey.new(curve := EllipticCurveNISTP256.get_curve())
+# The public keys of the members
+keys = [ECKey.new(curve).get_public_key() for _ in range(n)]
+rs = AOS(keys, signer)
+sigma, rk = rs.sign(m)
+print(sigma)
+v = AOS.verify(rk, m, sigma)
+print(v)
+
 ```
 
 

@@ -3,6 +3,7 @@ from AsymmetricEncryptions.PublicPrivateKey.ECC import ECKey, ECPoint, ECCurve
 from AsymmetricEncryptions.General.BytesAndInts import BytesAndInts
 from hashlib import sha256
 from secrets import randbelow, SystemRandom
+from warnings import warn
 
 class AOS:
 
@@ -18,7 +19,6 @@ class AOS:
         keys.insert(j, self.signer_key)
         n = len(keys)
         s = [None] * n
-        e = [None] * n
 
         def H(M:bytes):
             return BytesAndInts.byte2Int(sha256(M + m).digest())
@@ -26,13 +26,16 @@ class AOS:
         alpha = randbelow(curve.n-1)
         g = curve.g()
         Q = g * alpha
-        e[(j+1)%n] = H(str(Q).encode())
+        e = H(str(Q).encode())
+        e0 = b""
         for i in range(j+1, n+j):
             indexI = i % n
             s[indexI] = randbelow(curve.n-1)
-            e[(indexI+1) % n] = H(str((g*s[indexI]) + (keys[indexI].public_key * e[indexI])).encode())
-        s[j] = (alpha - (e[j]*keys[j].private_key)) % curve.n
-        sigma = (e[0], s)
+            e = H(str((g*s[indexI]) + (keys[indexI].public_key * e)).encode())
+            if (indexI+1) % n == 0:
+                e0 = e
+        s[j] = (alpha - (e*keys[j].private_key)) % curve.n
+        sigma = (e0, s)
         rk = keys.copy()
         rk[j] = rk[j].get_public_key()
         return sigma, rk.copy()
@@ -42,12 +45,11 @@ class AOS:
         s = sigma[1]
         e = e_0 = sigma[0]
         n = len(rk)
+        if n != len(s):
+            warn("Might be missing a key")
+            return False
         curve = rk[0].curve
-        """
-        print(e[j])
-        print(e)
-        print(H(str((g*s[j-1]) + (keys[j-1].public_key * e[j-1])).encode()))
-        """
+
         def H(M: bytes) -> int:
             return BytesAndInts.byte2Int(sha256(M + m).digest())
 
