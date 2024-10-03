@@ -6,8 +6,6 @@ from AsymmetricEncryptions.Protocols import KDF
 from AsymmetricEncryptions.Protocols.Kerberos import AS, TGS
 from hashlib import sha256
 import hmac
-from build.lib.AsymmetricEncryptions import MACError
-from AsymmetricEncryptions.General.XOR import XOR
 
 
 class KDC:
