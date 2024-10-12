@@ -224,7 +224,7 @@ k = 0 < k < p
 s1 = g**k % p
 phi = p - 1
 mod_inv = k ** -1 % phi // pow(k, -1, phi) or mod_inv*k % phi == 1
-s2 = (mod_inv * (m - x * s1)) % phi
+s2 = (mod_inv * (hash(m) - x * s1)) % phi
 
 Send {m, s1, s2}
 Keep k private
@@ -232,7 +232,7 @@ Keep k private
                              Verifying
 ------------------------------------------------------------------------
 V = y**s1 * s1**s2 % p
-W = g**m % p
+W = g**hash(m) % p
 If V == W then the message was signed by the private key
 
 

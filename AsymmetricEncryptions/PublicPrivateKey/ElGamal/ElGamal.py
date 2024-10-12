@@ -62,8 +62,9 @@ class ElGamal(ISignAndVerify, IEncryptAndDecrypt):
         @param assertion: if true then will check if m is allowed
         @return: signature
         """
+        og_m = msg
         msg = hashlib.sha256(msg).digest()
-        m: bytes = BytesAndInts.byte2Int(msg)
+        m: int = BytesAndInts.byte2Int(msg)
         if assertion: assert m < self.key.p
         k: int = secrets.randbelow(self.key.p)
         while gcd(k, self.key.p - 1) != 1: k = secrets.SystemRandom().randint(2, self.key.p - 2)
@@ -72,9 +73,9 @@ class ElGamal(ISignAndVerify, IEncryptAndDecrypt):
         inv: int = pow(k, -1, phi_n)
         s2: int = (inv * (m - s1 * self.key.x)) % phi_n
         if s2 == 0: self.sign(msg, assertion)
-        return BytesAndInts.int2Byte(s1), BytesAndInts.int2Byte(s2),  BytesAndInts.int2Byte(m)
+        return BytesAndInts.int2Byte(s1), BytesAndInts.int2Byte(s2),  og_m
 
-    def verify(self, signature: tuple[bytes, bytes, bytes], *, og_message: bytes = None) -> bool:
+    def verify(self, signature: tuple[bytes, bytes, bytes], *, og_message: bytes = None) -> None:
         """
         Verifies a signature
         @param og_message: The original message
@@ -82,10 +83,11 @@ class ElGamal(ISignAndVerify, IEncryptAndDecrypt):
         @return: bool
         """
         if og_message:
-            assert signature[2] == hashlib.sha256(og_message).digest()
+            assert signature[2] == og_message
+
         s1: int = BytesAndInts.byte2Int(signature[0])
         s2: int = BytesAndInts.byte2Int(signature[1])
-        m: int = BytesAndInts.byte2Int(signature[2])
+        m: int = BytesAndInts.byte2Int(hashlib.sha256(signature[2]).digest())
         V = pow(self.key.y, s1, self.key.p) * pow(s1, s2, self.key.p)
         V = V % self.key.p
         W = pow(self.key.g, m, self.key.p)

@@ -4,7 +4,7 @@ DESC = 'A simple asymmetric encryption module'
 LONG_DESC = "Showcases protocols and has a lot of cryptographic functions"
 setup(
     name="asymmetric-encryption",
-    version="0.2.1",
+    version="0.2.2",
     author="Roy Nisimov, jacebalaron (Daniel Gaisenberg)",
     description=DESC,
     long_description_content_type="text/markdown",
