@@ -1127,8 +1127,6 @@ print(unpadded == msg)  # True if the msg is small
 ```
 
 # SSS
-<span style="font-size:2em; font-weight: 900; color: red">WARNING: DEPRECATED UNTIL I FIGURE HOW TO IMPLEMENT GF(128)</span>
-
 SSS stands for Shamir's Secret Sharing.
 
 Adi Shamir, an Israeli scientist, first formulated the scheme in 1979.
@@ -1347,7 +1345,7 @@ In a 1–2 oblivious transfer protocol, Alice the sender has two messages m0 and
 # Bob gets e, n, x0, x1
 4. Bob picks b to be 0 or 1 (b is what message he will get) and selects xb
 5. Bob generate a random value k (k < n) and computes:
-v = (xb - k**e) % n
+v = (xb + k**e) % n
 Bob sends to Alice: {v} and keeps {b, k} a secret.
 # Alice gets: {v}
 6. Alice computes:

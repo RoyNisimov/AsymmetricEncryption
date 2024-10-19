@@ -46,7 +46,7 @@ class ObliviousTransfer:
         # send pub, x0, x1 to the other person
 
     @staticmethod
-    def Stage4and5(pubX0X1: tuple[RSAKey, int, int], b: int) -> int and int:
+    def Stage4and5(pubX0X1: tuple[RSAKey, int, int], b: int) -> (int and int):
         pub: RSAKey = pubX0X1[0]
         x0: int = pubX0X1[1]
         x1: int = pubX0X1[2]
@@ -54,7 +54,7 @@ class ObliviousTransfer:
         xs: tuple[int, int] = (x0, x1)
         k: int = secrets.randbelow(pub.n)
         v: int = (xs[b] + pow(k, pub.e, pub.n)) % pub.n
-        return v, k
+        return (v, k)
         # send only v! keep k private
 
     def Stage6and7(self, v: int) -> tuple[int, int]:
