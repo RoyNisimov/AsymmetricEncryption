@@ -27,6 +27,7 @@ class ECCurve(IExport):
         self.b = b
         self.G = g
         self.h = h
+        assert((4 * pow(a, 3, p) + 27 * b ** 2) % p != 0) # Curve is not singular
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, ECCurve): return False

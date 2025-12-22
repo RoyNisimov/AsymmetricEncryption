@@ -33,8 +33,8 @@ class ECDSA:
 
     @staticmethod
     def verify(m: bytes, public_key: ECKey, signature: tuple[int, int]) -> bool:
-        if not  public_key.public_key != public_key.curve.infinity(): return False
-        if not  public_key.curve.is_on_curve(public_key.public_key): return False
+        if not public_key.public_key != public_key.curve.infinity(): return False
+        if not public_key.curve.is_on_curve(public_key.public_key): return False
         if not public_key.public_key * public_key.curve.n == public_key.curve.infinity(): return False
         r, s = signature
         if not 1 < r < (public_key.curve.n - 1) or not 1 < s < (public_key.curve.n - 1): return False
