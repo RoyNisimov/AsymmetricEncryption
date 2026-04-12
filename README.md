@@ -1,10 +1,11 @@
-# WARNING
-This is probably hazards because I don't know best practices.
-I write this only for fun and learning.
-Do not use it on real things.
-Checkout Pycryptodome [here](https://github.com/Legrandin/pycryptodome) and [here](https://pycryptodome.readthedocs.io/en/latest/)
+> [!CAUTION]
+> This is probably hazards because I don't know best practices.
+> I write this only for fun and learning.
+> Do not use it on real things.
+> Check out Pycryptodome [here](https://github.com/Legrandin/pycryptodome) and [here](https://pycryptodome.readthedocs.io/en/latest/)
 
-Check out the pdf I attached it's a book I wrote
+> [!NOTE]
+> Check out the pdf I attached it's a book I wrote
 
 # Asymmetric-Encryption
 Asymmetric encryption uses two keys, one public, one private.
