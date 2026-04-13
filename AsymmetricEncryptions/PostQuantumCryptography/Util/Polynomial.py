@@ -1,0 +1,72 @@
+from __future__ import annotations
+from AsymmetricEncryptions.PostQuantumCryptography.Util.Term import Term
+
+
+class Polynomial:
+
+    def __init__(self, q, degree=256, coeff = None):
+        if coeff == None: coeff: list[int] = []
+        self.q = q
+        self.degree = degree
+        self.terms: list[Term] = []
+        for i in range(degree):
+            x = 0
+            if i<len(coeff): x = coeff[i]
+            self.terms.append(Term(x, i) % q)
+
+
+    def __str__(self):
+        s = ""
+        for i, t in enumerate(self.terms):
+            s += f"{t}"
+            if i + 1 < len(self.terms): s += " + "
+        return s
+
+    def __add__(self, other: Polynomial | Term | int):
+        l = self.terms.copy()
+        if isinstance(other, int):
+            l[0] += other
+            return Polynomial(self.q, self.degree, l)
+        if isinstance(other, Term):
+            if other.degree > len(l): return self
+            l[other.degree] = l[other.degree].add_coeff(other, self.q)
+            return Polynomial(self.q, self.degree, l)
+        if not isinstance(other, Polynomial): return self
+        for i, t in enumerate(self.terms):
+            if i < len(other.terms):
+                l[i] = l[i].add_coeff(other.terms[i], self.q)
+            else: break
+        return Polynomial(self.q, self.degree, l)
+
+    def round(self):
+        for t in self.terms:
+            t.round(self.q)
+
+    def __mul__(self, other: int | Polynomial):
+        if isinstance(other, int):
+            l = self.terms.copy()
+            for i in range(len(l)):
+                l[i] = ((l[i] * other) % self.q).modpom(self.degree)
+            return Polynomial(self.q, self.degree, l)
+        if isinstance(other, Polynomial):
+            b = [Term(0, i) for i in range(len(self.terms))]
+            for i in range(len(self.terms)):
+                for j in range(len(other.terms)):
+                    t = (self.terms[i] * other.terms[j]) % self.q
+                    t = t.modpom(self.degree) % self.q
+                    b[t.degree] = (b[t.degree].add_coeff(t)).modpom(self.degree) % self.q
+            return Polynomial(self.q, self.degree, b)
+
+        return self
+
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    a = Polynomial(3329, 4, [-4, 1])
+    b = Polynomial(3329, 4, [4, 1])
+    print(a * b)
