@@ -4,7 +4,7 @@ __all__ = ["SSS",
            "FiatShamirZeroKnowledgeProof",
            "OT1O2", "ObliviousTransfer",
            "Padding", "PKCS7", "RSADH", "DiffieHellman",
-           "ThreePass", "ThreePassProtocol", "KDF", "SchnorrPOK", "POK", "YAK", "Feistel", "GaloisField", "RingSignatures", "Kerberos", "AOSRingSignatures"]
+           "ThreePass", "ThreePassProtocol", "KDF", "SchnorrPOK", "POK", "YAK", "Feistel", "GaloisField", "RingSignatures", "Kerberos", "AOSRingSignatures", "PRF"]
 from .SSS import SSS
 from .OAEP import OAEP
 from .FSZKP import FiatShamirZeroKnowledgeProof
@@ -20,3 +20,4 @@ from .GaloisField import GaloisField
 from .RingSignatures import RingSignatures
 from .Kerberos import *
 from .AOSRingSignatures import AOS
+from .PRF import PRF

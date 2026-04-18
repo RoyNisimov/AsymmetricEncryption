@@ -1,10 +1,10 @@
 from __future__ import annotations
 from AsymmetricEncryptions.PostQuantumCryptography.Util.Term import Term
-
+from AsymmetricEncryptions.Protocols.PRF import PRF
 
 class Polynomial:
 
-    def __init__(self, q, degree=256, coeff = None):
+    def __init__(self, q:int , degree=256, coeff:list[int] = None):
         if coeff == None: coeff: list[int] = []
         self.q = q
         self.degree = degree
@@ -59,7 +59,14 @@ class Polynomial:
 
         return self
 
-
+    @staticmethod
+    def generate_polynomial(q:int, degree=256, seed: bytes = None) -> tuple[Polynomial, int]:
+        prf = PRF(seed)
+        coeff = []
+        for _ in range(degree):
+            coeff.append(prf.digest() % q)
+        p = Polynomial(q, degree, coeff)
+        return p, prf.starting_seed
 
 
 
@@ -69,4 +76,7 @@ class Polynomial:
 if __name__ == "__main__":
     a = Polynomial(3329, 4, [-4, 1])
     b = Polynomial(3329, 4, [4, 1])
+    c, s = Polynomial.generate_polynomial(3329, seed=b"test")
     print(a * b)
+    print(c)
+    print(s)
