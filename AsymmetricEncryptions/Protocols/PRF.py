@@ -2,6 +2,7 @@ from __future__ import annotations
 from AsymmetricEncryptions.Protocols import KDF
 from AsymmetricEncryptions.General import BytesAndInts
 from secrets import randbits
+from hashlib import sha256
 
 class PRF:
 
@@ -11,10 +12,10 @@ class PRF:
         self.starting_seed: bytes = seed
 
     def digest(self, n: int = 16) -> int:
-        c = KDF.derive_key(self.seed)
+        c = sha256(self.seed).digest()
         self.seed = c[:256]
         while len(c) < n:
-            c += KDF.derive_key(self.seed)
+            c += sha256(self.seed).digest()
             self.seed = c[:256]
         return BytesAndInts.byte2Int(c[:n])
 

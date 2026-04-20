@@ -1,6 +1,7 @@
 from __future__ import annotations
 from AsymmetricEncryptions.PostQuantumCryptography.Util.Term import Term
 from AsymmetricEncryptions.Protocols.PRF import PRF
+from AsymmetricEncryptions.General.BytesAndInts import BytesAndInts
 
 class Polynomial:
 
@@ -35,18 +36,43 @@ class Polynomial:
         for i, t in enumerate(self.terms):
             if i < len(other.terms):
                 l[i] = l[i].add_coeff(other.terms[i], self.q)
-            else: break
+            else:
+                break
         return Polynomial(self.q, self.degree, l)
 
     def round(self):
         for t in self.terms:
             t.round(self.q)
 
+    @staticmethod
+    def generate_low_polynomial(q: int, degree=256, seed: bytes = None) -> tuple[Polynomial, int]:
+        theta = 4
+        prf = PRF(seed)
+        coeff = []
+        for _ in range(degree):
+            c = prf.digest() % theta
+            if c > theta//2: c = c - theta
+            coeff.append(c)
+        p = Polynomial(q, degree, coeff)
+        return p, prf.starting_seed
+
+
+    def round_to_absolutes(self):
+        for i, t in enumerate(self.terms):
+            c = (self.terms[i].coeff + self.q) % self.q
+            if self.q // 4 < c < 3 * self.q // 4:
+                self.terms[i].coeff = 1
+            else:
+                self.terms[i].coeff = 0
+
+    def __sub__(self, other: Polynomial):
+        return self + other*-1
+
     def __mul__(self, other: int | Polynomial):
         if isinstance(other, int):
             l = self.terms.copy()
             for i in range(len(l)):
-                l[i] = ((l[i] * other) % self.q).modpom(self.degree)
+                l[i] = ((l[i] * other) % self.q)
             return Polynomial(self.q, self.degree, l)
         if isinstance(other, Polynomial):
             b = [Term(0, i) for i in range(len(self.terms))]
@@ -60,7 +86,7 @@ class Polynomial:
         return self
 
     @staticmethod
-    def generate_polynomial(q:int, degree=256, seed: bytes = None) -> tuple[Polynomial, int]:
+    def generate_polynomial(q: int, degree=256, seed: bytes = None) -> tuple[Polynomial, int]:
         prf = PRF(seed)
         coeff = []
         for _ in range(degree):
@@ -68,15 +94,17 @@ class Polynomial:
         p = Polynomial(q, degree, coeff)
         return p, prf.starting_seed
 
-
-
-
+    @staticmethod
+    def transcribe_polynomial(m: bytes, q: int = 3329, degree: int = 256):
+        integer_value = BytesAndInts.byte2Int(m)
+        binary_string = bin(integer_value).replace('0b', '')
+        l = [int(c) for c in binary_string][::-1]
+        return Polynomial(q, degree, l)
 
 
 if __name__ == "__main__":
-    a = Polynomial(3329, 4, [-4, 1])
-    b = Polynomial(3329, 4, [4, 1])
-    c, s = Polynomial.generate_polynomial(3329, seed=b"test")
-    print(a * b)
-    print(c)
-    print(s)
+    a = Polynomial(3329, 4, [-4, 1, 5, 10])
+    b = Polynomial(3329, 4, [4, 1, 5, 2])
+
+    print(a - b)
+
