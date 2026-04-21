@@ -122,6 +122,24 @@ class Matrix:
             return mat
         return None
 
+    def copy(self):
+        mat = Matrix(self.n, self.m)
+        for r in range(self.n):
+            for c in range(self.m):
+                mat.mat[r][c] = self.mat[r][c].copy()
+        return mat
+
+
+    def __eq__(self, other):
+        if isinstance(other, Matrix):
+            if self.n != other.n or self.m != other.m: return False
+            for r in range(self.n):
+                for c in range(self.m):
+                    if self.mat[r][c] != other.mat[r][c]:
+                        return False
+            return True
+        return False
+
     def compress(self, d: int=10):
         if not isinstance(self.mat[0][0], Polynomial): return
         for r in range(self.n):

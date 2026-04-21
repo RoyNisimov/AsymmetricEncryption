@@ -20,10 +20,13 @@ class KyberPKE:
         self.public = self.B * self.s + self.e
 
     @staticmethod
-    def encrypt(msg: bytes, B_seed: bytes, Bse: Matrix, q: int = 3329, degree: int = 256, n: int = 2, m: int = 2) -> tuple[Matrix, Matrix]:
-        error_seed = token_bytes(16)
-        error_seed2 = token_bytes(16)
-        r_seed = token_bytes(16)
+    def encrypt(msg: bytes, B_seed: bytes, Bse: Matrix, q: int = 3329, degree: int = 256, n: int = 2, m: int = 2, error_seed=None, error_seed2=None, r_seed=None) -> tuple[Matrix, Polynomial]:
+        if error_seed is None:
+            error_seed = token_bytes(16)
+        if error_seed2 is None:
+            error_seed2 = token_bytes(16)
+        if r_seed is None:
+            r_seed = token_bytes(16)
 
         e1 = Matrix.random_mat_low_poly(q=q, degree=degree, seed=error_seed, n=1, m=m)
         e2, _ = Polynomial.generate_low_polynomial(q, degree, error_seed2)
@@ -55,8 +58,7 @@ class KyberPKE:
 if __name__ == "__main__":
     k = KyberPKE(b"test")
     print(k.get_public_key()[0], k.get_public_key()[1])
-    c, c1 = KyberPKE.encrypt(b"\x06",  B_seed=k.get_public_key()[1],  Bse=k.get_public_key()[0])
-
+    c, c1 = KyberPKE.encrypt(b"ligma sigma balls",  B_seed=k.get_public_key()[1],  Bse=k.get_public_key()[0])
     d = k.decrypt(c, c1)
     print(d)
 

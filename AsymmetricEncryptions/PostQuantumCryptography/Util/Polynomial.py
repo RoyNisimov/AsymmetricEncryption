@@ -109,6 +109,19 @@ class Polynomial:
         l = [int(c) for c in binary_string][::-1]
         return Polynomial(q, degree, l)
 
+    def copy(self):
+        p = Polynomial(self.q, self.degree, [t.coeff for t in self.terms])
+        return p
+
+    def __eq__(self, other):
+        if isinstance(other, Polynomial):
+            if self.degree != other.degree: return False
+            for i, term in enumerate(self.terms):
+                if term.coeff != other.terms[i].coeff:
+                    print(f"{term.coeff} other {other.terms[i]}")
+                    return False
+            return True
+        return False
 
 if __name__ == "__main__":
     a = Polynomial(3329, 4, [-4, 1, 5, 10])
