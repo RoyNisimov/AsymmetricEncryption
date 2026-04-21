@@ -34,9 +34,13 @@ class KyberPKE:
         inflated_m = Polynomial.transcribe_polynomial(msg, q, degree) * (q//2)
         Bsere2m = Bse * r + inflated_m + e2
         Bre1 = B * r + e1
+        Bre1.compress(10)
+        Bsere2m.compress(4)
         return Bre1, Bsere2m
 
     def decrypt(self, Bre1: Matrix, Bsere2m: Matrix):
+        Bre1.decompress(10)
+        Bsere2m.decompress(4)
         d: Polynomial = Bsere2m - (self.s * Bre1)
         d.round_to_absolutes()
         bits = "".join(f"{d.terms[i].coeff}" for i in range(d.degree))[::-1]

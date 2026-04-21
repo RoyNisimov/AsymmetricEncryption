@@ -19,6 +19,13 @@ class Term:
 
         return self
 
+    def compress(self, d: int=10, q: int = 3329):
+        self.coeff = ((self.coeff << d) + (q // 2)) // q % (1 << d)
+
+    def decompress(self, d: int=10, q: int = 3329):
+        self.coeff = ((self.coeff * q) + (1 << (d - 1))) >> d
+
+
     def modpom(self, deg):
         if self.degree >= deg:
             flip_sign, r = divmod(self.degree, deg)

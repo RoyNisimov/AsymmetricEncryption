@@ -44,6 +44,14 @@ class Polynomial:
         for t in self.terms:
             t.round(self.q)
 
+    def compress(self, d: int=4):
+        for i, t in enumerate(self.terms):
+            t.compress(d, self.q)
+
+    def decompress(self, d: int=4):
+        for i, t in enumerate(self.terms):
+            t.decompress(d, self.q)
+
     @staticmethod
     def generate_low_polynomial(q: int, degree=256, seed: bytes = None) -> tuple[Polynomial, int]:
         theta = 4

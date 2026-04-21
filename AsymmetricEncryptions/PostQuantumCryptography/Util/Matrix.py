@@ -122,6 +122,19 @@ class Matrix:
             return mat
         return None
 
+    def compress(self, d: int=10):
+        if not isinstance(self.mat[0][0], Polynomial): return
+        for r in range(self.n):
+            for c in range(self.m):
+                self.mat[r][c].compress(d)
+
+    def decompress(self, d: int=10):
+        if not isinstance(self.mat[0][0], Polynomial): return
+        for r in range(self.n):
+            for c in range(self.m):
+                self.mat[r][c].decompress(d)
+
+
     def __str__(self):
         s = "---" * self.n + "\n"
         for r in range(self.n):
