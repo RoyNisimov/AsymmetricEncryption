@@ -49,7 +49,7 @@ if __name__ == "__main__":
     k = KyberKEM()
     ct, key, row = KyberKEM.initialise_handshake(k.get_public()[0], k.get_public()[1])
     kprime = k.finish_handshake(ct)
-    print(kprime, key)
+    print(kprime.hex(), key.hex())
 
 
 
